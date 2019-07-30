@@ -1,0 +1,111 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+      {% block content %}
+            <div class="col-sm-12">
+              {%if message%}
+              <p class="text-danger" style="text-align: center;">{{message}}</p>
+              {%endif%}
+      <div class="card">
+      	 <div class="card-header info-color white-text">
+
+    <h5>Enroll Student</h5>
+  </div>
+      	<div class="card-body">
+
+                 <form method="POST"  id="form-enroll">
+                   {%csrf_token%}
+      	<div class="row">
+          <div class="col">
+            <div class="form-group">
+            <label for="#id_student">Student Name</label>
+            <input type="text" class="form-control disabled" id="id_student">
+            </div>
+
+          </div>
+</div>
+      	<div class="row">
+      	<div class="col">
+
+      <div class="form-group">
+        {{form.course.errors}}
+        {{form.course.label}}
+        {{form.course}}
+      </div>
+    </div>
+  	<div class="col">
+      <div class="form-group">
+           {{form.major.errors}}
+        {{form.major.label}}
+        {{form.major}}
+      </div>
+    </div>
+  </div>
+
+
+
+    <div class="row">
+
+      <div class="col">
+        <div class="form-group">
+             {{form.year_level.errors}}
+          {{form.year_level.label}}
+          {{form.year_level}}
+        </div>
+      </div>
+        <div class="col">
+
+      <div class="form-group">
+        {{form.semister.errors}}
+        <label>Semester</label>
+        {{form.semister}}
+      </div>
+    </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <input type="hidden" name="pk" value="{{student.pk}}">
+        <div class="form-group">
+             {{form.academic_year.errors}}
+          {{form.academic_year.label}}
+          {{form.academic_year}}
+        </div>
+      </div>
+  </div>
+
+    <button type="submit" class="btn btn-sm btn-purple" id="btn-enroll">Save</button>
+
+  </form>
+
+
+
+
+
+
+</div>
+
+</div>
+
+
+
+      {%endblock%}
+      
+      {%block script%}
+
+      <script type="text/javascript">
+      $(document).ready(function($){
+
+
+
+        const fullname="{{student.first_name}} {{student.middle_name}} {{student.last_name}}"
+$('#id_student').val(fullname)
+$('#id_course').val({{student.course.pk}})
+
+
+      });
+
+
+      </script>
+
+      {%endblock%}

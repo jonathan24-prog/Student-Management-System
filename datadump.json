@@ -1,0 +1,996 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$120000$Om6jqCEzZanU$XbznWpQ0tiVILzhdorZwXbjMevibbsmnu/SuLpIU2eg=",
+        "last_login": "2018-10-21T12:00:55.656Z",
+        "is_superuser": true,
+        "username": "yamamz",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2018-10-21T11:54:39.122Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$120000$L56JSAtTjWY6$6FHgTTPm9V6EMNG3cvKwhSW+OQ9ZpRwmgYsUY2AKwS0=",
+        "last_login": "2018-10-21T11:59:43.331Z",
+        "is_superuser": false,
+        "username": "yamam2",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2018-10-21T11:59:42.938Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "4ryyv0es8g4pz7dxrquna5d5bbdxhtu0",
+    "fields": {
+        "session_data": "OWQ4YTRhMjIyNzJlNmU1YWNkZTlmOTIwYzViNzQyNGFiOTgzNTJmNTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI3MGYzNTFiMzA2ODAwMWY5NWZmYzQ5ODNiOTEwNjk5ZjVlMTFlNDU1In0=",
+        "expire_date": "2018-11-04T12:00:55.790Z"
+    }
+},
+{
+    "model": "student_profile.uploadexcel",
+    "pk": 1,
+    "fields": {
+        "file": "xls/subjectsAll_HEAqoEy.xlsx"
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 1,
+    "fields": {
+        "code": "GE 1",
+        "description": "Understanding the Self",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 2,
+    "fields": {
+        "code": "GE 2",
+        "description": "Contemporary World",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 3,
+    "fields": {
+        "code": "GE 3",
+        "description": "Purposive Communication",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 4,
+    "fields": {
+        "code": "GE 4",
+        "description": "Mathematics  in the Modern World",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 5,
+    "fields": {
+        "code": "GE 5",
+        "description": "Ethics",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 6,
+    "fields": {
+        "code": "Fil. 1",
+        "description": "Komunikasyon sa Akademikong Pilipino",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 7,
+    "fields": {
+        "code": "EC 1",
+        "description": "Interactive English",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 8,
+    "fields": {
+        "code": "Criminology 1",
+        "description": "Introducation to Criminology",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 9,
+    "fields": {
+        "code": "PE 1",
+        "description": "Fundamentals of Martial Arts",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 10,
+    "fields": {
+        "code": "ROTC",
+        "description": "National Service Training Program",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 11,
+    "fields": {
+        "code": "GE 6",
+        "description": "Science, Technology and Society",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 12,
+    "fields": {
+        "code": "GE 7",
+        "description": "Reading in Philippine History",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 13,
+    "fields": {
+        "code": "PC",
+        "description": "Life and Works of Rizal",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 14,
+    "fields": {
+        "code": "Elective 2",
+        "description": "Logic and Debate (Inductive and Deductive Reasoning)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 15,
+    "fields": {
+        "code": "CLJ 1",
+        "description": "Intro to Philippine Criminal Justice System",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 16,
+    "fields": {
+        "code": "Elective 3",
+        "description": "Art Appreciation",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 17,
+    "fields": {
+        "code": "PE 2",
+        "description": "Arnis and Disarming Teachniques",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 18,
+    "fields": {
+        "code": "Fil. 2",
+        "description": "Pagbasa at Pagsulat tungo sa Pananaliksik",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 19,
+    "fields": {
+        "code": "EC 3",
+        "description": "Information Communication Technology",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 20,
+    "fields": {
+        "code": "PC",
+        "description": "Life and  Works of Rizal",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 21,
+    "fields": {
+        "code": "CDI 1",
+        "description": "Fundamentals of Investagation and Intellegence",
+        "unit": 4
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 22,
+    "fields": {
+        "code": "LEA 1",
+        "description": "Law Inforcement organization and Administration",
+        "unit": 4
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 23,
+    "fields": {
+        "code": "LEA 2",
+        "description": "Comparative models in policing",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 24,
+    "fields": {
+        "code": "Criminology 2",
+        "description": "Theories of Crime Causation",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 25,
+    "fields": {
+        "code": "PE 3",
+        "description": "First Aid and Water Survival",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 26,
+    "fields": {
+        "code": "CA 1",
+        "description": "Institutional Corrections",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 27,
+    "fields": {
+        "code": "Forensic 1",
+        "description": "Forencsic Photography",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 28,
+    "fields": {
+        "code": "CFLM-1",
+        "description": "Character formation, nationalism and patriotism",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 29,
+    "fields": {
+        "code": "CDI 2",
+        "description": "Specialized crime investigation 1 with legal medicine",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 30,
+    "fields": {
+        "code": "Forensic 2",
+        "description": "Personal identification techniques",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 31,
+    "fields": {
+        "code": "AdGE",
+        "description": "General chemistry (organic)",
+        "unit": 5
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 32,
+    "fields": {
+        "code": "Criminology 3",
+        "description": "Human behavior and victimology",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 33,
+    "fields": {
+        "code": "LEA 3",
+        "description": "Introducation to industrial security concepts",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 34,
+    "fields": {
+        "code": "PE 4",
+        "description": "Fundamentals of Markmanship",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 35,
+    "fields": {
+        "code": "CLJ 2",
+        "description": "Human rights education",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 36,
+    "fields": {
+        "code": "CFLM-2",
+        "description": "Character formation with leadership, Decision Making, Management and Administration",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 37,
+    "fields": {
+        "code": "CDI 3",
+        "description": "Specialized crime investigation 2",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 38,
+    "fields": {
+        "code": "Forensic 3",
+        "description": "Forensic chemistry and Toxicology",
+        "unit": 5
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 39,
+    "fields": {
+        "code": "CLJ 3",
+        "description": "Criminal Law (Book 1)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 40,
+    "fields": {
+        "code": "LEA 4",
+        "description": "Law inforcement operations and planning with crime mapping",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 41,
+    "fields": {
+        "code": "CDI 4",
+        "description": "Traffic management and accident investigation with driving",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 42,
+    "fields": {
+        "code": "Criminology 4",
+        "description": "Professional conduct and ethical standards",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 43,
+    "fields": {
+        "code": "CA 2",
+        "description": "Non-institutional corrections",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 44,
+    "fields": {
+        "code": "CLJ 4",
+        "description": "Criminal Law (Book 2)",
+        "unit": 4
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 45,
+    "fields": {
+        "code": "Forensic 4",
+        "description": "Questioned documents examination",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 46,
+    "fields": {
+        "code": "Criminology 5",
+        "description": "Juvenile deliquency and juvenile justice system",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 47,
+    "fields": {
+        "code": "Forensic 5",
+        "description": "Lie detection Techniques",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 48,
+    "fields": {
+        "code": "CDI 5",
+        "description": "Technical English 1 (Technical report writing and presentation)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 49,
+    "fields": {
+        "code": "CDI 6",
+        "description": "Fire protection and Arson Investigation",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 50,
+    "fields": {
+        "code": "Practicum 1",
+        "description": "Internship (On-the-job-training)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 51,
+    "fields": {
+        "code": "CA 3",
+        "description": "Therapeutic Modalities",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 52,
+    "fields": {
+        "code": "CLJ 5",
+        "description": "Evidence",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 53,
+    "fields": {
+        "code": "Criminology 6",
+        "description": "Dispute resolution and Crises/incedents management",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 54,
+    "fields": {
+        "code": "Criminology 7",
+        "description": "Criminological Research 1(Research methods with applied statistics)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 55,
+    "fields": {
+        "code": "CDI 7",
+        "description": "Vice and drug education and control",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 56,
+    "fields": {
+        "code": "Forensic 6",
+        "description": "Forensic Ballistics",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 57,
+    "fields": {
+        "code": "CLJ 6",
+        "description": "Criminal procedure and court testimony",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 58,
+    "fields": {
+        "code": "Criminology 8",
+        "description": "Riminology research 2(Thesis writing and Presentation) Criminological Research 2 ",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 59,
+    "fields": {
+        "code": "CDI 8",
+        "description": "Technical English 2 (Legal Forms)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 60,
+    "fields": {
+        "code": "CDI 9",
+        "description": "Indtroduction Laws and Protection",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 61,
+    "fields": {
+        "code": "Educ 1",
+        "description": "The Child and Adolescent Learners and Learning Principle",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 62,
+    "fields": {
+        "code": "PE 1",
+        "description": "Gymnastics",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 63,
+    "fields": {
+        "code": "Guidance 1",
+        "description": "Adjustment for College Life and Emotional Intelligence",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 64,
+    "fields": {
+        "code": "Engglish Plus",
+        "description": "Remedial English ",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 65,
+    "fields": {
+        "code": "GE 10",
+        "description": "Community Engagement, Solidarity, and Citizenship",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 66,
+    "fields": {
+        "code": "GE 11",
+        "description": "Organizational Management",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 67,
+    "fields": {
+        "code": "GE 12",
+        "description": "Trends, Network and Critical Thinking of the 21st Century ",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 68,
+    "fields": {
+        "code": "Educ 2",
+        "description": "Building and Enhancing New Literacies Across the Curriculum",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 69,
+    "fields": {
+        "code": "PE 2",
+        "description": "Rythmic Activities",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 70,
+    "fields": {
+        "code": "Guidance 2",
+        "description": "Financial Literacy",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 71,
+    "fields": {
+        "code": "HELE",
+        "description": "Home Economics and Livelihood Education",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 72,
+    "fields": {
+        "code": "Educ. 3",
+        "description": "Technology for Teaching and Learning1",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 73,
+    "fields": {
+        "code": "Educ. 4",
+        "description": "Facilitating Learner-Centered Teaching",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 74,
+    "fields": {
+        "code": "Sci 1",
+        "description": "Teaching Science in Elementary Grades (Biology and Chemistry)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 75,
+    "fields": {
+        "code": "Math 1",
+        "description": "Teaching Math in the Primary Grades",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 76,
+    "fields": {
+        "code": "Soc. Sci 1",
+        "description": "Teaching Social Studies in the Elemantary Grades (Culture and Geography)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 77,
+    "fields": {
+        "code": "Fil 1",
+        "description": "Pagtuturo and Filipino sa Elementarya (1)-Estraktura at Gamit ng  Wikang Filipino",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 78,
+    "fields": {
+        "code": "VED",
+        "description": "Good Manners and Right Conduct (Edukasyon sa Pagkakatao)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 79,
+    "fields": {
+        "code": "PE 3",
+        "description": "Individual and Dual Sports",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 80,
+    "fields": {
+        "code": "Educ. 5",
+        "description": "The Teaching Prefession",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 81,
+    "fields": {
+        "code": "Educ. 6",
+        "description": "Foundations of Special and Inclusive Education",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 82,
+    "fields": {
+        "code": "Science 1",
+        "description": "Teaching Science in Elementary Grades (Physics, Earth and Space Science)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 83,
+    "fields": {
+        "code": "Math 2",
+        "description": "Teaching Math in the Intermediate Grades",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 84,
+    "fields": {
+        "code": "MTB-MLE",
+        "description": "Content and Pedagogy for the Mother Tongue",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 85,
+    "fields": {
+        "code": "Soc. Sci 2",
+        "description": "Teaching Social Studies in Elementary Grades (Philippine History and and Government)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 86,
+    "fields": {
+        "code": "TLE 1",
+        "description": "Edukasyong Pantahanan at Pangkabuhayan",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 87,
+    "fields": {
+        "code": "PE 4",
+        "description": "Team Sports",
+        "unit": 2
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 88,
+    "fields": {
+        "code": "ENG. 1",
+        "description": "Teaching English in the Elementary Grades (Language Arts)",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 89,
+    "fields": {
+        "code": "Educ. 7",
+        "description": "Teacher and the School Curriculum",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 90,
+    "fields": {
+        "code": "TTL",
+        "description": "Technology for Teaching and Learning in the Elementary Grades",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 91,
+    "fields": {
+        "code": "Educ 8",
+        "description": "Assessment of Learning 1",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 92,
+    "fields": {
+        "code": "MUSIC",
+        "description": "Teaching Music of the Elementary Grades",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 93,
+    "fields": {
+        "code": "ENGL. 2",
+        "description": "Teaching English in the Elementary Grades through Literature",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 94,
+    "fields": {
+        "code": "ARTS",
+        "description": "Teaching Arts in the Elementary Grades",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 95,
+    "fields": {
+        "code": "Elective 1",
+        "description": "Elective: Teaching Multi-Grade Classes",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 96,
+    "fields": {
+        "code": "Educ. 9",
+        "description": "The Teacher and the Community, School Culture and Organizational Leadership",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 97,
+    "fields": {
+        "code": "Educ. 10",
+        "description": "Assessment of Learning 2",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 98,
+    "fields": {
+        "code": "PEH",
+        "description": "Teaching PE and Health in the Elemantary Grades",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 99,
+    "fields": {
+        "code": "Fil 2",
+        "description": "Pagtuturo and Filipino sa Elementarya (11) Panitikan ng Pilipinas",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 100,
+    "fields": {
+        "code": "RES",
+        "description": "Research in Education",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 101,
+    "fields": {
+        "code": "Entrep.",
+        "description": "Edukasyong Pantahanan at Pangkabuhayan with Entrep",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 102,
+    "fields": {
+        "code": "Elective 2",
+        "description": "Practicum in Strategies of Teaching Education",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 103,
+    "fields": {
+        "code": "FS 1",
+        "description": "Field Study 1",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 104,
+    "fields": {
+        "code": "FS 2",
+        "description": "Field Study 2",
+        "unit": 3
+    }
+},
+{
+    "model": "student_profile.subject",
+    "pk": 105,
+    "fields": {
+        "code": "Educ. 11",
+        "description": "Teaching Internship",
+        "unit": 6
+    }
+}
+]

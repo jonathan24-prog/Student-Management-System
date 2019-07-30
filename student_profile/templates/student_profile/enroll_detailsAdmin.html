@@ -1,0 +1,247 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+{% block content %}
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header info-color white-text  py-2">
+
+      <strong>Enrollment Information</strong>
+    </div>
+    <div class="card-body">
+      <div class="row">
+
+
+        <div class="col" style="text-align: left;">
+          <p style="font-family: sans-serif;  font-style: italic;">First Name: {{enroll.student.first_name}}</p>
+          <p style="font-family: sans-serif; font-style: italic;">Last Name: {{enroll.student.last_name}}</p>
+          <p style="font-family: sans-serif; font-style: italic;">Address: {{enroll.student.address}}</p>
+          <p style="font-family: sans-serif; font-style: italic;">Gender: {{enroll.student.gender}}</p>
+          <p style="font-family: sans-serif; font-style: italic;" id="p-status">Status: {{enroll.status}}</p>
+
+        </div>
+
+        <div class="col" style="text-align: left;">
+          <p style="font-family: sans-serif; font-style: italic;">Course: {{enroll.course}}</p>
+          <p style="font-family: sans-serif; font-style: italic;">Major: {{enroll.major}}</p>
+          <p style="font-family: sans-serif; font-style: italic;">Year Level: {{enroll.year_level}}</p>
+          <p style="font-family: sans-serif; font-style: italic;">Semister: {{enroll.semister}} &nbsp; &nbsp;AC: {{enroll.academic_year}}</p>
+        </div>
+
+
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header info-color white-text  py-2 d-flex justify-content-between">
+     <strong>Subjects</strong>
+<!--      {%if enroll.status == 'draft'%}
+     <form method="POST" class="addByCurriculum" data-href="{%url 'addsubjectbycuriculumAPI' enroll.pk %}">
+      {%csrf_token%}
+      <input type="hidden" name="coursepk" value="{{enroll.course.pk}}">
+      <input type="hidden" name="majorpk" value="{{enroll.major.pk}}">
+      <input type="hidden" name="semister" value="{{enroll.semister}}">
+      <input type="hidden" name="yearpk" value="{{enroll.year_level.pk}}">
+
+      <button type="submit" class="btn btn-danger btn-sm"name="">add subject on curriculum</button>
+    </form>
+{%endif%} -->
+
+  </div>
+  <div class="card-body">
+
+   <form method="POST"  id="form-addSubject" data-href-add="{% url 'subjectLoad-api' enroll.pk %}">
+    {%csrf_token%}
+    <input type="hidden" name="is_updated" id="is_updated">
+
+    <div class="row">
+      <div class="col-md-10">
+        <div class="form-group">
+          {{forms.errors}}
+          {{form.subject}}
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+        <button type="submit" class="btn btn-sm btn-outline-info waves-effect" id="save-subject" >Add <i class="fa fa-save ml-1"></i></button>
+      </div>
+      </div>
+    </div>
+
+
+  </form>
+
+
+<div class="table-responsive" style="margin-right: 10px;">
+  <table  class="table table-striped" cellspacing="0">
+    <thead>
+
+      <tr>
+       <th class="th-sm">Subject Code
+
+       </th>
+
+       <th class="th-sm">Descriptive Title
+       </th>
+       <th class="th-sm">Unit
+       </th>
+        <th class="th-sm">Status
+       </th>
+
+       <th class="th-sm">Action   
+       </th>
+     </tr>
+
+   </thead>
+   <tbody id="subject-body">
+    {%for sub in subjects%}
+    <tr id="subject-tr" data-id="{{sub.pk}}">
+      <td class="code" data-id="{{sub.subject.id}}">{{sub.subject.code}}</td>
+      <td class="description">{{sub.subject.description}}</td>
+      <td class="unit">{{sub.subject.unit}}</td>
+       <td class="status">{{sub.status}}</td>
+
+      {%if sub.status == 'forwarded' or sub.status == 'returned for correction'%}
+      <td><a data-href="{%url 'delete-enroll-subject' sub.pk %}"  id="delete-subject-loaded" class="btn btn-sm btn-warning" >delete</a><!-- &nbsp; &nbsp; &nbsp;<a  id="edit-subject-loaded"><i class="fa fa-edit text-info"></i></a> --></td>
+      {%endif%}
+      {%if sub.status == 'enrolled'%}
+      <td><a data-href="{%url 'drop-enroll-subject' sub.pk %}"  id="drop-subject-loaded" class="btn btn-sm btn-danger">Drop</a></td>
+      {%endif%}
+    </tr>
+    {%endfor%}     
+  </tbody>
+  <tfoot>
+
+  </tfoot>
+</table>
+</div>
+<p style="text-align: right; padding-right: 20px;">TOTAL UNITS: {{total_units}}</p>
+
+<div class="row">
+    <div class="col" style="text-align:right;">
+    {%if not enroll.status == 'returned for correction'%}
+    <a data-href="{%url 'enroll-return-api' enroll.pk %}" class="btn btn-sm btn-info" id="btn-return">returned for correction</a>
+        {%endif%}
+    {%if enroll.status == 'forwarded'%}
+    <a data-href="{%url 'enroll-status-api' enroll.pk %}" class="btn btn-sm btn-info" id="btn-enroll">Enroll</a>
+    {%endif%}
+    
+    <a class="btn btn-sm btn-info" id="btn-enroll" href="{%url 'print-enroll' enroll.pk %}">print</a>
+
+  </div>
+</div>
+
+</div>
+</div>
+
+
+
+
+
+
+{%endblock%}
+
+{%block script%}
+
+<script type="text/javascript">
+  $(document).ready(function($) {
+
+    $('.addByCurriculum').submit(function(event) {
+      event.preventDefault()
+      $url=$(this).attr('data-href')
+      console.log($url)
+      $.ajax({
+        method:"POST",
+        url:$url,
+        data:$(this).serialize(),
+        success: function(data){
+          for(i in data.subjects){
+           $('#subject-body').append(`<tr id="subject-tr" data-id="${data.subjects[i].pk}">
+            <td class="description" data-id="${data.subjects[i].subject_pk}">${data.subjects[i].code}</td>
+            <td class="unit">${data.subjects[i].description}</td>
+            <td class="status">${data.subjects[i].unit}</td>
+
+            <td><a data-href="/Api/${data.subjects[i].pk}/enroll/subjects/delete/" id="delete-subject-loaded" class="btn btn-sm btn-warning">delete</a>
+            </td>
+            <td><a data-href="/Api/${data.subjects[i].pk}/enroll/subjects/drop/" class="btn btn-sm btn-danger" id="drop-subject-loaded">Drop</a>
+            </td>
+
+            </tr>`)
+
+         }
+
+         console.log(data)
+       },
+       error:function(e){
+        console.log(e)
+      }
+    })
+    });
+
+
+  });
+
+
+</script>
+
+{%endblock%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

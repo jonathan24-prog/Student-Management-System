@@ -1,0 +1,57 @@
+{% extends 'student_profile/base.html' %}
+
+
+      {% block content %}
+
+     
+
+    <!--first row -->
+   
+<div class="row wow">
+  
+   <div class="col-md-6 col-sm-12 offset-md-3">
+ 
+
+<!-- Default form login -->
+<!-- Material form login -->
+
+<br>  
+
+<div class="card">
+
+  <h5 class="card-header info-color white-text text-center py-4">
+    <strong>Sign in</strong>
+  </h5>
+
+  <!--Card content-->
+  <div class="card-body px-lg-5 pt-0">
+
+    <!-- Form -->
+    <form class="text-center" style="color: #757575;" method="POST">
+      {%csrf_token%}
+      <!-- Email -->
+      {{form.as_p}}
+
+
+      <!-- Sign in button -->
+      <button class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0" type="submit">Sign in</button>
+
+      <!-- Register -->
+      <p>Not a member?
+        <a href="{%url 'register'%}">Register</a>
+      </p>
+
+    
+    </form>
+    <!-- Form -->
+
+  </div>
+
+</div>
+<!-- Material form login --><!-- Default form login -->
+
+
+</div>
+</div>
+
+ {%endblock%}

@@ -1,0 +1,121 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+{% block content %}
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header info-color white-text  py-2">
+
+      <strong>Enrollment Information</strong>
+    </div>
+    <div class="card-body">
+      <div class="row" style="overflow-x:scroll;">
+        <div class="col">
+
+          <div class="table table-responsive">
+            <table id="dtBasicExample" class="table table-striped  w-auto" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                  <th class="th-sm">Student ID
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+
+
+                  <th class="th-sm">Last Name
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                  <th class="th-sm">First Name
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                   <th class="th-sm">Middle Name
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+
+                  <th class="th-sm">Extension Name
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                   <th class="th-sm">Gender
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                  <th class="th-sm">Birth date
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                  <th class="th-sm">Degree Program
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                <th class="th-sm">Year Level
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                 <th class="th-sm">Zip Code
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                <th class="th-sm">Email Address
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+
+                <th class="th-sm">Phone Number
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+                <th class="th-sm">Unit enrolled
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+
+                 <th class="th-sm">Course Code
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+
+                  <th class="th-sm">Course Description
+                  <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                </th>
+
+
+
+              </tr>
+            </thead>
+            <tbody>
+              {%for enroll in enroll_students%}
+              <tr>
+                <td>{{enroll.student_id}}</td>
+                <td> {{enroll.last_name}}</td>
+                <td>{{enroll.first_name}}</td>
+                <td>{{enroll.middle_name}}</td>
+                <td>{{enroll.ext_name}}</td>
+                 <td>{{enroll.gender}}</td>
+                  <td>{{enroll.birth_date}}</td>
+                <td>{{enroll.course}}</td>
+                <td>{{enroll.year_level}}</td>
+                 <td>{{enroll.zip_code}}</td>
+                 <td>{{enroll.email_add}}</td>
+                <td>{{enroll.mobile_no}}</td>
+            <td>{{enroll.total_units}}</td>
+            <td>{{enroll.course_codes}}</td>
+            <td>{{enroll.course_descs}}</td>
+              </tr>
+              {%endfor%}     
+            </tbody>
+          <!--   <tfoot>
+              
+            </tfoot> -->
+          </table>
+
+          <form method="POST">
+            {%csrf_token%}
+            <input type="hidden" name="course_pk" value="{{course.pk}}">
+            <input type="hidden" name="semister" value="{{semister}}">
+            <input type="hidden" name="ay_pk" value="{{ay.pk}}">
+            <input type="submit" value="export to excel" class="btn btn-primary btn-md">
+            
+          </form>
+                 
+          </div>
+          
+        </div>  
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{%endblock%}
