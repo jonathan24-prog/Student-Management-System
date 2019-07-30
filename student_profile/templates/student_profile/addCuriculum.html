@@ -1,0 +1,127 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+{% block content %}
+<div class="card">
+  <div class="card-header info-color">
+
+    <h4 class="card-title  white-text  py-1">Add Curriculum</h4>
+  </div>
+  <div class="card-body">
+    <form class=""  method="post" style="margin-left: 10px; margin-right: 10px;">
+      {%csrf_token%}
+
+      <div class="row">
+
+        <div class="col pr-1">
+          <div class="form-group">
+
+            <label>year level offered</label>
+            {{form.year_level}}
+          </div>
+
+        </div>
+
+        <div class="col pr-1">
+          <div class="form-group">
+
+            <label>semister offered</label>
+            {{form.semister}}
+          </div>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col pr-1">
+          <div class="form-group">
+            <label>Course</label>
+            {{form.course}}
+          </div>
+
+        </div>
+        <div class="col pr-1">
+          <div class="form-group">
+            <label>major</label>
+            {{form.major}}
+          </div>
+        </div>
+      </div>
+      <div class="row" style="max-height: 300px; height: 300px; overflow-y: scroll;">
+        <div class="col">
+          <div class="form-group">
+           <label>Subjects Offered</label>
+         {{form.subjects}}              
+       </div>
+       </div>
+     </div>
+
+
+
+     <button type="submit" class="btn btn-sm btn-info">Save</button>
+   </form>
+
+
+<div class="table-responsive">
+        <table id="dtBasicExample" class="table table-striped  w-auto" cellspacing="0" width="100%" style="margin-left: 10px; margin-right: 10px;">
+          <thead>
+            <tr>
+              <th class="th-sm">COURSE
+                <i class="fa fa-sort float-right" aria-hidden="true"></i>
+              </th>
+
+              <th class="th-sm">SEMISTER
+                <i class="fa fa-sort float-right" aria-hidden="true"></i>
+              </th>
+             
+              <th class="th-sm">YEAR LEVEL
+                <i class="fa fa-sort float-right" aria-hidden="true"></i>
+              </th>
+
+               <th class="th-sm">MAJOR
+                <i class="fa fa-sort float-right" aria-hidden="true"></i>
+              </th>
+                <th class="th-sm">ACTION
+                <i class="fa fa-sort float-right" aria-hidden="true"></i>
+              </th>
+
+
+            </tr>
+          </thead>
+          <tbody>
+            {%for c in curriculums%}
+            <tr>
+              <td>{{c.course}}</td>
+              
+              <td>{{c.semister}}</td>
+              <td>{{c.year_level}}</td>
+              <td>{{c.major}}</td>
+              <td><a href="{%url 'editCuriculum' c.pk %}" class="btn btn-purple btn-sm">edit</a></td>
+         
+            {%endfor%}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Course
+              </th>
+              <th>Semister
+              </th>
+              <th>Year Lever
+              </th>
+               <th>Major
+              </th>
+
+
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+   
+
+
+
+  </div>
+
+
+
+</div>
+{%endblock%}

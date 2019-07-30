@@ -1,0 +1,52 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+      {% block content %}
+
+     
+
+    <!--first row -->
+   
+<div class="row">
+  
+   <div class="col-md-6 col-sm-12 offset-md-3">
+ 
+
+<!-- Default form login -->
+<!-- Material form login -->
+
+  
+
+<div class="card">
+
+  <h5 class="card-header info-color white-text text-center py-4">
+    <strong>Enrollment Portal</strong>
+  </h5>
+
+  <!--Card content-->
+  <div class="card-body px-lg-5 pt-0">
+  	<div class="row">
+  		<!-- <div class="col">
+  			<a href="{%url 'allStudent'%}" class="btn btn-danger">Old Student</a>
+  		</div>
+ -->
+  			<div class="col-md-12">
+  			<center><a href="{%url 'add-new-student'%}" class="btn btn-danger">New Student</a></center>
+
+        <center><a href="{%url 'checkMyEnrollment'%}" class="btn btn-danger">Old Student</a></center>
+
+  		</div>
+
+  	</div>
+        
+
+  </div>
+
+</div>
+<!-- Material form login --><!-- Default form login -->
+
+
+</div>
+</div>
+
+ {%endblock%}

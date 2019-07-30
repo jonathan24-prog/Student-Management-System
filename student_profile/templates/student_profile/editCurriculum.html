@@ -1,0 +1,71 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+{% block content %}
+<div class="card">
+  <div class="card-header info-color">
+
+    <h4 class="card-title  white-text  py-1">Add Curriculum</h4>
+  </div>
+  <div class="card-body">
+    <form class=""  method="POST" style="margin-left: 10px; margin-right: 10px;">
+      {%csrf_token%}
+
+      <div class="row">
+
+        <div class="col pr-1">
+          <div class="form-group">
+
+            <label>year level offered</label>
+            {{form.year_level}}
+          </div>
+
+        </div>
+
+        <div class="col pr-1">
+          <div class="form-group">
+
+            <label>semister offered</label>
+            {{form.semister}}
+          </div>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col pr-1">
+          <div class="form-group">
+            <label>Course</label>
+            {{form.course}}
+          </div>
+
+        </div>
+        <div class="col pr-1">
+          <div class="form-group">
+            <label>major</label>
+            {{form.major}}
+          </div>
+        </div>
+      </div>
+      <div class="row" style="max-height: 300px; height: 300px; overflow-y: scroll;">
+        <div class="col">
+          <div class="form-group">
+           <label>Subjects Offered</label>
+         {{form.subjects}}              
+       </div>
+       </div>
+     </div>
+
+
+
+     <button type="submit" class="btn btn-sm btn-info">Save</button>
+   </form>
+
+
+
+
+  </div>
+
+
+
+</div>
+{%endblock%}

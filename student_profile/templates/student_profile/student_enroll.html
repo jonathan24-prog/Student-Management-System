@@ -1,0 +1,101 @@
+{% extends 'student_profile/basemenu.html' %}
+
+
+{% block content %}
+<div class="col-sm-12">
+	<div class="card">
+		<div class="card-header info-color white-text  py-2">
+
+			<strong>Enrollment Information</strong>
+		</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col">
+
+					<div class="table-responsive">
+						<table id="dtBasicExample" class="table table-striped  w-auto" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+									<th class="th-sm">Student ID
+									<i class="fa fa-sort float-right" aria-hidden="true"></i>
+								</th>
+
+
+									<th class="th-sm">Full Name
+									<i class="fa fa-sort float-right" aria-hidden="true"></i>
+								</th>
+
+								<th class="th-sm">Course
+									<i class="fa fa-sort float-right" aria-hidden="true"></i>
+								</th>
+									<th class="th-sm">Major
+									<i class="fa fa-sort float-right" aria-hidden="true"></i>
+								</th>
+
+								<th class="th-sm">School Year
+													</th>
+								<th class="th-sm">Semister
+																</th>
+																		<th class="th-sm">AC Year
+																</th>
+								<th class="th-sm">Status</th>
+
+
+								<th class="th-sm">Action
+																</th>
+							</tr>
+						</thead>
+						<tbody>
+							{%for enroll in enroll_students%}
+							<tr>
+								<td>{{enroll.student.student_id}}</td>
+
+								<td>{{enroll.student.first_name}} {{enroll.student.middle_name}} {{enroll.student.last_name}}</td>
+								<td>{{enroll.course}}</td>
+								<td>{{enroll.major}}</td>
+								<td>{{enroll.school_year}}</td>
+								<td>{{enroll.semister}}</td>
+								<td>{{enroll.academic_year}}</td>
+								<td>{{enroll.status}}</td>
+						
+								<td><a href="{%url 'enrollDetailsAdmin' enroll.pk %}" class="btn btn-sm btn-info">view details</a></td>
+							
+					
+							
+						
+							</tr>
+							{%endfor%}     
+						</tbody>
+						<tfoot>
+							<tr>
+								<th class="th-sm">Full Name
+
+								</th>
+
+								<th class="th-sm">Course
+								</th>
+
+								<th class="th-sm">School Year
+
+								</th>
+								<th class="th-sm">Semister
+								</th>
+
+
+								<th class="th-sm">Action
+								</th>
+							</tr>
+						</tfoot>
+					</table>          	
+					</div>
+					
+				</div>	
+
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{%endblock%}

@@ -1,0 +1,79 @@
+{% extends 'student_profile/base.html' %}
+
+
+      {% block content %}
+
+     
+
+    <!--first row -->
+   
+<div class="row">
+  
+   <div class="col-md-6 col-sm-12 offset-md-3">
+ 
+
+<!-- Default form login -->
+<!-- Material form login -->
+
+  
+
+<div class="card">
+
+  <h5 class="card-header info-color white-text text-center py-4">
+    <strong>View Enrolled student</strong>
+  </h5>
+
+  <!--Card content-->
+  <div class="card-body px-lg-5 pt-0">
+    <div class="row">
+      <!-- <div class="col">
+        <a href="{%url 'allStudent'%}" class="btn btn-danger">Old Student</a>
+      </div>
+ -->
+        <div class="col-md-12">
+        <form method="GET" action="{%url 'StudentByCourse'%}" style="margin: 10px;">
+          {%csrf_token%}
+
+             <select class="form-control" id="course" name="course">
+
+        {%for course in courses%}
+        <option value="{{course.pk}}">{{course}}</option>
+        {%endfor%}
+      </select>
+      <select class="form-control" id="academic_year" name="ay">
+
+        {%for ay in ays%}
+        <option value="{{ay.pk}}">{{ay}}</option>
+        {%endfor%}
+
+    </select>
+
+       <select class="form-control" id="semister" name="semister">
+        <option value="1st">First Semester</option>
+        <option value="2nd">Second Semester</option>
+        <option value="summer">Summer Term</option>
+    </select>
+    
+    <input type="submit" value="View" class="btn btn-danger btn-sm">
+
+
+
+
+
+        </form>
+
+      </div>
+
+    </div>
+        
+
+  </div>
+
+</div>
+<!-- Material form login --><!-- Default form login -->
+
+
+</div>
+</div>
+
+ {%endblock%}

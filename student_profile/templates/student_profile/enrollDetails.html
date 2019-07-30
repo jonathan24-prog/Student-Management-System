@@ -1,0 +1,344 @@
+{% extends 'student_profile/basemenu.html' %}
+{%load static%}
+
+{%block css%}
+<link rel="stylesheet" href="{%static 'student_profile/css/select2.min.css' %}">
+
+<style>
+  .select2 {
+width:100%!important;
+}
+</style>
+{%endblock%}
+
+{% block content %}
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header info-color white-text  py-2">
+
+      <strong>Enrollment Information</strong>
+    </div>
+<div class="card-body">
+
+                 <form method="POST"  id="form-enroll">
+                   {%csrf_token%}
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+            <label for="#id_student">Student Name</label>
+            <input type="text" class="form-control disabled" id="id_student">
+            </div>
+
+          </div>
+</div>
+        <div class="row">
+        <div class="col">
+
+      <div class="form-group">
+        {{form2.course.errors}}
+        {{form2.course.label}}
+        {{form2.course}}
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+           {{form2.major.errors}}
+        {{form2.major.label}}
+        {{form2.major}}
+      </div>
+    </div>
+  </div>
+
+
+
+    <div class="row">
+
+      <div class="col">
+        <div class="form-group">
+             {{form2.year_level.errors}}
+          {{form2.year_level.label}}
+          {{form2.year_level}}
+        </div>
+      </div>
+        <div class="col">
+
+      <div class="form-group">
+        {{form2.semister.errors}}
+        <label>Semester</label>
+        {{form2.semister}}
+      </div>
+    </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <input type="hidden" name="pk" value="{{student.pk}}">
+        <div class="form-group">
+             {{form2.academic_year.errors}}
+          {{form2.academic_year.label}}
+          {{form2.academic_year}}
+        </div>
+      </div>
+
+       
+  </div>
+ <p style="font-family: sans-serif; font-style: italic;" id="p-status">Status: {{enroll.status}}</p>
+    <button type="submit" class="btn btn-sm btn-primary" id="btn-enroll">Update</button>
+
+  </form>
+
+
+
+
+
+
+</div>
+  </div>
+
+  <div class="card" style="margin-right: 0px !important; margin-left: 0px !important;">
+    <div class="card-header info-color white-text  py-2 d-flex justify-content-between">
+     <strong>Subjects</strong>
+{%if enroll.status == "draft" or enroll.status == 'returned for correction'%}
+
+     <form method="POST" class="addByCurriculum" data-href="{%url 'addsubjectbycuriculumAPI' enroll.pk %}">
+      {%csrf_token%}
+      <input type="hidden" name="coursepk" value="{{enroll.course.pk}}">
+      <input type="hidden" name="majorpk" value="{{enroll.major.pk}}">
+      <input type="hidden" name="semister" value="{{enroll.semister}}">
+      <input type="hidden" name="yearpk" value="{{enroll.year_level.pk}}">
+
+      <button type="submit" class="btn btn-danger btn-sm"name="" id="add-curr">add subjects on curriculum</button>
+    </form>
+{%endif%}
+
+  </div>
+  <div class="card-body">
+    {%if enroll.status == "draft" or enroll.status == 'returned for correction'%}
+
+   <form method="POST"  id="form-addSubject" data-href-add="{% url 'subjectLoad-api' enroll.pk %}">
+    {%csrf_token%}
+    <input type="hidden" name="is_updated" id="is_updated">
+
+    <div class="row">
+      <div style="padding-top: 15px;" class="col-md-10">
+        <div class="form-group">
+
+          {{forms.errors}}
+          {{form.subject}}
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+        <button type="submit" class="btn btn-sm btn-outline-info waves-effect" id="save-subject" >Add <i class="fa fa-save ml-1"></i></button>
+      </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+  </form>
+  {%endif%}
+
+
+<div class="table-responsive" style="margin-right: 10px;">
+  <table  class="table table-striped" cellspacing="0" width="100%" >
+    <thead>
+
+      <tr>
+       <th class="th-sm">Subject Code
+
+       </th>
+
+       <th class="th-sm">Descriptive Title
+       </th>
+       <th class="th-sm">Unit
+       </th>
+       <th class="th-sm">Status
+       </th>
+
+       <th class="th-sm">Action   
+       </th>
+     </tr>
+
+   </thead>
+   <tbody id="subject-body">
+    {%for sub in subjects%}
+    <tr id="subject-tr" data-id="{{sub.pk}}">
+      <td class="subject" data-id="{{sub.subject.id}}">{{sub.subject.code}}</td>
+      <td class="time">{{sub.subject.description}}</td>
+      <td class="day">{{sub.subject.unit}}</td>
+      <td>{{sub.status}}</td>
+      {%if enroll.status == "draft" or enroll.status == 'returned for correction'%}
+      <td><a data-href="{%url 'delete-enroll-subject' sub.pk %}"  id="delete-subject-loaded" class="btn btn-sm btn-warning" >delete</a><!-- &nbsp; &nbsp; &nbsp;<a  id="edit-subject-loaded"><i class="fa fa-edit text-info"></i></a> --></td>
+
+      {%else%}
+       <td><a data-href="{%url 'delete-enroll-subject' sub.pk %}"  id="delete-subject-loaded" class="btn btn-sm btn-warning disabled muted" >delete</a><!-- &nbsp; &nbsp; &nbsp;<a  id="edit-subject-loaded"><i class="fa fa-edit text-info"></i></a> --></td>
+      {%endif%}
+    </tr>
+    {%endfor%}     
+  </tbody>
+  <tfoot>
+
+  </tfoot>
+</table>
+{%if enroll.status == 'draft' or enroll.status == 'returned for correction' %}
+<a data-href="{%url 'enroll-forward-api' enroll.pk %}" class="btn btn-sm btn-info" id="forwardToRegistrar">Forward for approval</a>
+{%endif%}
+</div>
+
+</div>
+</div>
+
+
+
+
+
+
+{%endblock%}
+
+{%block script%}
+
+<script src="{% static 'student_profile/js/select2.min.js'%}" type="text/javascript"></script>
+<script type="text/javascript">
+     $(document).ready(function($) {
+
+      $('.search-select').select2();
+
+
+              const fullname="{{enroll.student.first_name}} {{enroll.student.middle_name}} {{enroll.student.last_name}}"
+$('#id_student').val(fullname)
+$('#id_course').val({{student.course.pk}})
+
+
+      var course="{{enroll.course.pk}}"
+      var sem="{{enroll.semister}}"
+      $("#id_subject").children("option").remove();
+
+
+
+
+      $.ajax({method:"GET",
+              url:'/getSubjectsByCurriculumAPI/',
+              success:function(data){
+                console.log(data)
+                $("#id_subject").append(`<option value selected>Subject</option>`)
+                data.subjects.forEach(el=>{
+                  $("#id_subject").append(`<option value="${el.id}">${el.code}-${el.description}</option>`)
+            
+                })
+               
+              },
+              error:function(e){
+
+              }
+            })
+
+ $('#forwardToRegistrar').click(function(event) {
+      event.preventDefault()
+      $url=$(this).attr('data-href')
+      console.log($url)
+      $.ajax({
+        method:"POST",
+        url:$url,
+        data:$(this).serialize(),
+        success: function(data){
+          if(data.is_forwarded){
+            $('#p-status').text('Status:forwarded');
+            $('#subject-body').children("tr").remove();
+           data.subjects.forEach(el=>{
+           $('#subject-body').append(`<tr id="subject-tr" data-id="${el.pk}">
+            <td class="description" data-id="${el.subject_pk}">${el.code}</td>
+            <td class="unit">${el.description}</td>
+            <td class="status">${el.unit}</td>
+            <td class="status">${el.status}</td>
+
+              <td><a data-href="/Api/${el.pk}/enroll/subjects/delete/" id="delete-subject-loaded" class="btn btn-sm btn-warning disabled muted">delete</a>
+            </td>
+            </tr>`)
+         })
+
+   alert("Forward successfully")
+
+           $('#add-curr').addClass("disabled muted")
+           $('#save-subject').addClass("disabled muted")
+           
+
+}
+         console.log(data)
+       },
+       error:function(e){
+        console.log(e)
+      }
+    })
+    });
+
+
+
+
+    $('.addByCurriculum').submit(function(event) {
+      event.preventDefault()
+      $url=$(this).attr('data-href')
+      console.log($url)
+      $.ajax({
+        method:"POST",
+        url:$url,
+        data:$(this).serialize(),
+        success: function(data){
+          for(i in data.subjects){
+           $('#subject-body').append(`<tr id="subject-tr" data-id="${data.subjects[i].pk}">
+            <td class="description" data-id="${data.subjects[i].subject_pk}">${data.subjects[i].code}</td>
+            <td class="unit">${data.subjects[i].description}</td>
+            <td class="status">${data.subjects[i].unit}</td>
+            <td class="status">${data.subjects[i].status}</td>
+            <td><a data-href="/Api/${data.subjects[i].pk}/enroll/subjects/delete/" id="delete-subject-loaded" class="btn btn-sm btn-warning">delete</a>
+            </td>
+       
+
+            </tr>`)
+
+         }
+
+    alert("subjects successfully added")
+             console.log(data)
+       },
+       error:function(e){
+        console.log(e)
+      }
+    })
+    });
+
+
+  });
+
+
+
+
+</script>
+
+{%endblock%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,144 @@
+  {% extends 'student_profile/basemenu.html' %}
+
+
+  {% block content %}
+  <div id="app">
+  <form id="form_upload111"  data-href="{%url 'uploadSubjectsAPI'%}" method="POST" enctype="multipart/form-data">
+    {%csrf_token%}
+    <div class="form-group row">
+      <div class="col-md-12">
+        <div class="input-group">
+          {{form_upload.file.errors}}
+          {{form_upload.file}}
+          <span class="input-group-btn">
+            <button class="btn btn-info" type="submit">import</button>
+          </span>
+        </div>
+      </div>
+
+
+    </div>
+
+
+
+  </form>
+  <div class="card">
+    <div class="card-header info-color">
+      <el-button @click="dialog = true" size="small"type="primary">Add Subject</el-button>
+    </div>
+    <div class="card-body">
+
+
+       <div class="table-responsive">
+        
+        <v-client-table :columns="columns" :data="subjects">
+          <a :href="props.row.uri"  slot="action" slot-scope="props" > <el-button type="success" size="small"  circle icon="el-icon-edit"></el-button></a>
+      </v-client-table>
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+
+  <el-dialog title="Add Subject" :visible.sync="dialog" width="40%" center>
+      <el-form size="small" :ref="form" :model="form">
+        <el-form-item label="Code">
+          <el-input placeholder="code" v-model="form.code"></el-input>
+        </el-form-item>
+        <el-form-item label="Description">
+          <el-input placeholder="description" v-model="form.description"></el-input>
+        </el-form-item>
+        <el-form-item label="Unit">
+          <el-input placeholder="unit" type="number" v-model="form.unit"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialog = false">Cancel</el-button>
+        <el-button :disabled="form.code==''|| form.description =='' || form.unit == ''" type="primary" @click="save">Save</el-button>
+      </span>
+  </el-dialog>
+</div>
+  {%endblock%}
+  
+  {%block script%}
+
+  <script type="text/javascript">
+    $(document).ready(function($){
+      console.log('upload1')
+
+
+
+    })
+
+
+
+  </script>
+<script>
+
+
+  const inst = axios.create({
+    baseURL: '/bccapi',
+    timeout: 10000,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken')
+    }
+  })
+  Vue.use(VueTables.ClientTable);
+  Vue.use(VueLoading);
+Vue.component('loading', VueLoading)
+new Vue({
+  el: '#app',
+    data(){
+        return {
+            columns:["code","description","unit","action"],
+            students:[],
+            ids:[],
+            isLoading: true,
+            fullPage: false,
+            subjects:[],
+            dialog:false,
+            form:{
+              code:'',
+              description:'',
+              unit:''
+            }
+
+        }
+    },
+    methods: {
+      save(){
+        inst.post('subjects/',this.form).then(res=>{
+          console.log(res.data)
+          //if(res.data.failed == true)
+          //this.subjects.push(res.data)
+        }).catch(err=>{
+               this.$notify.error({
+          title: 'Error',
+          message: 'Data Already Exists'
+        });
+        })
+      }
+    },
+    created() {
+ 
+        inst.get('subjects').then(res=>{
+          this.subjects=res.data
+         
+     
+
+        })
+        
+    },
+})
+</script>
+
+
+  {%endblock%}
+
+
+
