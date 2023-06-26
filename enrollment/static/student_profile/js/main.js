@@ -259,7 +259,12 @@ $formSubject.submit(function(event){
              
 
 
-              
+Notify({
+  content: 'Successfully added',
+  timeout: 1000 // default: 4000ms
+
+});
+
 
 
               

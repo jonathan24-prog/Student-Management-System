@@ -1,0 +1,5 @@
+virtualenv --system-site-packages /home/portal.buenavistacommunitycollege.edu.ph/public_html
+source /home/portal.buenavistacommunitycollege.edu.ph/public_html/bin/activate
+
+virtualenv --system-site-packages /home/site.buenavistacommunitycollege.edu.ph/public_html
+source /home/site.buenavistacommunitycollege.edu.ph/public_html/bin/activate

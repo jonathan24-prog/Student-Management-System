@@ -13,7 +13,7 @@
             <el-row :gutter="5">
                 <el-col :md="8">
                     <el-form-item label="Fullname">
-                        <el-select  filterable style="width: 100%;" placeholder="select a student"
+                        <el-select filterable style="width: 100%;" placeholder="select a student"
                             v-model="enroll.student">
                             <el-option v-for="(item, index) in students" :label="item.fullname" :value="item.id"
                                 :key="index"></el-option>
@@ -33,7 +33,9 @@
                 </el-col>
                 <el-col :md="8">
                     <el-form-item label="Major">
-                        <el-select filterable style="width: 100%;" placeholder="select a major" v-model="enroll.major">
+                        <el-select
+                            :disabled="enroll.course == '' || enroll.course == 4 || enroll.course == 5 || enroll.course == 3"
+                            filterable style="width: 100%;" placeholder="select a major" v-model="enroll.major">
                             <el-option v-for="(item, index) in majors" :label="item.name" :value="item.id" :key="index">
                             </el-option>
 
@@ -52,7 +54,8 @@
                 </el-col>
                 <el-col :md="8">
                     <el-form-item label="Semister">
-                        <el-select placeholder="select a semister" style="width: 100%;" v-model="enroll.semister">
+                        <el-select placeholder="select a semister" style="width: 100%;" v-model="enroll.semister"
+                            :disabled="activeSem!=null">
                             <el-option v-for="(item, index) in semisters" :label="item" :value="item" :key="index">
                             </el-option>
 
@@ -75,64 +78,51 @@
         <el-card>
             <div slot="header" class="clearfix">
                 <span>Subjects</span>
-                <el-button :disabled="enroll.status=='forwarded'" :disabled="enroll.course == '' || enroll.semister == '' || enroll.year_level == '' || enroll.academic_year == ''" style="float: right;" @click="getSubjects" size="small" round type="danger">Add Subjects on
+                <el-button :disabled="enroll.status=='forwarded'"
+                    :disabled="enroll.course == '' || enroll.semister == '' || enroll.year_level == '' || enroll.academic_year == ''"
+                    style="float: right;" @click="getSubjects" size="small" round type="danger">Add Subjects on
                     curriculum</el-button>
             </div>
 
             <el-row :gutter="10">
                 <el-col :md="20">
-                <v-select v-model="subject" label="full" value="id" :options="subjects"></v-select>
-                
+                    <v-select v-model="subject" label="full" value="id" :options="subjects"></v-select>
+
                 </el-col>
                 <el-col :md="4">
-                    <el-button :disabled="enroll.status=='forwarded'"size="small" @click="addSubject" style="width: 100%;" type="primary">add</el-button>
+                    <el-button :disabled="enroll.status=='forwarded'" size="small" @click="addSubject"
+                        style="width: 100%;" type="primary">add</el-button>
                 </el-col>
             </el-row>
             <hr>
-   
 
-            <el-table
-            :data="enroll.enroll_subjects"
-            style="width: 100%">
-            <el-table-column
-            prop="sub.code"
-            label="Code"
-            width="100"
-             >
-            </el-table-column>
-            <el-table-column
-            prop="sub.description"
-            label="Descriptive Title"
-              >
-            </el-table-column>
-            <el-table-column
-            prop="sub.unit"
-            label="Unit">
-            </el-table-column>
-            <el-table-column
-            prop="status"
-            label="status">
-            </el-table-column>
-       
-            <el-table-column
-    
-      label="action"
-      width="120">
-      <template slot-scope="scope">
-        <el-button
-        :disabled='scope.row.status=="forwarded"'
-          @click.native.prevent="deleteRow(scope.$index, enroll.enroll_subjects)"
-          type="danger"
-          size="small">
-          Remove
-        </el-button>
-      </template>
-    </el-table-column>
-          </el-table>
-          <br>
-          <el-button :disabled="enroll.status=='forwarded' || enroll.course == '' || enroll.semister == '' || enroll.year_level == '' || enroll.academic_year == '' || enroll.enroll_subjects.length == 0 " @click="save" size="small"  type="success">forward for approval</el-button>
+
+            <el-table :data="enroll.enroll_subjects" style="width: 100%">
+                <el-table-column prop="sub.code" label="Code" width="100">
+                </el-table-column>
+                <el-table-column prop="sub.description" label="Descriptive Title">
+                </el-table-column>
+                <el-table-column prop="sub.unit" label="Unit">
+                </el-table-column>
+                <el-table-column prop="status" label="status">
+                </el-table-column>
+
+                <el-table-column label="action" width="120">
+                    <template slot-scope="scope">
+                        <el-button :disabled='scope.row.status=="forwarded"'
+                            @click.native.prevent="deleteRow(scope.$index, enroll.enroll_subjects)" type="danger"
+                            size="small">
+                            Remove
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br>
+            <el-button
+                :disabled="enroll.status=='forwarded' || enroll.course == '' || enroll.semister == '' || enroll.year_level == '' || enroll.academic_year == '' || enroll.enroll_subjects.length == 0 "
+                @click="save" size="small" type="success">forward for approval</el-button>
         </el-card>
-      
+
     </el-form>
 
 
@@ -149,19 +139,19 @@
     }
 
     .style-chooser .vs__search::placeholder,
-  .style-chooser .vs__dropdown-toggle,
-  .style-chooser .vs__dropdown-menu {
-    background: #dfe5fb;
-    border: none;
-    color: #394066;
-    text-transform: lowercase;
-    font-variant: small-caps;
-  }
+    .style-chooser .vs__dropdown-toggle,
+    .style-chooser .vs__dropdown-menu {
+        background: #dfe5fb;
+        border: none;
+        color: #394066;
+        text-transform: lowercase;
+        font-variant: small-caps;
+    }
 
-  .style-chooser .vs__clear,
-  .style-chooser .vs__open-indicator {
-    fill: #394066;
-  }
+    .style-chooser .vs__clear,
+    .style-chooser .vs__open-indicator {
+        fill: #394066;
+    }
 </style>
 {%endblock%}
 
@@ -171,7 +161,7 @@
 <!-- import Vue before Element -->
 
 <script>
-    const stud_id={{student_id}}
+    const stud_id = {{student_id}}
     Vue.use(VueTables.ClientTable);
 
     Vue.component('v-select', VueSelect.VueSelect);
@@ -200,6 +190,7 @@
             return {
                 students: [],
                 ays: [],
+                activeSem: null,
                 majors: [],
                 courses: [],
                 subject: null,
@@ -223,96 +214,102 @@
         },
         methods: {
             deleteRow(index, rows) {
-        rows.splice(index, 1);
-      },
-            addSubject(){
+                rows.splice(index, 1);
+            },
+            addSubject() {
                 //let subject=this.subjects.find(el=>el.id == this.subject.id)
 
                 console.log(this.subject)
-           
-                if(this.enroll.enroll_subjects.find(e=>e.subject == this.subject) == null){
-                    this.enroll.enroll_subjects.push(
-                            {
-                             
-                                grade_status: null,
-                                grade: null,
-                                status: "draft",
-                                subject: this.subject.id,
-                                instructor: null,
-                                sub:this.subject
-                            }
-                        )
+
+                if (this.enroll.enroll_subjects.find(e => e.subject == this.subject) == null) {
+                    this.enroll.enroll_subjects.push({
+
+                        grade_status: null,
+                        grade: null,
+                        status: "draft",
+                        subject: this.subject.id,
+                        instructor: null,
+                        sub: this.subject
+                    })
                 }
-     
+
             },
-            save(){
+            save() {
                 let major = this.enroll.major != null ? this.enroll.major : "0"
-         
-                axios_instance1.get(`/searchenrolllist/${this.enroll.student}/${this.enroll.course}/${major}/${this.enroll.semister}/${this.enroll.year_level}`).then(res=>{
-                    if(res.data.length==0){
-                               this.enroll.enroll_subjects.forEach(el=>{
-                    el.status="forwarded"
-                })
-                this.enroll.status='forwarded'
-                        axios_instance.post('enrolls/',this.enroll).then(result=>{
+
+                axios_instance1.get(
+                    `/searchenrolllist/${this.enroll.student}/${this.enroll.course}/${major}/${this.enroll.semister}/${this.enroll.year_level}/${this.enroll.academic_year}`
+                    ).then(res => {
+                    if (res.data.length == 0) {
+                        this.enroll.enroll_subjects.forEach(el => {
+                            el.status = "forwarded"
+                        })
+                        this.enroll.status = 'forwarded'
+                        axios_instance.post('enrolls/', this.enroll).then(result => {
                             this.$notify({
                                 title: 'Info',
                                 message: 'Forward Successfully',
                                 type: 'success'
-                              });
+                            });
                         })
-                    }else{
-                 
-                        Swal.fire({
-  type: 'error',
-  title: 'Oops...',
-  text: 'already save on this semister',
-    footer: `<a href="/students/enroll/${this.enroll.student}/">Check here to view your enroll list</a>`
+                    } else {
 
-})
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'already save on this semister',
+                            footer: `<a href="/students/enroll/${this.enroll.student}/">Check here to view your enroll list</a>`
+
+                        })
                     }
                 })
-           
+
             },
             getSubjects() {
 
                 let major = this.enroll.major != null ? this.enroll.major : "0"
-                axios_instance1.get(`/Apiaddsubjectbycuriculum/${this.enroll.course}/${major}/${this.enroll.semister}/${this.enroll.year_level}`).then(res => {
+                axios_instance1.get(
+                    `/Apiaddsubjectbycuriculum/${this.enroll.course}/${major}/${this.enroll.semister}/${this.enroll.year_level}`
+                    ).then(res => {
                     console.log(res.data)
-                    this.enroll.enroll_subjects=[]
+                    this.enroll.enroll_subjects = []
                     res.data.forEach(el => {
-                        this.enroll.enroll_subjects.push(
-                            {
-                             
-                                grade_status: null,
-                                grade: null,
-                                status: "draft",
-                                subject: el.id,
-                                instructor: null,
-                                sub:el
-                            },
-                        )
+                        this.enroll.enroll_subjects.push({
+
+                            grade_status: null,
+                            grade: null,
+                            status: "draft",
+                            subject: el.id,
+                            instructor: null,
+                            sub: el
+                        }, )
                     })
-                }).catch(err=>{
-                 this.$message.error('Oops, No Curriculum added on this parameters');
+                }).catch(err => {
+                    this.$message.error('Oops, No Curriculum added on this parameters');
                 })
             }
 
         },
         created() {
-         
+            axios_instance.get('activeSems').then(res => {
+                if (res.data.length > 0) {
+                    this.activeSem = res.data[0]
+                    this.enroll.semister = this.activeSem.semister
+                }
+            });
+
             axios_instance.get('curriculumss').then(res => {
-                res.data.forEach(el=>{
-                    el.subjects.forEach(e=>{
-                        if(this.subjects.find(sub=>sub.id == e.id) == null){
+                res.data.forEach(el => {
+                    el.subjects.forEach(e => {
+                        if (this.subjects.find(sub => sub.id == e.id) == null) {
                             this.subjects.push(e)
                         }
-                        
-                        })
-                 
+
+                    })
+
                 })
-           
- 
+
+
                 this.subjects.forEach(el => {
                     el.full = `${el.code}-${el.description}`
                 });
@@ -328,7 +325,7 @@
                 console.log(res.data)
             })
             axios_instance.get('ays').then(res => {
-                this.ays = res.data
+                this.ays = res.data.filter(e => e.status == true)
                 console.log(res.data)
             })
             axios_instance.get('courses').then(res => {
@@ -339,13 +336,13 @@
                 this.yearlevels = res.data
                 console.log(res.data)
             })
-            axios_instance.get('students/'+stud_id).then(res => {
+            axios_instance.get('students/' + stud_id).then(res => {
                 this.students.push(res.data)
                 this.students.forEach(el => {
                     el.fullname = `${el.last_name}, ${el.first_name}`
                 })
                 console.log(res.data)
-                this.enroll.student=stud_id
+                this.enroll.student = stud_id
             })
         },
     })
