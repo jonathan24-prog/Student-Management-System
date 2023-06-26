@@ -185,9 +185,6 @@ def returnForCorrectionAPI(request,pk):
 @authentication_classes((SessionAuthentication,))
 @permission_classes((IsAuthenticated,))
 def displayAllEnrollAPI(request):
-
-	print('nakaabot')
-
 	enrollees=EnrollbyStudent.objects.all()
 	enroll_dic_list=[]
 
@@ -714,7 +711,6 @@ def deleteSubjectLoaded(request,pk):
 @permission_classes((IsAuthenticated,))
 def dropSubjectLoaded(request,pk):
 	subject=get_object_or_404(SubjectsLoaded,pk=pk)
-	print('hello')
 	if request.method == 'POST':
 		subject.status="drop"
 		subject.save()
@@ -728,7 +724,6 @@ def dropSubjectLoaded(request,pk):
 @permission_classes((IsAuthenticated,))
 def EnrolldropSubjectLoaded(request,pk):
 	subject=get_object_or_404(SubjectsLoaded,pk=pk)
-	print('hello')
 	if request.method == 'POST':
 		subject.status="enrolled"
 		subject.save()
@@ -741,8 +736,7 @@ def EnrolldropSubjectLoaded(request,pk):
 @login_required(login_url=settings.LOGIN_URL)
 def home(request):
 	forwarded=EnrollbyStudent.objects.filter(status='forwarded')
-	print(forwarded)
-	return render(request,'student_profile/index.html',{'user':request.user,'count':len(forwarded),'forwarded':forwarded})
+	return render(request,'student_profile/index.html',{'user':request.user,'count':0,'forwarded':forwarded})
 
 @login_required(login_url=settings.LOGIN_URL)
 def addNewStudent(request):
@@ -779,7 +773,6 @@ def addStudent(request):
 def addCuriculum(request):
     form=CurriculumForm()
     curriculums=Curriculum.objects.all()
-    print(curriculums)
     if request.method == 'POST':
         form=CurriculumForm(request.POST)
         if form.is_valid():
@@ -796,19 +789,15 @@ def addCuriculum(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def editCurriculum(request,pk):
-	print('ni abot sa edit')
 	curriculum=get_object_or_404(Curriculum,pk=pk)
 	form=CurriculumForm(instance=curriculum)
 	if request.method == 'POST':
-		print('ni POST')
 		form=CurriculumForm(request.POST,instance=curriculum)
 		if form.is_valid():
 			cur=form.save(commit=False)
 			if cur.major == None:
 				cur.slug=str(cur.course.pk)+str(cur.year_level.pk)+str(cur.semister)
 				cur.save()
-				print('ni abor dri')
-			print('ni abor dri oi')
 			cur.save()
 
 			return redirect('addCuriculum')
@@ -1075,6 +1064,9 @@ def enrollSelection(request):
 def viewGrades(request,pk):
 	enroll= get_object_or_404(EnrollbyStudent, pk = pk)
 	return render(request,'student_profile/view_grades.html',{'enroll':enroll})
+def viewGradesStudent(request,pk):
+	enroll= get_object_or_404(EnrollbyStudent, pk = pk)
+	return render(request,'student_profile/view_grade_student.html',{'enroll':enroll})
 
 
 
@@ -1130,7 +1122,6 @@ def addsubjectbycuriculumAPI(request,pk):
 	enrollbyStud=get_object_or_404(EnrollbyStudent,pk=pk)
 	if request.method == "POST":
 		major_pk=request.POST.get('majorpk')
-		print(major_pk)
 		if major_pk == "":
 			major_pk=0
 
@@ -1155,7 +1146,6 @@ def addsubjectbycuriculumAPI(request,pk):
 
 
 		if subjects_by_curriculum.exists():
-			print(subjects_by_curriculum)
 			
 			serialize_subjects=[]
 			for subject in subjects_by_curriculum[0].subjects.all():
@@ -1169,7 +1159,6 @@ def addsubjectbycuriculumAPI(request,pk):
 					serialize_subjects.append(subject_enroll)
 
 			subjects={'status':True,'subjects':serialize_subjects,'message':'subjects added'}
-			print(subjects)
 			return Response(subjects)
 
 
@@ -1197,8 +1186,6 @@ def enrollChoices(request):
 def uploadSubjectsAPI(request):
 	if request.method == 'POST':
 		form=UploadExcelForm(request.POST,request.FILES)
-
-		print(form)
 		if form.is_valid():
 
 			form.save()
@@ -1274,7 +1261,6 @@ def enrollDetails(request,pk):
     		return redirect('enrollDetails',enroll.pk)
 
     context={'enroll':enroll,'form':form,'form2':form2,'subjects':subjects}
-    print(subjects)
     return render(request,'student_profile/enrolldetailss.html',context)
 
 
@@ -1289,7 +1275,6 @@ def enrollDetailsAdmin(request,pk):
     	total_units=total_units+sub.subject.unit
 
     context={'enroll':enroll,'form':form,'subjects':subjects,'total_units':total_units}
-    print(subjects)
     return render(request,'student_profile/enrollDetailsAdmins.html',context)
 
 

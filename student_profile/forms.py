@@ -1,6 +1,7 @@
 from .models import Student,EnrollbyStudent,IDandFullname, SubjectsLoaded,Curriculum,Subject,UploadExcel,IDandFullname,ActiveSem
 from django import forms
 from django.db.models import Q
+import sys
 
 
 
@@ -164,29 +165,21 @@ class StudentForm(forms.ModelForm):
 
     def clean_student_id(self):
         student_id=self.cleaned_data['student_id']
-        first_name=self.data.get('first_name')
-        last_name=self.data.get('last_name')
+        try:
+            first_name=self.data.get('first_name')
+            last_name=self.data.get('last_name')
+            qs_student_id=Student.objects.filter(student_id=student_id)
+            id_owner=IDandFullname.objects.filter(student_id=student_id.strip(),first_name__iexact=first_name.strip(),last_name__iexact=last_name.strip())
+            if student_id:
+                if not id_owner.exists():
+                    raise forms.ValidationError('ID number must match your name, go to registrar to fix')
+                if qs_student_id.exists():
+                    raise forms.ValidationError('User Id already exists')
+                else:
+                    return student_id
+        except UnicodeEncodeError:
+            return student_id
 
-        print(last_name)
-        print(first_name)
-   
-        qs_student_id=Student.objects.filter(student_id=student_id)
-    
-        id_owner=IDandFullname.objects.filter(student_id=student_id.strip(),first_name__iexact=first_name.strip(),last_name__iexact=last_name.strip())
-     
-          
-
-        print(id_owner)
-        if student_id:
-            if not id_owner.exists():
-                raise forms.ValidationError('ID number must match your name, go to registrar to fix')
-
-
-            if qs_student_id.exists():
-                print('already exists')
-                raise forms.ValidationError('User Id already exists')
-            else:
-                return student_id
 
 
     def __init__(self,*args,**kwargs):

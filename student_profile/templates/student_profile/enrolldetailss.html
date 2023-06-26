@@ -13,7 +13,7 @@
             <el-row :gutter="5">
                 <el-col :md="8">
                     <el-form-item label="Fullname">
-                        <el-select  filterable style="width: 100%;" placeholder="select a student"
+                        <el-select filterable style="width: 100%;" placeholder="select a student"
                             v-model="enroll.student">
                             <el-option v-for="(item, index) in students" :label="item.fullname" :value="item.id"
                                 :key="index"></el-option>
@@ -75,68 +75,51 @@
         <el-card>
             <div slot="header" class="clearfix">
                 <span>Subjects</span>
-                <el-button style="float: right;"             :disabled='enroll.status=="forwarded" || enroll.status=="approved"' @click="getSubjects" size="small" round type="danger">Add Subjects on
+                <el-button style="float: right;" :disabled='enroll.status=="forwarded" || enroll.status=="approved"'
+                    @click="getSubjects" size="small" round type="danger">Add Subjects on
                     curriculum</el-button>
             </div>
 
             <el-row :gutter="10">
                 <el-col :md="20">
-                <v-select v-model="subject" label="full" value="id" :options="subjects"></v-select>
-                
+                    <v-select v-model="subject" label="full" value="id" :options="subjects"></v-select>
+
                 </el-col>
                 <el-col :md="4">
-                    <el-button size="small"             :disabled='enroll.status=="forwarded" || enroll.status=="approved"' @click="addSubject" style="width: 100%;" type="primary">add</el-button>
+                    <el-button size="small" :disabled='enroll.status=="forwarded" || enroll.status=="approved"'
+                        @click="addSubject" style="width: 100%;" type="primary">add</el-button>
                 </el-col>
             </el-row>
             <hr>
-   
 
-            <el-table
-            v-loading="loading"
-            element-loading-text="Loading..."
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.1)"
-            :data="enroll.enroll_subjects"
-            style="width: 100%">
-            <el-table-column
-            prop="sub.code"
-            label="Code"
-            width="100"
-             >
-            </el-table-column>
-            <el-table-column
-            prop="sub.description"
-            label="Descriptive Title"
-              >
-            </el-table-column>
-            <el-table-column
-            prop="sub.unit"
-            label="Unit">
-            </el-table-column>
-            <el-table-column
-            prop="status"
-            label="status">
-            </el-table-column>
-       
-            <el-table-column
 
-      label="action"
-      width="120">
-      <template slot-scope="scope">
-        <el-button
-            :disabled='scope.row.status=="forwarded"'
-          @click.native.prevent="deleteRow(scope.$index, enroll.enroll_subjects,scope.row.id)"
-          type="danger"
-          size="small">
-          Remove
-        </el-button>
-      </template>
-    </el-table-column>
-          </el-table>
-          <br>
-          <el-button :disabled="enroll.status =='forwarded' || enroll.status=='approved' " @click="save" size="small"  type="success">forward for approval</el-button>
+            <el-table v-loading="loading" element-loading-text="Loading..." element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(0, 0, 0, 0.1)" :data="enroll.enroll_subjects" style="width: 100%">
+                <el-table-column prop="sub.code" label="Code" width="100">
+                </el-table-column>
+                <el-table-column prop="sub.description" label="Descriptive Title">
+                </el-table-column>
+                <el-table-column prop="sub.unit" label="Unit">
+                </el-table-column>
+                <el-table-column prop="status" label="status">
+                </el-table-column>
+
+                <el-table-column label="action" width="120">
+                    <template slot-scope="scope">
+                        <el-button :disabled='scope.row.status=="forwarded"'
+                            @click.native.prevent="deleteRow(scope.$index, enroll.enroll_subjects,scope.row.id)"
+                            type="danger" size="small">
+                            Remove
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br>
+            <el-button :loading="isLoading"
+                :disabled="(enroll.status =='forwarded' || enroll.status=='approved') && !isLoading" @click="save"
+                size="small" type="success">forward for approval</el-button>
         </el-card>
-      
+
     </el-form>
 
 
@@ -153,19 +136,19 @@
     }
 
     .style-chooser .vs__search::placeholder,
-  .style-chooser .vs__dropdown-toggle,
-  .style-chooser .vs__dropdown-menu {
-    background: #dfe5fb;
-    border: none;
-    color: #394066;
-    text-transform: lowercase;
-    font-variant: small-caps;
-  }
+    .style-chooser .vs__dropdown-toggle,
+    .style-chooser .vs__dropdown-menu {
+        background: #dfe5fb;
+        border: none;
+        color: #394066;
+        text-transform: lowercase;
+        font-variant: small-caps;
+    }
 
-  .style-chooser .vs__clear,
-  .style-chooser .vs__open-indicator {
-    fill: #394066;
-  }
+    .style-chooser .vs__clear,
+    .style-chooser .vs__open-indicator {
+        fill: #394066;
+    }
 </style>
 {%endblock%}
 
@@ -175,7 +158,7 @@
 <!-- import Vue before Element -->
 
 <script>
-    const enroll_id={{enroll.id}}
+    const enroll_id = {{ enroll.id }}
     Vue.use(VueTables.ClientTable);
     ELEMENT.locale(ELEMENT.lang.en)
     Vue.component('v-select', VueSelect.VueSelect);
@@ -201,6 +184,7 @@
         el: '#app',
         data() {
             return {
+                isLoading: false,
                 students: [],
                 ays: [],
                 majors: [],
@@ -210,7 +194,7 @@
                 subjects: [],
                 yearlevels: [],
                 semisters: ["1st", "2nd", "summer"],
-                loading:true,
+                loading: true,
 
                 enroll: {
 
@@ -226,53 +210,54 @@
             }
         },
         methods: {
-            deleteRow(index, rows,id) {
-            axios_instance.delete('subjectsenrolled/'+id+'/').then(res=>{
-                console.log(res.data)
-                 rows.splice(index, 1);
-            })
-            
-      },
-            addSubject(){
+            deleteRow(index, rows, id) {
+                axios_instance.delete('subjectsenrolled/' + id + '/').then(res => {
+                    console.log(res.data)
+                    rows.splice(index, 1);
+                })
+
+            },
+            addSubject() {
                 //let subject=this.subjects.find(el=>el.id == this.subject.id)
 
                 console.log(this.subject)
-           
-                if(this.enroll.enroll_subjects.find(e=>e.subject == this.subject) == null){
+
+                if (this.enroll.enroll_subjects.find(e => e.subject == this.subject) == null) {
                     this.enroll.enroll_subjects.push(
-                            {
-                             
-                                grade_status: null,
-                                grade: null,
-                                status: "draft",
-                                subject: this.subject.id,
-                                instructor: null,
-                                sub:this.subject
-                            }
-                        )
+                        {
+
+                            grade_status: null,
+                            grade: null,
+                            status: "draft",
+                            subject: this.subject.id,
+                            instructor: null,
+                            sub: this.subject
+                        }
+                    )
                 }
-     
+
             },
-            save(){
-    
-         console.log(this.enroll)
-                        this.enroll.status='forwarded'
-                        this.enroll.enroll_subjects.forEach(el=>{
-                            el.status='forwarded'
-                        })
-                        axios_instance.put('enrolls/'+this.enroll.id+'/',this.enroll).then(result=>{
-                            console.log(result.data)
-                            //window.location.replace(`/student/${result.data.id}/enroll/`);
-                            this.$notify({
-                                title: 'Success',
-                                message: 'Forward Successfully',
-                                type: 'success'
-                              });
-                        })
-                   
-                    
-            
-           
+            save() {
+
+                this.enroll.status = 'forwarded'
+                this.enroll.enroll_subjects.forEach(el => {
+                    el.status = 'forwarded'
+                })
+                this.isLoading = true
+                axios_instance.put('enrolls/' + this.enroll.id + '/', this.enroll).then(result => {
+                    this.isLoading = false
+                    console.log(result.data)
+                    //window.location.replace(`/student/${result.data.id}/enroll/`);
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Forward Successfully',
+                        type: 'success'
+                    });
+                })
+
+
+
+
             },
             getSubjects() {
 
@@ -281,77 +266,77 @@
                     console.log(res.data)
                     //this.enroll.enroll_subjects=[]
                     res.data.forEach(el => {
-                        if(this.enroll.enroll_subjects.find(e=>e.subject== el.id)== null){
+                        if (this.enroll.enroll_subjects.find(e => e.subject == el.id) == null) {
                             this.enroll.enroll_subjects.push(
-                            {
-                             
-                                grade_status: null,
-                                grade: null,
-                                status: "draft",
-                                subject: el.id,
-                                instructor: null,
-                                sub:el
-                            },
-                        )
+                                {
+
+                                    grade_status: null,
+                                    grade: null,
+                                    status: "draft",
+                                    subject: el.id,
+                                    instructor: null,
+                                    sub: el
+                                },
+                            )
                         }
-                        else{
+                        else {
                             console.log('already added')
                         }
-                        
+
                     })
-                }).catch(err=>{
-                 this.$message.error('Oops, No Curriculum added on this parameters');
+                }).catch(err => {
+                    this.$message.error('Oops, No Curriculum added on this parameters');
                 })
             }
 
         },
         created() {
-        
-            
-              axios_instance.get('curriculumss').then(res => {
-                    res.data.forEach(el=>{
-                    el.subjects.forEach(e=>{
-                        if(this.subjects.find(sub=>sub.id == e.id) == null){
+
+
+            axios_instance.get('curriculumss').then(res => {
+                res.data.forEach(el => {
+                    el.subjects.forEach(e => {
+                        if (this.subjects.find(sub => sub.id == e.id) == null) {
                             this.subjects.push(e)
                         }
-                        
-                        })
-                 
+
+                    })
+
                 })
-           
- 
+
+
                 this.subjects.forEach(el => {
                     el.full = `${el.code}-${el.description}`
                 });
-        
 
-          
 
-                axios_instance.get('enrolls/'+enroll_id).then(ress => {
-                this.enroll = ress.data
-                console.log(this.enroll)
-          
-                this.enroll.enroll_subjects.forEach(el=>{
-                    let subject=this.subjects.find(e=>e.id == el.subject)
-                    console.log(subject)
-                    el.sub=subject
-                })
 
-                this.loading=false
 
-                axios_instance.get('students/'+this.enroll.student).then(ress => {
-                    this.students.push(ress.data)
-                    this.students.forEach(el => {
-                        el.fullname = `${el.last_name}, ${el.first_name}`
+                axios_instance.get('enrolls/' + enroll_id).then(ress => {
+                    this.enroll = ress.data
+                    console.log(this.enroll)
+
+                    this.enroll.enroll_subjects.forEach(el => {
+                        let subject = this.subjects.find(e => e.id == el.subject)
+                        console.log(subject)
+                        el.sub = subject
                     })
-                
+
+                    this.loading = false
+
+                    axios_instance.get('students/' + this.enroll.student).then(ress => {
+                        this.students.push(ress.data)
+                        this.students.forEach(el => {
+                            el.fullname = `${el.last_name}, ${el.first_name}`
+                        })
+
+                    })
+
+
                 })
-
-             
-            })
             })
 
-         
+
 
             axios_instance.get('instructors').then(res => {
                 this.instructors = res.data
@@ -374,7 +359,7 @@
                 this.yearlevels = res.data
                 console.log(res.data)
             })
-     
+
         },
     })
 </script>
