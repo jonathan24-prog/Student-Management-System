@@ -37,7 +37,6 @@ def login_view(request):
 		
 		user=authenticate(username=username,password=password)
 		login(request,user)
-		print(request.user.is_authenticated)
 		return redirect('home')
 		
 

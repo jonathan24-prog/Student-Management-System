@@ -78,6 +78,7 @@ urlpatterns = [
     path('students/enroll/<int:pk>/',views.viewEnrolledStudent,name='allStudentEnroll-student'),
     path('students/enroll/<student_id>/',views.viewEnrolledStudentByStudentId,name='allStudentEnrollByStudentId-student'),
     path('students/viewGrades/<int:pk>/',views.viewGrades,name='viewGrades'),
+    path('students/viewGradesStudent/<int:pk>/',views.viewGradesStudent,name='viewGradesStudent'),
     path('student/check/',views.checkMyEnrollment,name='checkMyEnrollment'),
     path('Admin/students/enroll/',views.viewEnrolledStudentAdmin,name='allStudentEnroll'),
     path('Api/students/enroll/<int:pk>/status',views.updateStatusAPI,name='enroll-status-api'),

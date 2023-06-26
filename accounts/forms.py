@@ -11,7 +11,7 @@ from .models import CustomUser
 from student_profile.models import IDandFullname
 User=get_user_model()
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-
+import sys
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -35,7 +35,7 @@ class UserLoginForm(forms.Form):
 	password.widget.attrs.update({'class':'form-control w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500',})
 
 	def clean(self,*args,**kwargs):
-		print('ni abot')
+
 		username=self.cleaned_data.get('username')
 		password=self.cleaned_data.get('password')
 		
@@ -114,27 +114,24 @@ class UserRegisterForm(forms.ModelForm):
 		}
 	def clean_student_id(self):
 		student_id=self.cleaned_data['student_id']
-		first_name=self.data.get('first_name')
-		last_name=self.data.get('last_name')
-
-		print(last_name)
-		print(first_name)
-
-		qs_student_id=CustomUser.objects.filter(student_id=student_id)
-		id_owner=IDandFullname.objects.filter(student_id=student_id.strip(),first_name__iexact=first_name.strip(),last_name__iexact=last_name.strip())
-
+		try:
+			first_name=self.data.get('first_name')
+			last_name=self.data.get('last_name')
+			qs_student_id=CustomUser.objects.filter(student_id=student_id)
+			id_owner=IDandFullname.objects.filter(student_id=student_id.strip(),first_name__iexact=first_name.strip(),last_name__iexact=last_name.strip())
 			
+				
+			if student_id:
+				if not id_owner.exists():
+					raise forms.ValidationError(' number must match your name, go to registrar to fix')
 
-		print(id_owner)
-		if student_id:
-			if not id_owner.exists():
-				raise forms.ValidationError('ID number must match your name, go to registrar to fix')
+				if qs_student_id.exists():
+					raise forms.ValidationError('User Id already exists')
+				else:
+					return student_id
+		except UnicodeEncodeError:
+			return student_id
 
-			if qs_student_id.exists():
-				print('already exists')
-				raise forms.ValidationError('User Id already exists')
-			else:
-				return student_id
 
 
 

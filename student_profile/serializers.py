@@ -15,10 +15,8 @@ class SubjectSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 	def create(self,validated_data):
-		print(validated_data.get('code', None))
-
 		query=Subject.objects.filter(code=validated_data.get('code', None),description=validated_data.get('description', None)).count()
-		print(query)
+
 		if query == 0:
 			return Subject.objects.create(**validated_data)
 		raise  DuplicateData()
@@ -92,8 +90,6 @@ class EnrollStudSerlizer(serializers.ModelSerializer):
 		return enroll
 
 	def update(self, instance, validated_data):
-		print(instance)
-
 		instance.student = validated_data.get('student', instance.student)
 		instance.course = validated_data.get('course', instance.course)
 		instance.major = validated_data.get('major', instance.major)
@@ -105,9 +101,7 @@ class EnrollStudSerlizer(serializers.ModelSerializer):
 		enroll_subjects = validated_data.get('enroll_subjects')
 
 		for item in enroll_subjects:
-			print(item)
 			item_id = item.get('id',None)
-			print(item_id)
 			if item_id:
 				inv_item = SubjectsLoaded.objects.get(pk=item_id)
 				inv_item.subject = item.get('subject', inv_item.subject)
