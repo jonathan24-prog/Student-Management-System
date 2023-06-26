@@ -22,7 +22,7 @@
                 </v-client-table>
     </el-card>
     <el-card>
-        <v-client-table :columns="['id','fullname','action']" :data="ids">
+        <v-client-table :columns="['id','student_id','fullname','action']" :data="ids">
             <a :href="props.row.uri"  slot="action" slot-scope="props" > <el-button type="success" size="small"  circle icon="el-icon-edit"></el-button></a>
         </v-client-table>
     </el-card>
@@ -157,7 +157,7 @@ Vue.component('loading', VueLoading)
               res.data.forEach(el=>{
                 let ext_name=el.ext_name != null?el.ext_name:""
                 let course=this.courses.find(e=> e.id == el.course)
-                el.fullname=`${el.last_name}, ${el.last_name} ${ext_name}`
+                el.fullname=`${el.last_name}, ${el.first_name} ${ext_name}`
                 el.course=course.code
                 el.uri='/editStudent/'+el.id
               })

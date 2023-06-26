@@ -21,7 +21,13 @@
               <form method="post">
                 {%csrf_token%}
                      <div class="row">
-                  <div class="col-md-3 pl-1">
+                      <div class="col-md-1 pl-1">
+                        <div class="form-group">
+                          <label>Conditional</label>
+                          {{form.is_conditional}}
+                        </div>
+                      </div>
+                  <div class="col-md-2 pl-1">
                     <div class="form-group">
                       <label>Course</label>
                       {{form.course}}
@@ -87,7 +93,7 @@
                   </div>
                   <div class="col-md-6 pl-1">
                     <div class="form-group">
-                      <label>City</label>
+                      <label>Municipality</label>
                       {{form.city}}
                     </div>
                   </div>
@@ -236,7 +242,7 @@
                <div class="row">
                 <div class="col-md-9 pl-1">
                   <div class="form-group">
-                    <label>Highschool</label>
+                    <label>Junior Highschool</label>
                     {{form.highschool}}
                   </div>
                 </div>
@@ -244,6 +250,20 @@
                   <div class="form-group">
                     <label>Year Completed</label>
                     {{form.highschool_completed}}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-9 pl-1">
+                  <div class="form-group">
+                    <label>Senior Highschool</label>
+                    {{form.senior_highschool}}
+                  </div>
+                </div>
+                <div class="col-md-3 pl-1">
+                  <div class="form-group">
+                    <label>Year Completed</label>
+                    {{form.senior_highschool_completed}}
                   </div>
                 </div>
               </div>

@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Course, EnrollbyStudent, Instructor, Major, Student,UploadExcel,IDandFullname, Subject, Academic_year, Year_level,Room,Subject, TimeSched, DaySched, SubjectsLoaded, Curriculum
+from .models import AOSF, Course, EnrollbyStudent, Instructor, Major, Student,UploadExcel,IDandFullname, Subject, Academic_year, Year_level,Room,Subject, TimeSched, DaySched, SubjectsLoaded, Curriculum, ActiveSem
+
+from django.contrib import admin
+
+from .forms import ActiveSemAdminForm
+
+class ActiveSemAdmin(admin.ModelAdmin):
+    form = ActiveSemAdminForm
+
+
 
 admin.site.register(Course)
 admin.site.register(EnrollbyStudent)
@@ -16,6 +25,8 @@ admin.site.register(SubjectsLoaded)
 admin.site.register(UploadExcel)
 admin.site.register(Curriculum)
 admin.site.register(IDandFullname)
+admin.site.register(AOSF)
+admin.site.register(ActiveSem, ActiveSemAdmin)
 
 
 

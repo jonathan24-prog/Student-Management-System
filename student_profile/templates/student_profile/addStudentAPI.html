@@ -1,0 +1,73 @@
+{% extends 'basemenu.html' %}
+{% block content %}
+
+{% endblock content %}
+
+{% block script %}
+<style>
+        .el-form-item--small .el-form-item__content,
+    .el-form-item--small .el-form-item__label {
+        line-height: 0px;
+    }
+</style>
+<script>
+
+        const inst = axios.create({
+            baseURL: '/bccapi',
+            timeout: 10000,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': Cookies.get('csrftoken')
+            }
+          })
+          Vue.use(VueTables.ClientTable);
+          Vue.use(VueLoading);
+        Vue.component('loading', VueLoading)
+        new Vue({
+          el: '#app',
+            data(){
+                return {
+                    form:{
+                        first_name:'',
+                        middle_name:'',
+                        last_name:'',
+                        ext_name:'',
+                        student_id:'',
+                        course:'',
+                        major:'',
+                        lrn_num:'',
+                        gender:'',
+                        address:'',
+                        city:'',
+                        province:'',
+                        birth_date:'',
+                        place_of_birth:'',
+                        mobile_no:'',
+                        guardian:'',
+                        relationship:'',
+                        guardian_address:'',
+                        guardian_contact:'',
+                        occupation:'',
+                        religion:'',
+                        zip_code:'',
+                        primary:'',
+                        elementary:'',
+                        highschool:'',
+                        degree_completed:'',
+                        degree_year_attended:'',
+                        name_of_school:'',
+                        primary_completed:'',
+                        elementary_completed:'',
+                        highschool_completed:'',
+                        civil_status:'',
+                        nationality:'',
+                        email_add:''
+
+                    }
+                }
+            }
+        })
+        
+</script>
+
+{% endblock %}

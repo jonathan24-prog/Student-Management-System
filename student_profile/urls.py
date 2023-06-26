@@ -19,8 +19,10 @@ from accounts.views import (login_view,register_view,logout_view,displayAccount)
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-
 from rest_framework import routers
+from django.urls import path
+from django.contrib.auth import views as auth_views
+
 router = routers.DefaultRouter()
 router.register('subjects', views.SubjectViewSet)
 router.register('majors', views.MajorViewSet)
@@ -35,7 +37,14 @@ router.register('yearlevels', views.YearLevelViewSet)
 router.register('ids', views.IdAndFullnameViewSet)
 router.register('curriculums', views.CurriculumViewSet)
 router.register('curriculumss', views.CurriculumsViewSet)
+router.register('aosfs', views.AOSFViewSet)
+router.register('instructorloads', views.InstructorLoadSubjectViewSet)
+router.register('instructorloads-read', views.InstructorLoadSubjectWithObjectViewSet)
 
+router.register('rooms', views.RoomViewSet)
+router.register('times', views.TimeSchedViewSet)
+router.register('days', views.DaySchedViewSet)
+router.register('activeSems', views.ActiveSemViewSet)
 
 
 
@@ -44,40 +53,40 @@ urlpatterns = [
     path('', views.home,name='home'),
     path('bccapi/', include(router.urls)),
     path('login/',login_view,name='login'),
-    path('logout/',logout_view,name='logout'),
+    path('logout/',logout_view,name='logout'),  
+    path('bccapi/IntructorLoadedSubjectByClassList/<sem>/<ay>/<course>/<major>/<section>/<year_level>',views.IntructorLoadedSubjectByClassList.as_view(),name='IntructorLoadedSubjectByClassList'),
+    path('bccapi/IntructorLoadedSubjectList/<sem>/<ay>/<instructor>',views.IntructorLoadedSubjectList.as_view(),name='IntructorLoadedSubjectList'),
     path('enroll/',views.enrollChoices,name='enrollChoices'),
     path('enrollstud/<int:pk>',views.enrollstud,name='enrollstud'),
-    path('searchenrolllist/<id>/<course>/<major>/<sem>/<year>',views.SearchEnroll.as_view(),name='searchenrolllist'),
+    path('searchenrolllist/<id>/<course>/<major>/<sem>/<year>/<ay>',views.SearchEnroll.as_view(),name='searchenrolllist'),
     path('register/',register_view,name='register'),
     path('registerConfirm/',views.registerConfirm,name='register-confirm'),
     path('addStudent/',views.addNewStudent,name='add-student'),
+    path('schedules/',views.schedules,name='schedules'),
     path('addNewStudent/',views.addNewStudent,name='add-new-student'),
-
+    path('addNewStudentAPI/',views.addNewStudentAPI,name='addNewStudentAPI'),
     path('allStudent/',views.displayAllStudent,name='allStudent'),
     path('editStudent/<int:pk>',views.editStudent,name='editStudent'),
     path('editIDs/<int:pk>',views.editIDs,name='editIDs'),
-
     path('addCuriculum/',views.addCuriculum,name='addCuriculum'),
     path('editCuriculum/<int:pk>/',views.editCurriculum,name='editCuriculum'),
     path('addsubjectbycuriculumAPI/<int:pk>/',views.addsubjectbycuriculumAPI,name='addsubjectbycuriculumAPI'),
     path('Apiaddsubjectbycuriculum/<course>/<major>/<sem>/<year>',views.SubjectbyCurriculum.as_view(),name='Apiaddsubjectbycuriculum'),
     path('getSubjectsByCurriculumAPI/<int:course>/<sem>',views.getSubjectsByCurriculumAPI,name='getSubjectsByCurriculumAPI'),
     path('getSubjectsByCurriculumAPI/',views.getSubjectsByCurriculumAPIAll,name='getSubjectsByCurriculumAPIAll'),
-
     path('addSubject/',views.addSubject,name='addSubject'),
     path('students/enroll/<int:pk>/',views.viewEnrolledStudent,name='allStudentEnroll-student'),
+    path('students/enroll/<student_id>/',views.viewEnrolledStudentByStudentId,name='allStudentEnrollByStudentId-student'),
+    path('students/viewGrades/<int:pk>/',views.viewGrades,name='viewGrades'),
     path('student/check/',views.checkMyEnrollment,name='checkMyEnrollment'),
-    path('admin/students/enroll/',views.viewEnrolledStudentAdmin,name='allStudentEnroll'),
-
+    path('Admin/students/enroll/',views.viewEnrolledStudentAdmin,name='allStudentEnroll'),
     path('Api/students/enroll/<int:pk>/status',views.updateStatusAPI,name='enroll-status-api'),
     path('Api/students/enroll/<int:pk>/return',views.returnForCorrectionAPI,name='enroll-return-api'),
     path('Api/students/enroll/<int:pk>/forward',views.forwardForApprovalAPI,name='enroll-forward-api'),
     path('Api/displayAllEnrollAPI',views.displayAllEnrollAPI,name='displayAllEnrollAPI'),
-
-
     path('student/<int:pk>/',views.enroll,name='enroll'),
-    path('EnrollPrint/<int:pk>/',views.render_pdf_view,name='print-enroll'),
-
+    # path('EnrollPrint/<int:pk>/',views.render_pdf_view,name='print-enroll'),
+    path('bccapi/enrollCount/<int:pk>/',views.getEnrolledCount),
     path('Api/<int:pk>/enroll/', views.enrollSTudAPI,name='enroll-api'),
     path('student/<int:pk>/enroll/', views.enrollDetails,name='enrollDetails'),
     path('Admin/student/<int:pk>/enroll/', views.enrollDetailsAdmin,name='enrollDetailsAdmin'),
@@ -86,17 +95,25 @@ urlpatterns = [
     path('Api/uploadSubjectsAPI/',views.uploadSubjectsAPI,name='uploadSubjectsAPI'),
     path('Api/<int:pk>/enroll/subjects/delete/',views.deleteSubjectLoaded,name='delete-enroll-subject'),
     path('Api/<int:pk>/enroll/subjects/drop/',views.dropSubjectLoaded,name='drop-enroll-subject'),
+    path('Api/<int:pk>/enroll/subjects/enroll/',views.EnrolldropSubjectLoaded,name='enroll-drop-enroll-subject'),
     path('Api/enrollStudent/all/',views.StudentEnrollList.as_view(),name='student-enroll-api'),
-    path('Api/enrollStudent/ay/course/sem/',views.ByCourseStudentEnrollList.as_view(),name='student-enroll-api'),
+    path('Api/enrollStudent/all/<ay>',views.StudentEnrollListByAcademicYear.as_view(),name='student-enroll-api-ay'),
+    path('Api/enrollStudent/<ay>/<course>/<sem>/<major>',views.ByCourseStudentEnrollList.as_view()),
     path('enrollSelection',views.enrollSelection,name='enrollSelection'),
     path('StudentByCourse',views.StudentByCourse,name='StudentByCourse'),
     path('Admin/managegrades',views.manageGrade,name='manage-grades'),
     path('Api/subjectloaded/<sub>/<major>/<ay>/<course>/<sem>',views.SubjectLoadedList.as_view(),name="subjects_loadedapi"),
-    path('Api/enrollbystudsub/<student>/<ay>/<sem>',views.SubjectByStudentList.as_view(),name="enrollbystudsub")
+    path('Api/enrollbystudsub/<student>/<ay>/<sem>',views.SubjectByStudentList.as_view(),name="enrollbystudsub"),
+    path('Api/allEnrollbySemAyCourse/<ay>/<sem>/<course>/<year>/<major>',views.AllStudentEnrollBySYAndSEM.as_view(),name="allEmrollbySemAy"),
+    path('bccapi/getIdAndFullname/<student_id>',views.GetStudentIdAnfFullnameList.as_view(),name="getStudentId"),
+    path('bccapi/subjects',views.SubjectsList.as_view(),name=''),
+    path('password-reset/', views.ResetPasswordView.as_view(), name='password_reset'),
+    path('password-reset-confirm/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),
+         name='password_reset_confirm'),
 
     
-
-    
-
 
 ]
+urlpatterns  +=  static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

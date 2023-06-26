@@ -25,7 +25,7 @@ SECRET_KEY = 'da&44^xmooyw1jj^q223xaqa-phng@(^y!&aogmth!_@@patyg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','yamamz.com','192.168.8.221']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','yamamz.com','192.168.8.221','192.168.10.221','portal.buenavistacommunitycollege.edu.ph']
 
 
 # Application definition
@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'student_profile',
     'rest_framework',
+    'accounts'
 
 
 ]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 REST_FRAMEWORK = {
@@ -87,19 +89,26 @@ WSGI_APPLICATION = 'enrollment.wsgi.application'
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
   'default': {
-      'ENGINE': 'django.db.backends.mysql',
-      'NAME': 'registrar',
-      'HOST': '127.0.0.1',
-      'PORT': '3306',
-      'USER': 'root',
-      'PASSWORD': 'root'
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'port_bcc_db',
+        'USER': 'port_bcc',
+        'PASSWORD': 'BccAdmin@123',
+        'HOST': 'localhost',
+        'PORT': '',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': 'SET character_set_connection=utf8mb4;'
+                        'SET collation_connection=utf8mb4_unicode_ci;'
+                        "SET NAMES 'utf8mb4';"
+                        "SET CHARACTER SET utf8mb4;"
+        }
   }
 }
 
 # DATABASES = {
 #     'default': {
 #     'ENGINE': 'django.db.backends.sqlite3',
-#     'NAME': 'C:/Bitnami/djangostack-2.1.1-1/apps/django/django_projects/enrollment/db.sqlite3',
+#     'NAME': 'db.sqlite3',
 #     }
 # }
 
@@ -140,7 +149,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 LOGIN_URL='/login/'
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/portal.buenavistacommunitycollege.edu.ph/public_html/static'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+# STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = "accounts.CustomUser"

@@ -9,12 +9,12 @@ from rest_framework.decorators import api_view,authentication_classes,permission
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .models import Instructor, EnrollbyStudent, Student,Major, Academic_year, Year_level,Course, SubjectsLoaded,Subject,Curriculum,IDandFullname
+from .models  import ActiveSem, DaySched, TimeSched, Room, InstructorLoadSubject, AOSF, Instructor, EnrollbyStudent, Student,Major, Academic_year, Year_level,Course, SubjectsLoaded,Subject,Curriculum,IDandFullname
 from django.conf import settings
-from .serializers import CurriculumSerializer,CurriculumsSerializer, IDandFullnameSerializer, EnrollStudSerlizer, SubjectSerializer,InstructorSerializer, StudentEnrollSerializer, SubjectsLoadedSerializer, CourseSerializer, Academic_yearSerializer, MajorSerializer,Year_levelSerializer,StudentSerializer,SubjectEnrollSerializer
+from .serializers import ActiveSemSerializer, InstructorLoadSubjectWithObjectSerializer, RoomSerializer, DaySchedSerializer, TimeSchedSerializer, InstructorLoadSubjectSerializer, AOSFSerializer, StudentsEnrollSerializer, CurriculumSerializer,CurriculumsSerializer, IDandFullnameSerializer, EnrollStudSerlizer, SubjectSerializer,InstructorSerializer, StudentEnrollSerializer, SubjectsLoadedSerializer, CourseSerializer, Academic_yearSerializer, MajorSerializer,Year_levelSerializer,StudentSerializer,SubjectEnrollSerializer
 from rest_framework import generics
-import numpy as np
-import pandas as pd
+# import numpy as np
+# import pandas as pd
 from django.utils import timezone
 from datetime import datetime
 from django.db.models import Q
@@ -26,68 +26,71 @@ from os.path import expanduser
 from django.conf import settings
 from django.template import Context
 from django.template.loader import get_template
-from xhtml2pdf import pisa
-import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-import numpy as np
-from openpyxl import load_workbook
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+# from xhtml2pdf import pisa
+# import pandas as pd
+# from pandas import ExcelWriter
+# from pandas import ExcelFile
+# import numpy as np
+# from openpyxl import load_workbook
 # Create your views here.
 
 
 
-def link_callback(uri, rel):
-    """
-    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-    resources
-    """
-    # use short variable names
-    sUrl = settings.STATIC_URL      # Typically /static/
-    sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
-    mUrl = settings.MEDIA_URL       # Typically /static/media/
-    mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
+# def link_callback(uri, rel):
+#     """
+#     Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+#     resources
+#     """
+#     # use short variable names
+#     sUrl = settings.STATIC_URL      # Typically /static/
+#     sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
+#     mUrl = settings.MEDIA_URL       # Typically /static/media/
+#     mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
 
-    # convert URIs to absolute system paths
-    if uri.startswith(mUrl):
-        path = os.path.join(mRoot, uri.replace(mUrl, ""))
-    elif uri.startswith(sUrl):
-        path = os.path.join(sRoot, uri.replace(sUrl, ""))
-    else:
-        return uri  # handle absolute uri (ie: http://some.tld/foo.png)
+#     # convert URIs to absolute system paths
+#     if uri.startswith(mUrl):
+#         path = os.path.join(mRoot, uri.replace(mUrl, ""))
+#     elif uri.startswith(sUrl):
+#         path = os.path.join(sRoot, uri.replace(sUrl, ""))
+#     else:
+#         return uri  # handle absolute uri (ie: http://some.tld/foo.png)
 
-    # make sure that file exists
-    if not os.path.isfile(path):
-            raise Exception(
-                'media URI must start with %s or %s' % (sUrl, mUrl)
-            )
-    return path
-
-
+#     # make sure that file exists
+#     if not os.path.isfile(path):
+#             raise Exception(
+#                 'media URI must start with %s or %s' % (sUrl, mUrl)
+#             )
+#     return path
 
 
-def render_pdf_view(request,pk):
-	enroll_stud=get_object_or_404(EnrollbyStudent,pk=pk)
-	subjects=SubjectsLoaded.objects.filter(enrolled_by_student=enroll_stud,status="enrolled")
-	template_path = 'student_profile/user_printer.html'
-	now = datetime.now(timezone.utc)
-	total_units=0
-	for sub in subjects:
-		total_units=total_units+sub.subject.unit
-	context = {'enroll': enroll_stud,'subjects': subjects,'time':now.strftime('%b %d, %Y'),'total_units':total_units}
-	# Create a Django response object, and specify content_type as pdf
-	response = HttpResponse(content_type='application/pdf')
-	# response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-	# find the template and render it.
-	template = get_template(template_path)
-	html = template.render(context)
 
-	# create a pdf
-	pisaStatus = pisa.CreatePDF(
-	html, dest=response, link_callback=link_callback)
-	# if error then show some funy view
-	if pisaStatus.err:
-		return HttpResponse('We had some errors <pre>' + html + '</pre>')
-	return response
+
+# def render_pdf_view(request,pk):
+# 	enroll_stud=get_object_or_404(EnrollbyStudent,pk=pk)
+# 	subjects=SubjectsLoaded.objects.filter(enrolled_by_student=enroll_stud,status="enrolled")
+# 	template_path = 'student_profile/user_printer.html'
+# 	now = datetime.now(timezone.utc)
+# 	total_units=0
+# 	for sub in subjects:
+# 		total_units=total_units+sub.subject.unit
+# 	context = {'enroll': enroll_stud,'subjects': subjects,'time':now.strftime('%b %d, %Y'),'total_units':total_units}
+# 	# Create a Django response object, and specify content_type as pdf
+# 	response = HttpResponse(content_type='application/pdf')
+# 	# response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+# 	# find the template and render it.
+# 	template = get_template(template_path)
+# 	html = template.render(context)
+
+# 	# create a pdf
+# 	pisaStatus = pisa.CreatePDF(
+# 	html, dest=response, link_callback=link_callback)
+# 	# if error then show some funy view
+# 	if pisaStatus.err:
+# 		return HttpResponse('We had some errors <pre>' + html + '</pre>')
+# 	return response
 
 
 class enrollFormView(AjaxFormMixin, FormView):
@@ -251,26 +254,66 @@ def viewEnrolledStudent(request,pk):
 	enroll_students=EnrollbyStudent.objects.filter(student=student)
 	context={'enroll_students':enroll_students,'student':student}
 	return render(request,'student_profile/byStudentEnrollList.html',context)
+def viewEnrolledStudentByStudentId(request,student_id):
+	student=get_object_or_404(Student,student_id=student_id)
+	enroll_students=EnrollbyStudent.objects.filter(student=student)
+	context={'enroll_students':enroll_students,'student':student}
+	return render(request,'student_profile/byStudentEnrollList.html',context)
 
 def enrollstud(request,pk):
 	return render(request,'student_profile/enrollstud.html',{'student_id':pk})
 
+@api_view(['GET'])
+@authentication_classes((SessionAuthentication,))
+@permission_classes((IsAuthenticated,))
+def getEnrolledCount(request, pk):
+	student = get_object_or_404(Student,pk=pk)
+	enroll_by_students = EnrollbyStudent.objects.filter(student=student, status= 'approved')
+	return Response({'enroll_count':len(enroll_by_students)})
+
+
+
+
+
 
 class ByCourseStudentEnrollList(generics.ListAPIView):
-	serializer_class = StudentEnrollSerializer
+	serializer_class = StudentsEnrollSerializer
+	permission_classes = (IsAuthenticated,)
+	authentication_classes=(SessionAuthentication,)
 
 	def get_queryset(self):
 		ay_pk=self.kwargs['ay']
 		course_pk=self.kwargs['course']
 		sem=self.kwargs['sem']
-		course=get_object_or_404(Course,pk=course_pk)
-		ay=get_object_or_404(Academic_year,pk=ay_pk)
-		return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(semister=sem,course=course,academic_year=ay)
+		major_pk = self.kwargs['major']
+		if major_pk != "0":
+			course=get_object_or_404(Course,pk=course_pk)
+			ay=get_object_or_404(Academic_year,pk=ay_pk)
+			major = get_object_or_404(Major,pk=major_pk)
+			return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(semister=sem,course=course,academic_year=ay,status="approved", major=major).order_by('year_level','major', 'student__last_name')
+		else:
+			course=get_object_or_404(Course,pk=course_pk)
+			ay=get_object_or_404(Academic_year,pk=ay_pk)
+	
+			return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(semister=sem,course=course,academic_year=ay,status="approved").order_by('year_level','major', 'student__last_name')
+	
 
 
+class SubjectsList(generics.ListAPIView):
+	serializer_class = SubjectSerializer
+	permission_classes = (IsAuthenticated,)
+	authentication_classes=(SessionAuthentication,)
 
+	def get_queryset(self):
+		return Subject.objects.all()
 
-
+class StudentEnrollListByAcademicYear(generics.ListAPIView):
+	serializer_class = StudentEnrollSerializer
+	
+	def get_queryset(self):
+		ayId = self.kwargs['ay']
+		ay = get_object_or_404(Academic_year,pk=ayId)
+		return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(academic_year=ay)
 
 
 
@@ -282,8 +325,33 @@ class StudentEnrollList(generics.ListAPIView):
 		This view should return a list of all the purchases
 		for the currently authenticated user.
 		"""
-
 		return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").all()
+
+class AllStudentEnrollBySYAndSEM(generics.ListAPIView):
+	serializer_class = StudentEnrollSerializer
+	
+	def get_queryset(self):
+		sem=self.kwargs['sem']
+		ayId = self.kwargs['ay']
+		coursePk = self.kwargs['course']
+		yearPk = self.kwargs['year']
+		majorPk = self.kwargs['major']
+		ay = get_object_or_404(Academic_year,pk=ayId)
+		course = get_object_or_404(Course,pk=coursePk)
+		year = get_object_or_404(Year_level,pk=yearPk)
+		results = []
+		if majorPk != '-1':
+			major = get_object_or_404(Major, pk = majorPk)
+			results = EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(major = major,academic_year=ay, semister = sem, course = course, year_level= year, status ='approved').all()
+			if len(results) != 0:
+				return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(major = major,academic_year=ay, semister = sem, course = course, year_level= year, status ='approved').all()
+			
+			return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(academic_year=ay, semister = sem, course = course, year_level= year, status ='approved').all()
+				
+		return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(academic_year=ay, semister = sem, course = course, year_level= year, status ='approved').all()
+		
+
+
 
 
 class SubjectbyCurriculum(generics.ListAPIView):
@@ -311,6 +379,7 @@ class SearchEnroll(generics.ListAPIView):
 		course_pk=self.kwargs['course']
 		sem=self.kwargs['sem']
 		year=self.kwargs['year']
+		ay = self.kwargs['ay']
 		student=get_object_or_404(Student,pk=self.kwargs['id'])
 
 		if major_pk != "0":
@@ -318,13 +387,15 @@ class SearchEnroll(generics.ListAPIView):
 			major=get_object_or_404(Major,pk=major_pk)
 			course=get_object_or_404(Course,pk=course_pk)
 			year=get_object_or_404(Year_level,pk=year)
-			return EnrollbyStudent.objects.filter(student=student,semister=sem,course=course,year_level=year,major=major)
+			academic_year = get_object_or_404(Academic_year,pk = ay)
+			return EnrollbyStudent.objects.filter(academic_year = academic_year, student=student,semister=sem,course=course,year_level=year,major=major)
 
 
 		
 		course=get_object_or_404(Course,pk=course_pk)
 		year=get_object_or_404(Year_level,pk=year)
-		return EnrollbyStudent.objects.filter(student=student,semister=sem,course=course,year_level=year)
+		academic_year = get_object_or_404(Academic_year,pk = ay)
+		return EnrollbyStudent.objects.filter(academic_year = academic_year,student=student,semister=sem,course=course,year_level=year)
 
 
 
@@ -348,6 +419,11 @@ class SubjectLoadedList(generics.ListAPIView):
 			course=get_object_or_404(Course,pk=course_pk)
 			academic_y=get_object_or_404(Academic_year,pk=ay)
 			return SubjectsLoaded.objects.select_related("enrolled_by_student").filter(enrolled_by_student__course=course,enrolled_by_student__academic_year=academic_y,enrolled_by_student__semister=sem,subject=sub,enrolled_by_student__major=major,status="enrolled")
+		if major_pk == "0" and course_pk == "0":
+			sub=get_object_or_404(Subject,pk=sub_pk)
+			academic_y=get_object_or_404(Academic_year,pk=ay)
+			return SubjectsLoaded.objects.select_related("enrolled_by_student").filter(enrolled_by_student__academic_year=academic_y,enrolled_by_student__semister=sem,subject=sub,status="enrolled")
+	
 
 
 		
@@ -370,6 +446,41 @@ class SubjectByStudentList(generics.ListAPIView):
 		return SubjectsLoaded.objects.select_related("enrolled_by_student").filter(enrolled_by_student__student=student,enrolled_by_student__academic_year=academic_y,enrolled_by_student__semister=sem,status="enrolled")
 
 
+class IntructorLoadedSubjectList(generics.ListAPIView):
+	serializer_class= InstructorLoadSubjectWithObjectSerializer
+	def get_queryset(self):
+		instruc=self.kwargs['instructor']
+		sem=self.kwargs['sem']
+		ay=self.kwargs['ay']
+
+		instructor=get_object_or_404(Instructor,pk=instruc)
+		academic_y=get_object_or_404(Academic_year,pk=ay)
+		return InstructorLoadSubject.objects.filter(instructor=instructor,academic_year=academic_y,semister=sem)
+
+class IntructorLoadedSubjectByClassList(generics.ListAPIView):
+	serializer_class= InstructorLoadSubjectWithObjectSerializer
+	def get_queryset(self):
+		course_pk=self.kwargs['course']
+		sem=self.kwargs['sem']
+		ay=self.kwargs['ay']
+		section = self.kwargs['section']
+		major_pk = self.kwargs['major']
+		year_level_pk = self.kwargs['year_level']
+		year_level = get_object_or_404(Year_level,pk=year_level_pk)
+		course=get_object_or_404(Course,pk=course_pk)
+		academic_y=get_object_or_404(Academic_year,pk=ay)
+		if major_pk == '-1':
+			return InstructorLoadSubject.objects.filter(course=course,academic_year=academic_y,semister=sem, section=section, year_level = year_level)
+		major = get_object_or_404(Major,pk=major_pk)
+		return InstructorLoadSubject.objects.filter(course=course,academic_year=academic_y,semister=sem, section=section, year_level = year_level, major=major)
+
+
+
+class GetStudentIdAnfFullnameList(generics.ListAPIView):
+	serializer_class= IDandFullnameSerializer
+	def get_queryset(self):
+		student_id=self.kwargs['student_id']
+		return IDandFullname.objects.filter(student_id=student_id)
 
 
 
@@ -460,12 +571,61 @@ class YearLevelViewSet(viewsets.ModelViewSet):
     queryset = Year_level.objects.all()
     serializer_class = Year_levelSerializer
 
+class AOSFViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = AOSF.objects.all()
+    serializer_class = AOSFSerializer
+
+class ActiveSemViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = ActiveSem.objects.all()
+    serializer_class = ActiveSemSerializer
+
 class SubjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows messages to be viewed or edited.
     """
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
+
+class RoomViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = Room.objects.all()
+    serializer_class =RoomSerializer
+
+class DaySchedViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = DaySched.objects.all()
+    serializer_class =DaySchedSerializer
+
+class TimeSchedViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = TimeSched.objects.all()
+    serializer_class =TimeSchedSerializer
+
+class InstructorLoadSubjectViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = InstructorLoadSubject.objects.all()
+    serializer_class = InstructorLoadSubjectSerializer
+
+class InstructorLoadSubjectWithObjectViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows messages to be viewed or edited.
+    """
+    queryset = InstructorLoadSubject.objects.all()
+    serializer_class = InstructorLoadSubjectWithObjectSerializer
 
 @api_view(['GET', 'POST'])
 @authentication_classes((SessionAuthentication,))
@@ -523,8 +683,7 @@ def updateSubjectLoadAPI(request):
 						'description':str(addSubject.subject.description),
 						'unit':str(addSubject.subject.unit),
 						'status':str(addSubject.status),
-
-					'is_updated':True}
+					'is_updated':True,}
 			return Response(context)
 
 		return Response({'is_updated':False})
@@ -559,16 +718,23 @@ def dropSubjectLoaded(request,pk):
 	if request.method == 'POST':
 		subject.status="drop"
 		subject.save()
-		context={
-				'pk':str(subject.pk),
-				'subject_pk':str(subject.subject.pk),
-				'code':str(subject.subject.code),
-				'description':str(subject.subject.description),
-				'unit':str(subject.subject.unit),
-				'status':str(subject.status),
-				'is_drop':True}
-		return Response(context)
+		serializer=SubjectsLoadedSerializer(subject)
+		return Response(serializer.data)
 	return Response({'is_drop':False})
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes((SessionAuthentication,))
+@permission_classes((IsAuthenticated,))
+def EnrolldropSubjectLoaded(request,pk):
+	subject=get_object_or_404(SubjectsLoaded,pk=pk)
+	print('hello')
+	if request.method == 'POST':
+		subject.status="enrolled"
+		subject.save()
+		serializer=SubjectsLoadedSerializer(subject)
+		return Response(serializer.data)
+	return Response({'is_enroll':False})
 
 
 
@@ -591,6 +757,10 @@ def addNewStudent(request):
 			return redirect('enrollstud',student.pk)
 	return render(request,'student_profile/add_student.html',{'form':form,'students':students})
 
+@login_required(login_url=settings.LOGIN_URL)
+def addNewStudentAPI(request):
+
+	return render(request,'student_profile/add_student_api.html')
 
 @login_required(login_url=settings.LOGIN_URL)
 def addStudent(request):
@@ -681,15 +851,15 @@ def addSubject(request):
 	if request.method=='POST':
 		form=UploadExcelForm(request.POST,request.FILES)
 		if form.is_valid():
-			excel=form.save(commit=False)
-			excel.save()
-			df = pd.read_excel('C:/Bitnami/djangostack-2.1.1-1/apps/django/django_projects/enrollment'+excel.file.url, sheet_name=0)  
+			# excel=form.save(commit=False)
+			# excel.save()
+			# df = pd.read_excel('C:/Bitnami/djangostack-2.1.1-1/apps/django/django_projects/enrollment'+excel.file.url, sheet_name=0)  
 			
-			for cell in df.values:
-				print('naka abot')
-				subject_exists=Subject.objects.filter(code=cell[0],description=cell[1])
-				if not subject_exists.exists():
-					Subject.objects.create(code=cell[0],description=cell[1],unit=cell[2])
+			# for cell in df.values:
+			# 	print('naka abot')
+			# 	subject_exists=Subject.objects.filter(code=cell[0],description=cell[1])
+			# 	if not subject_exists.exists():
+			# 		Subject.objects.create(code=cell[0],description=cell[1],unit=cell[2])
 
 
 
@@ -698,28 +868,28 @@ def addSubject(request):
 	return render(request,'student_profile/addSubject.html',context)
 
 
-@login_required(login_url=settings.LOGIN_URL)
-def addIDandName(request):
-	form_upload=UploadExcelForm()
-	form_subject=SubjectForm()
-	if request.method=='POST':
-		form=UploadExcelForm(request.POST,request.FILES)
-		if form.is_valid():
-			excel=form.save(commit=False)
-			excel.save()
-			df = pd.read_excel('C:/Bitnami/djangostack-2.1.1-1/apps/django/django_projects/enrollment'+excel.file.url, sheet_name=0)  
+# @login_required(login_url=settings.LOGIN_URL)
+# def addIDandName(request):
+# 	form_upload=UploadExcelForm()
+# 	form_subject=SubjectForm()
+# 	if request.method=='POST':
+# 		form=UploadExcelForm(request.POST,request.FILES)
+# 		if form.is_valid():
+# 			excel=form.save(commit=False)
+# 			excel.save()
+# 			df = pd.read_excel('C:/Bitnami/djangostack-2.1.1-1/apps/django/django_projects/enrollment'+excel.file.url, sheet_name=0)  
 			
-			for cell in df.values:
-				print('naka abot')
-				id_exists=IDandFullname.objects.filter(student_id=cell[0],first_name=cell[1],last_name=cell[2])
-				if not id_exists.exists():
-					IDandFullname.objects.create(student_id=cell[0],first_name=cell[1],last_name=cell[2])
+# 			for cell in df.values:
+# 				print('naka abot')
+# 				id_exists=IDandFullname.objects.filter(student_id=cell[0],first_name=cell[1],last_name=cell[2])
+# 				if not id_exists.exists():
+# 					IDandFullname.objects.create(student_id=cell[0],first_name=cell[1],last_name=cell[2])
 
 
 
-			return redirect('addSubject')
-	context={'form_upload':form_upload,'form_subject':form_subject,'subjects':Subject.objects.all()}
-	return render(request,'student_profile/addSubject.html',context)
+# 			return redirect('addSubject')
+# 	context={'form_upload':form_upload,'form_subject':form_subject,'subjects':Subject.objects.all()}
+# 	return render(request,'student_profile/addSubject.html',context)
 
 
 
@@ -788,107 +958,107 @@ def getSubjectsByCurriculumAPIAll(request,*args,**kwargs):
 def StudentByCourse(request):
 
 
-	sy=request.GET.get('ay')
-	course_pk=request.GET.get('course')
+	# sy=request.GET.get('ay')
+	# course_pk=request.GET.get('course')
 
-	ay=Academic_year.objects.get(pk=sy)
-	course=Course.objects.get(pk=course_pk)
-	semister=request.GET.get('semister')
+	# ay=Academic_year.objects.get(pk=sy)
+	# course=Course.objects.get(pk=course_pk)
+	# semister=request.GET.get('semister')
 
 
 
-	subjects_loaded=SubjectsLoaded.objects.all()
-	student_enroll=[]
+	# subjects_loaded=SubjectsLoaded.objects.all()
+	# student_enroll=[]
 
-	if request.method == "POST":
-		student_enrollExcel=[]
-		course=Course.objects.get(pk=request.POST.get('course_pk'))
-		ay=Academic_year.objects.get(pk=request.POST.get('ay_pk'))
+	# if request.method == "POST":
+	# 	student_enrollExcel=[]
+	# 	course=Course.objects.get(pk=request.POST.get('course_pk'))
+	# 	ay=Academic_year.objects.get(pk=request.POST.get('ay_pk'))
 
-		students=EnrollbyStudent.objects.filter(course=course,status="approved",academic_year=ay,semister=request.POST.get('semister'))
+	# 	students=EnrollbyStudent.objects.filter(course=course,status="approved",academic_year=ay,semister=request.POST.get('semister'))
 	
-		for student in students:
-			subjects=SubjectsLoaded.objects.filter(enrolled_by_student=student,status="enrolled")
-			total_units=0
-			course_codes=""
-			course_descs=""
-			for subject in subjects:
+	# 	for student in students:
+	# 		subjects=SubjectsLoaded.objects.filter(enrolled_by_student=student,status="enrolled")
+	# 		total_units=0
+	# 		course_codes=""
+	# 		course_descs=""
+	# 		for subject in subjects:
 				
-				#now.strftime('%b %d, %Y')
-				total_units=total_units+subject.subject.unit
-				if course_codes == "":
-					course_codes=course_codes+subject.subject.code
-				else:
-					course_codes=course_codes+","+subject.subject.code
+	# 			#now.strftime('%b %d, %Y')
+	# 			total_units=total_units+subject.subject.unit
+	# 			if course_codes == "":
+	# 				course_codes=course_codes+subject.subject.code
+	# 			else:
+	# 				course_codes=course_codes+","+subject.subject.code
 
-				if course_descs == "":
-					course_descs=course_descs+subject.subject.description
+	# 			if course_descs == "":
+	# 				course_descs=course_descs+subject.subject.description
 
-				else:
-					course_descs=course_descs+","+subject.subject.description
+	# 			else:
+	# 				course_descs=course_descs+","+subject.subject.description
 
 
 
 
 				
-			if not student.major == None:	
-				course_str=str(student.course) +" "+str(student.major)
-			else:
-				course_str=str(student.course)
+	# 		if not student.major == None:	
+	# 			course_str=str(student.course) +" "+str(student.major)
+	# 		else:
+	# 			course_str=str(student.course)
 
 
-			student_enrollExcel.append([student.student.student_id,student.student.last_name,
-									student.student.first_name,student.student.middle_name,
-									student.student.ext_name,student.student.gender,student.student.address,student.student.birth_date,
-									course_str,student.year_level,student.student.zip_code,
-									student.student.email_add,student.student.mobile_no,
-									total_units,course_codes,course_descs])
+	# 		student_enrollExcel.append([student.student.student_id,student.student.last_name,
+	# 								student.student.first_name,student.student.middle_name,
+	# 								student.student.ext_name,student.student.gender,student.student.address,student.student.birth_date,
+	# 								course_str,student.year_level,student.student.zip_code,
+	# 								student.student.email_add,student.student.mobile_no,
+	# 								total_units,course_codes,course_descs])
 
-		df=pd.DataFrame(student_enrollExcel)
-		print(os.environ['USERPROFILE'])
-		home = expanduser("C:/Users/yamamz/Desktop")
-		writer=ExcelWriter(home+"/Report/report.xlsx")
-		df.to_excel(writer,'sheet1',index=False,header=False)
-		writer.save()
-
-
-
+	# 	df=pd.DataFrame(student_enrollExcel)
+	# 	print(os.environ['USERPROFILE'])
+	# 	home = expanduser("C:/Users/yamamz/Desktop")
+	# 	writer=ExcelWriter(home+"/Report/report.xlsx")
+	# 	df.to_excel(writer,'sheet1',index=False,header=False)
+	# 	writer.save()
 
 
 
-	students=EnrollbyStudent.objects.filter(course=course,status="approved",academic_year=ay,semister=semister)
+
+
+
+	# students=EnrollbyStudent.objects.filter(course=course,status="approved",academic_year=ay,semister=semister)
 	
-	for student in students:
+	# for student in students:
 
-		subjects=SubjectsLoaded.objects.filter(enrolled_by_student=student,status="enrolled")
-		total_units=0
-		course_codes=""
-		course_descs=""
-		for subject in subjects:
+	# 	subjects=SubjectsLoaded.objects.filter(enrolled_by_student=student,status="enrolled")
+	# 	total_units=0
+	# 	course_codes=""
+	# 	course_descs=""
+	# 	for subject in subjects:
 			
-			#now.strftime('%b %d, %Y')
-			total_units=total_units+subject.subject.unit
-			if course_codes == "":
-				course_codes=course_codes+subject.subject.code
-			else:
-				course_codes=course_codes+","+subject.subject.code
+	# 		#now.strftime('%b %d, %Y')
+	# 		total_units=total_units+subject.subject.unit
+	# 		if course_codes == "":
+	# 			course_codes=course_codes+subject.subject.code
+	# 		else:
+	# 			course_codes=course_codes+","+subject.subject.code
 
-			if course_descs == "":
-				course_descs=course_descs+subject.subject.description
+	# 		if course_descs == "":
+	# 			course_descs=course_descs+subject.subject.description
 
-			else:
-				course_descs=course_descs+","+subject.subject.description
+	# 		else:
+	# 			course_descs=course_descs+","+subject.subject.description
 
-		student_enroll.append({'student_id':student.student.student_id,'first_name':student.student.first_name,
-								'last_name':student.student.last_name,'middle_name':student.student.middle_name,
-								'ext_name':student.student.ext_name,'gender':student.student.gender,'birth_date':student.student.birth_date,
-								'course':student.course,'year_level':student.year_level,'zip_code':student.student.zip_code,
-								'email_add':student.student.email_add,'mobile_no':student.student.mobile_no,
-								'total_units':total_units,'course_codes':course_codes,'course_descs':course_descs})
+	# 	student_enroll.append({'student_id':student.student.student_id,'first_name':student.student.first_name,
+	# 							'last_name':student.student.last_name,'middle_name':student.student.middle_name,
+	# 							'ext_name':student.student.ext_name,'gender':student.student.gender,'birth_date':student.student.birth_date,
+	# 							'course':student.course,'year_level':student.year_level,'zip_code':student.student.zip_code,
+	# 							'email_add':student.student.email_add,'mobile_no':student.student.mobile_no,
+	# 							'total_units':total_units,'course_codes':course_codes,'course_descs':course_descs})
 
-	context={'enroll_students':student_enroll,'course':course,'semister':semister,'ay':ay}
+	# context={'enroll_students':student_enroll,'course':course,'semister':semister,'ay':ay}
 
-	return render(request,'student_profile/byCourse.html',context)
+	return render(request,'student_profile/byCourse.html',{})
 
 
 
@@ -902,6 +1072,9 @@ def enrollSelection(request):
 
 
 	
+def viewGrades(request,pk):
+	enroll= get_object_or_404(EnrollbyStudent, pk = pk)
+	return render(request,'student_profile/view_grades.html',{'enroll':enroll})
 
 
 
@@ -1102,7 +1275,7 @@ def enrollDetails(request,pk):
 
     context={'enroll':enroll,'form':form,'form2':form2,'subjects':subjects}
     print(subjects)
-    return render(request,'student_profile/enrollDetailss.html',context)
+    return render(request,'student_profile/enrolldetailss.html',context)
 
 
 def enrollDetailsAdmin(request,pk):
@@ -1117,7 +1290,7 @@ def enrollDetailsAdmin(request,pk):
 
     context={'enroll':enroll,'form':form,'subjects':subjects,'total_units':total_units}
     print(subjects)
-    return render(request,'student_profile/enroll_detailsAdmin.html',context)
+    return render(request,'student_profile/enrollDetailsAdmins.html',context)
 
 
 def checkMyEnrollment(request):
@@ -1145,7 +1318,19 @@ def registerConfirm(request):
 
 
 def displayAllStudent(request):
-
-	
-
 	return render(request,'student_profile/allStudent.html',{})
+
+def schedules(request):
+		return render(request,'student_profile/schedules.html',{})
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'student_profile/password_reset.html'
+    email_template_name = 'student_profile/password_reset_email.html'
+    subject_template_name = 'users/password_reset_subject'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('home')
+

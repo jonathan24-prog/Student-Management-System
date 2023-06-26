@@ -24,7 +24,7 @@
   </form>
   <div class="card">
     <div class="card-header info-color">
-      <el-button @click="dialog = true" size="small"type="primary">Add Subject</el-button>
+      <el-button @click="add" size="small"type="primary">Add Subject</el-button>
     </div>
     <div class="card-body">
 
@@ -32,7 +32,7 @@
        <div class="table-responsive">
         
         <v-client-table :columns="columns" :data="subjects">
-          <a :href="props.row.uri"  slot="action" slot-scope="props" > <el-button type="success" size="small"  circle icon="el-icon-edit"></el-button></a>
+          <a   slot="action" slot-scope="props" > <el-button type="success" @click="update(props.row)" size="small"  circle icon="el-icon-edit"></el-button></a>
       </v-client-table>
       </div>
 
@@ -102,7 +102,9 @@ new Vue({
             fullPage: false,
             subjects:[],
             dialog:false,
+
             form:{
+             
               code:'',
               description:'',
               unit:''
@@ -111,18 +113,54 @@ new Vue({
         }
     },
     methods: {
+
+      add() {
+         this.form={
+             
+              code:'',
+              description:'',
+              unit:''
+            };
+        this.dialog = true
+       
+      },
+      update(subject) {
+        this.form = subject
+        this.dialog = true
+      },
       save(){
+        if(this.form.id ==''){
         inst.post('subjects/',this.form).then(res=>{
           console.log(res.data)
+          this.dialog = false
           //if(res.data.failed == true)
-          //this.subjects.push(res.data)
+          this.subjects.push(res.data)
         }).catch(err=>{
                this.$notify.error({
           title: 'Error',
           message: 'Data Already Exists'
         });
         })
-      }
+      } else {
+               inst.put('subjects/'+this.form.id+'/',this.form).then(res=>{
+          console.log(res.data)
+          //if(res.data.failed == true)
+          //this.subjects.push(res.data)
+          this.dialog = false
+          inst.get('subjects').then(res=>{
+          this.subjects=res.data
+        })
+        
+
+        }).catch(err=>{
+               this.$notify.error({
+          title: 'Error',
+          message: 'Error'
+        });
+        })
+      } 
+        }
+
     },
     created() {
  

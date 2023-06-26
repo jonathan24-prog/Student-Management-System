@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from .models import IDandFullname, EnrollbyStudent,Student,Subject,Course,Major,Year_level,Academic_year,SubjectsLoaded,Instructor,Curriculum
+from .models import DaySched, TimeSched, Room,InstructorLoadSubject, AOSF, IDandFullname, EnrollbyStudent,Student,Subject,Course,Major,Year_level,Academic_year,SubjectsLoaded,Instructor,Curriculum, ActiveSem
 
 class DuplicateData(APIException):
     status_code = 406 
@@ -61,7 +61,7 @@ class SubjectsLoadedSerializer(serializers.ModelSerializer):
 	id = serializers.IntegerField(required=False)
 	class Meta:
 		model = SubjectsLoaded
-		fields = ["id","grade_status","grade","status","enrolled_by_student","subject","instructor"]
+		fields = ["id","grade_status","grade","midterm_grade","status","enrolled_by_student","subject","instructor"]
 
 class CurriculumSerializer(serializers.ModelSerializer):
 	# subjects=SubjectSerializer(many=True)
@@ -121,14 +121,56 @@ class EnrollStudSerlizer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-	
+	birth_date=serializers.DateTimeField(format="%m-%d-%Y", input_formats=['%m-%d-%Y', 'iso-8601'])
 	class Meta:
 		model = Student
 		fields = '__all__'
 
+class AOSFSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = AOSF
+		fields = '__all__'
+
+class RoomSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = Room
+		fields = '__all__'
 
 
 
+class DaySchedSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = DaySched
+		fields = '__all__'
+
+class TimeSchedSerializer(serializers.ModelSerializer):
+	days=DaySchedSerializer()
+	class Meta:
+		model = TimeSched
+		fields = '__all__'
+
+class InstructorLoadSubjectSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = InstructorLoadSubject
+		fields = '__all__'
+
+class InstructorLoadSubjectWithObjectSerializer(serializers.ModelSerializer):
+	course=CourseSerializer()
+	major=MajorSerializer()
+	academic_year=Academic_yearSerializer()
+	year_level=Year_levelSerializer()
+	room = RoomSerializer()
+	time = TimeSchedSerializer()
+	schedule_days = DaySchedSerializer()
+	instructor = InstructorSerializer()
+	subject = SubjectSerializer()
+	class Meta:
+		model = InstructorLoadSubject
+		fields = '__all__'
 
 class StudentEnrollSerializer(serializers.ModelSerializer):
 	student=StudentSerializer()
@@ -136,10 +178,34 @@ class StudentEnrollSerializer(serializers.ModelSerializer):
 	major=MajorSerializer()
 	academic_year=Academic_yearSerializer()
 	year_level=Year_levelSerializer()
+
+
+	
 	
 	class Meta:
 		model = EnrollbyStudent
 		fields=['id','student','course','major','academic_year','year_level','semister','status']
+
+
+
+class StudentsEnrollSerializer(serializers.ModelSerializer):
+	student=StudentSerializer()
+	course=CourseSerializer()
+	major=MajorSerializer()
+	academic_year=Academic_yearSerializer()
+	year_level=Year_levelSerializer()
+	enroll_subjects=SubjectsLoadedSerializer(many=True)
+	enroll_count = serializers.SerializerMethodField()
+
+	def get_enroll_count(self, obj):
+
+		enroll_by_students = EnrollbyStudent.objects.filter(student=obj.student, status= 'approved')
+		return len(enroll_by_students)
+	
+	
+	class Meta:
+		model = EnrollbyStudent
+		fields=['id','student','course','major','academic_year','year_level','semister','status','enroll_subjects','enroll_count']
 
 
 class SubjectEnrollSerializer(serializers.ModelSerializer):
@@ -148,7 +214,14 @@ class SubjectEnrollSerializer(serializers.ModelSerializer):
 	instructor=InstructorSerializer()
 	class Meta:
 		model=SubjectsLoaded
-		fields = ['id','enrolled_by_student','grade','subject','instructor','grade_status','status',]
+		fields = ['id','enrolled_by_student','grade','midterm_grade','subject','instructor','grade_status','status',]
+
+class ActiveSemSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = ActiveSem
+		fields = '__all__'
+
 
 
 

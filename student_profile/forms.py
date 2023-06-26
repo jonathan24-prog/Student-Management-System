@@ -1,4 +1,4 @@
-from .models import Student,EnrollbyStudent,IDandFullname, SubjectsLoaded,Curriculum,Subject,UploadExcel,IDandFullname
+from .models import Student,EnrollbyStudent,IDandFullname, SubjectsLoaded,Curriculum,Subject,UploadExcel,IDandFullname,ActiveSem
 from django import forms
 from django.db.models import Q
 
@@ -117,7 +117,7 @@ class StudentForm(forms.ModelForm):
             'relationship','guardian_address','guardian_contact','occupation',
             'religion','primary','elementary','highschool','degree_completed',
             'degree_year_attended','name_of_school','primary_completed','elementary_completed',
-            'highschool_completed','civil_status','nationality','email_add','ext_name','lrn_num')
+            'highschool_completed','civil_status','nationality','email_add','ext_name','lrn_num', 'senior_highschool','senior_highschool_completed')
 
         widgets={
                 'student_id':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'student id'}),
@@ -127,7 +127,7 @@ class StudentForm(forms.ModelForm):
                 'last_name':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'last name'}),
                 'ext_name':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'ext. name e.g JR/SR'}),
                 'address':forms.TextInput(attrs={'class':'form-control form-control-sm validate' ,'placeholder':'street address, barangay'}),
-                'city':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'city/municipality'}),
+                'city':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'municipality'}),
                 'province':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'province'}),
                 'zip_code':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'zip code'}),
                 'place_of_birth':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'birth place'}),
@@ -154,6 +154,9 @@ class StudentForm(forms.ModelForm):
                 'email_add':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'email address'}),
                 'guardian_contact':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'mobile number'}),
                 'lrn_num':forms.TextInput(attrs={'class':'form-control form-control-sm validate','placeholder':'lrn number'}),
+                'senior_highschool':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'senior highschool'}),
+                'senior_highschool_completed':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'year completed'}),
+               
 
 
 
@@ -203,7 +206,8 @@ class StudentForm(forms.ModelForm):
 class StudentFormUpdate(forms.ModelForm):
     first_name=forms.CharField()
     first_name.widget.attrs.update({'class':'form-control','placeholder':'first name'})
-  
+    is_conditional = forms.BooleanField(required=False)
+    # is_conditional.widget.attrs.update({'class':'form-control form-control validate'})
     class Meta:
         model=Student
         fields=('student_id','first_name','middle_name','birth_date',
@@ -212,7 +216,7 @@ class StudentFormUpdate(forms.ModelForm):
             'relationship','guardian_address','guardian_contact','occupation',
             'religion','primary','elementary','highschool','degree_completed',
             'degree_year_attended','name_of_school','primary_completed','elementary_completed',
-            'highschool_completed','civil_status','nationality','email_add','ext_name','lrn_num')
+            'highschool_completed','civil_status','nationality','email_add','ext_name','lrn_num','is_conditional','senior_highschool','senior_highschool_completed')
 
         widgets={
                 'student_id':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'student id'}),
@@ -237,7 +241,7 @@ class StudentFormUpdate(forms.ModelForm):
                 'religion':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'religion'}),
                 'primary':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'primary'}),
                 'elementary':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'elementary'}),
-                'highschool':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'highschool'}),
+                'highschool':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'junior highschool'}),
                 'degree_completed':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'degree completed'}),
                 'degree_year_attended':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'year attended'}),
                 'name_of_school':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'name of school'}),
@@ -249,6 +253,9 @@ class StudentFormUpdate(forms.ModelForm):
                 'email_add':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'email address'}),
                 'guardian_contact':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'mobile number'}),
                 'lrn_num':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'lrn number'}),
+                'is_conditional' : forms.BooleanField(initial=False,required=False),
+                'senior_highschool':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'senior highschool'}),
+                'senior_highschool_completed':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'year completed'}),
 
 
 
@@ -294,3 +301,13 @@ class StudentFormUpdate(forms.ModelForm):
 
 
         #CHOICES = Province.objects.values_list('id', 'name')
+class ActiveSemAdminForm(forms.ModelForm):
+    class Meta:
+        model=ActiveSem
+        fields=('semister',)
+        widgets = {
+             'semister':forms.Select(attrs={'class':'form-control form-control validate'}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(ActiveSemAdminForm, self).__init__(*args, **kwargs)
+        self.fields['semister'].widget.choices = [('','Select Active Semister'),('1st','1st'),('2nd','2nd'),('Summer','Summer')]
