@@ -22,16 +22,27 @@
     <el-row :gutter="5">
 
 
-      <el-col :md="5">
-        <el-select size="small" style="width: 100%;" v-model="ay" placeholder="academic year">
+      <el-col :md="8">
+        <el-select size="small" @change="onChangeAcademicYear" style="width: 100%;" v-model="ay"
+          placeholder="academic year">
+          <el-option value="">academic year</el-option>
           <el-option v-for="(item, index) in ays" :value="item.id" :label="item.ay" :key="index"></el-option>
+        </el-select>
+
+      </el-col>
+      <el-col :md="8">
+        <el-select @change="onChangeStudentNameFilter" v-model="studentNameFilter" filterable remote reserve-keyword
+          placeholder="Enter Name or student ID" :remote-method="searchStudent" :loading="loadingSearch" size="small"
+          style="width: 100%;">
+          <el-option v-for="item in students" :key="item.id" :label="getFullname(item)" :value="item.id">
+          </el-option>
         </el-select>
       </el-col>
 
 
-      <el-col :md="2">
-        <el-button :loading="isLoading" @click="searchToApi()" :disabled="ay==''" size="small" style="width: 100%;"
-          type="danger">Search</el-button>
+      <el-col :md="4">
+        <el-button :loading="isLoading" @click="searchToApi()" :disabled="ay=='' && studentNameFilter == ''"
+          size="small" style="width: 100%;" type="danger">Search</el-button>
       </el-col>
 
     </el-row>
@@ -196,7 +207,7 @@
 
 <script>
   Vue.use(VueTables.ClientTable);
-
+  ELEMENT.locale(ELEMENT.lang.en)
   const inst = axios.create({
     baseURL: '/bccapi',
     timeout: 10000,
@@ -214,8 +225,10 @@
           "action"
         ],
         datas: [],
+        studentNameFilter: '',
         datastoFilter: [],
         isLoading: false,
+        loadingSearch: false,
         fullPage: false,
         ays: [],
         majors: [],
@@ -227,10 +240,20 @@
         status: '',
         ay: '',
         major: '',
-        sem: ''
+        sem: '',
+        students: []
       }
     },
     methods: {
+      onChangeAcademicYear() {
+        this.studentNameFilter = ''
+      },
+      onChangeStudentNameFilter() {
+        this.ay = ''
+      },
+      getFullname(item) {
+        return `${item.student_id}-${item.last_name}, ${item.first_name} ${item.middle_name}`
+      },
       exportjson() {
         let jsondata = this.datas
 
@@ -249,6 +272,14 @@
         this.major = ''
         this.sem = ''
         this.datas = this.datastoFilter
+      },
+      async searchStudent(query) {
+        if (query !== '') {
+          let res = await axios.get(
+            `/Api/StudentList?search=${query}`
+          );
+          this.students = res.data
+        }
       },
       search() {
         // if (this.major != '') {
@@ -287,13 +318,22 @@
       },
       async searchToApi() {
         this.isLoading = true
+        let res = null;
 
-        let res = await axios.get(
-          `/Api/enrollStudent/all/${this.ay}`
-        );
+
+        if (this.studentNameFilter !== '') {
+          res = await axios.get(
+            `/Api/enrollStudent/student/${this.studentNameFilter}`
+          );
+
+        } else {
+          if (this.ay === '') return;
+          res = await axios.get(
+            `/Api/enrollStudent/all/${this.ay}`
+          );
+        }
 
         this.isLoading = false
-        console.log(res.data)
         this.datas = []
         res.data.forEach(el => {
           let ext_name = el.student.ext_name != null ? el.student.ext_name : ""
@@ -315,7 +355,7 @@
               semister: el.semister,
               ac_year: el.academic_year.ay,
               status: el.status,
-              uri: `/Admin/student/${el.id}/enroll`,
+              uri: `/Admin-bcc/student/${el.id}/enroll`,
               gradeUrl: `/students/viewGrades/${el.id}/`,
               is_conditional: isConditionalStudent,
               conditional: isConditionalStudent ? 'conditional' : 'none'
@@ -333,7 +373,7 @@
               semister: el.semister,
               ac_year: el.academic_year.ay,
               status: el.status,
-              uri: `/Admin/student/${el.id}/enroll`,
+              uri: `/Admin-bcc/student/${el.id}/enroll`,
               gradeUrl: `/students/viewGrades/${el.id}/`,
               is_conditional: isConditionalStudent,
               conditional: isConditionalStudent ? 'conditional' : 'none'
@@ -373,7 +413,7 @@
                 semister: el.semister,
                 ac_year: el.academic_year.ay,
                 status: el.status,
-                uri: `/Admin/student/${el.id}/enroll`,
+                uri: `/Admin-bcc/student/${el.id}/enroll`,
                 gradeUrl: `/students/viewGrades/${el.id}/`,
                 is_conditional: isConditionalStudent,
                 conditional: isConditionalStudent ? 'conditional' : 'none'
@@ -391,7 +431,7 @@
                 semister: el.semister,
                 ac_year: el.academic_year.ay,
                 status: el.status,
-                uri: `/Admin/student/${el.id}/enroll`,
+                uri: `/Admin-bcc/student/${el.id}/enroll`,
                 gradeUrl: `/students/viewGrades/${el.id}/`,
                 is_conditional: isConditionalStudent,
                 conditional: isConditionalStudent ? 'conditional' : 'none'
@@ -408,7 +448,6 @@
     },
 
     created() {
-      console.log("nka abot")
 
       inst.get('yearlevels').then(res => {
         this.yearlevels = res.data

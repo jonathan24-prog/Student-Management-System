@@ -1,11 +1,11 @@
 {% extends 'student_profile/basemenu.html' %}
 
 
-      {% block content %}
+{% block content %}
 
-     
 
-   
+
+
 <!-- <div class="row">
   
    <div class="col-md-6 col-sm-12 offset-md-3">
@@ -69,78 +69,82 @@
 </div>
 </div> -->
 
-<div style="padding:10px;"id="app">
+<div style="padding:10px;" id="app">
 
-  <el-card >
+  <el-card>
     <h4>Enrolled Student by Course</h4>
     <hr>
     <h6>Search Parameters</h6>
     <el-row :gutter="5">
       <el-col :md="5">
-          <el-select size="small" style="width: 100%;" v-model="course" placeholder="course">
-              <el-option v-for="(item, index) in courses":value="item.id" :label="item.code" :key="index"></el-option>
-            </el-select>
+        <el-select size="small" style="width: 100%;" v-model="course" placeholder="course">
+          <el-option v-for="(item, index) in courses" :value="item.id" :label="item.code" :key="index"></el-option>
+        </el-select>
       </el-col>
-               <el-col :md="5">
-                    <el-select style="width: 100%;" size="small" v-model="major_pk" placeholder="select major">
-                        <el-option value="">select major</el-option>
-                        <el-option v-for="(item, index) in majors" :key="index" :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-col>
-
       <el-col :md="5">
-          <el-select size="small" style="width: 100%;" v-model="ay" placeholder="academic year">
-              <el-option v-for="(item, index) in ays":value="item.id" :label="item.ay" :key="index"></el-option>
-            </el-select>
+        <el-select style="width: 100%;" size="small" v-model="major_pk" placeholder="select major">
+          <el-option value="">select major</el-option>
+          <el-option v-for="(item, index) in majors" :key="index" :label="item.name" :value="item.id">
+          </el-option>
+        </el-select>
       </el-col>
 
       <el-col :md="5">
-          <el-select size="small" style="width: 100%;" v-model="sem" placeholder="semister">
-              <el-option v-for="(item, index) in semisters":value="item" :label="item" :key="index"></el-option>
-            </el-select>
+        <el-select size="small" style="width: 100%;" v-model="ay" placeholder="academic year">
+          <el-option v-for="(item, index) in ays" :value="item.id" :label="item.ay" :key="index"></el-option>
+        </el-select>
+      </el-col>
+
+      <el-col :md="5">
+        <el-select size="small" style="width: 100%;" v-model="sem" placeholder="semister">
+          <el-option v-for="(item, index) in semisters" :value="item" :label="item" :key="index"></el-option>
+        </el-select>
       </el-col>
       <el-col :md="2">
-          <el-button :loading="isLoading" @click="search(true)" :disabled="subjects.length ==0 || sem== '' || course== '' || ay==''" size="small" style="width: 100%;" type="danger">With grades</el-button>
-        
-    
+        <el-button :loading="isLoading" @click="search(true)"
+          :disabled="subjects.length ==0 || sem== '' || course== '' || ay==''" size="small" style="width: 100%;"
+          type="danger">With grades</el-button>
+
+
       </el-col>
       <el-col :md="2">
-            <el-button :loading="isLoading" @click="search(false)" :disabled="subjects.length ==0 || sem== '' || course== '' || ay==''" size="small" style="width: 100%;" type="danger">Without grades</el-button>
-   </el-col>
-    
+        <el-button :loading="isLoading" @click="search(false)"
+          :disabled="subjects.length ==0 || sem== '' || course== '' || ay==''" size="small" style="width: 100%;"
+          type="danger">Without grades</el-button>
+      </el-col>
+
     </el-row>
-<hr>
-  
-  <v-client-table filterable="true" :columns="columns" :data="datas">
+    <hr>
 
-  </v-client-table>
-  <el-button type="primary" size="small" @click='exportexcel'>export to excel</el-button>
+    <v-client-table filterable="true" :columns="columns" :data="datas">
+
+    </v-client-table>
+    <el-button type="primary" size="small" @click='exportexcel'>export to excel</el-button>
 
 
-</el-card>
+  </el-card>
 </div>
 
- {%endblock%}
- <style>
-      
-  .semipolar-spinner, .semipolar-spinner * {
+{%endblock%}
+<style>
+  .semipolar-spinner,
+  .semipolar-spinner * {
     box-sizing: border-box;
   }
 
   .semipolar-spinner {
 
 
-position: fixed;
-z-index: 999;
-height: 5em;
-width: 5em;
-overflow: visible;
-margin: auto;
-top: 0;
-left: 0;
-bottom: 0;
-right: 0;
+    position: fixed;
+    z-index: 999;
+    height: 5em;
+    width: 5em;
+    overflow: visible;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
 
   .semipolar-spinner .ring {
@@ -202,34 +206,34 @@ right: 0;
       transform: rotate(360deg) scale(0.7);
     }
   }
- </style>
+</style>
 
- {%block script%}
- <script>
+{%block script%}
+<script>
   Vue.use(VueTables.ClientTable);
   ELEMENT.locale(ELEMENT.lang.en)
 
-  const axios_instance=axios.create({
-   baseURL: '/bccapi',
-   timeout: 600000,
-   headers: {
-     'Content-Type': 'application/json',
-     'X-CSRFToken': Cookies.get('csrftoken')
-   }
- })
-     new Vue({
-       el: '#app',
+  const axios_instance = axios.create({
+    baseURL: '/bccapi',
+    timeout: 600000,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken')
+    }
+  })
+  new Vue({
+    el: '#app',
 
-         data() {
+    data() {
       return {
         datas: [],
         course: "",
         sem: "",
-        major_pk:"",
+        major_pk: "",
         isLoading: false,
         ay: "",
         aosf: null,
-     approveEnrolledCount:0,
+        approveEnrolledCount: 0,
         columns: [
           "student_id",
           "fullname",
@@ -243,7 +247,7 @@ right: 0;
         ays: [],
         semisters: ["1st", "2nd", "summer"],
         datatoExport: [],
-        majors:[],
+        majors: [],
         subjects: [],
       };
     },
@@ -283,12 +287,12 @@ right: 0;
         /* generate file and force a download*/
         var wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "ws");
-      XLSX.writeFile(wb, "report.xlsx");
+        XLSX.writeFile(wb, "report.xlsx");
       },
-           async getStudentCount(id) {
-            let studentCountresponse = await axios_instance.get(`enrollCount/${id}/`)
-            this.approveEnrolledCount = studentCountresponse.data.enroll_count
-            },
+      async getStudentCount(id) {
+        let studentCountresponse = await axios_instance.get(`enrollCount/${id}/`)
+        this.approveEnrolledCount = studentCountresponse.data.enroll_count
+      },
       async search(isGradeInclude) {
         try {
           this.isLoading = true;
@@ -298,7 +302,7 @@ right: 0;
           );
           this.datas = [];
           this.datatoExport = [];
- 
+
           res.data.forEach(async (el) => {
 
             let ext_name =
@@ -317,7 +321,7 @@ right: 0;
                 semister: el.semister,
                 ac_year: el.academic_year.ay,
                 status: el.status,
-                uri: `/Admin/student/${el.id}/enroll`,
+                uri: `/Admin-bcc/student/${el.id}/enroll`,
               });
             } else {
               this.datas.push({
@@ -330,10 +334,10 @@ right: 0;
                 semister: el.semister,
                 ac_year: el.academic_year.ay,
                 status: el.status,
-                uri: `/Admin/student/${el.id}/enroll`,
+                uri: `/Admin-bcc/student/${el.id}/enroll`,
               });
             }
-      
+
             let total_units = 0;
             let subject_codes = "";
             let subject_descriptions = "";
@@ -360,28 +364,28 @@ right: 0;
             });
             let lrn = el.student.lrn_num != null ? el.student.lrn_num : "";
             let major = el.major != null ? el.major.description : "";
-       
-         // let studentCountresponse = await axios_instance.get(`enrollCount/${el.student.id}/`)
 
-  
-                this.approveEnrolledCount = el.enroll_count
-              
-                let insurance =
+            // let studentCountresponse = await axios_instance.get(`enrollCount/${el.student.id}/`)
+
+
+            this.approveEnrolledCount = el.enroll_count
+
+            let insurance =
               el.semister == "1st" ? this.aosf[0].insurance : "0.00";
-                 let student_id_fee = this.approveEnrolledCount != '1' ? '0.00' : this.aosf[0].school_id_fees 
-                 let intrance_fee = this.approveEnrolledCount != '1' ?  '0.00' : this.aosf[0].entrance_exam 
-                 let student_hand_book =  this.approveEnrolledCount != '1' ? '0.00' : this.aosf[0].handbook_fees
+            let student_id_fee = this.approveEnrolledCount != '1' ? '0.00' : this.aosf[0].school_id_fees
+            let intrance_fee = this.approveEnrolledCount != '1' ? '0.00' : this.aosf[0].entrance_exam
+            let student_hand_book = this.approveEnrolledCount != '1' ? '0.00' : this.aosf[0].handbook_fees
 
 
-              let graduationFee = el.year_level.code == '4th' && el.semister  == '2nd' ? this.aosf[0].graduation_fee : '0.00'
+            let graduationFee = el.year_level.code == '4th' && el.semister == '2nd' ? this.aosf[0].graduation_fee : '0.00'
             this.datatoExport.push({
-             student_id: el.student.student_id,
+              student_id: el.student.student_id,
               lastname: el.student.last_name,
               firstname: el.student.first_name,
               middlename: el.student.middle_name,
               extension: el.student.ext_name,
               gender: el.student.gender,
-              address: `${el.student.address!=null?el.student.address: `${el.student.street} ${el.student.brgy}`}, ${el.student.city}, ${el.student.province}`,
+              address: `${el.student.address != null ? el.student.address : `${el.student.street} ${el.student.brgy}`}, ${el.student.city}, ${el.student.province}`,
               birthdate: new Date(el.student.birth_date).toDateString(),
               course: `${el.course.code} ${major}`,
               year_level: el.year_level.description,
@@ -408,28 +412,28 @@ right: 0;
               registration_free: this.aosf[0].registration_fees,
               insurance_fee: insurance,
               cultural_fee: this.aosf[0].cultural_fees,
-              graduation_fee:graduationFee,
+              graduation_fee: graduationFee,
             });
-              if(isGradeInclude) {
+            if (isGradeInclude) {
               el.enroll_subjects.forEach((e, index) => {
-              if (e.status == "enrolled") {
-                   let subject = this.subjects.find((sub) => sub.id === e.subject);
-                   this.datatoExport.push({
-                     subject:subject.code,
-                     desc:subject.description,
-                     unit:subject.unit,
-                     midterm: e.midterm_grade != null ? e.midterm_grade : '',
-                     grade:e.grade != null ? e.grade : (e.grade_status != null? e.grade_status : '')
-                   })
-              }
-            });
-              }
+                if (e.status == "enrolled") {
+                  let subject = this.subjects.find((sub) => sub.id === e.subject);
+                  this.datatoExport.push({
+                    subject: subject.code,
+                    desc: subject.description,
+                    unit: subject.unit,
+                    midterm: e.midterm_grade != null ? e.midterm_grade : '',
+                    grade: e.grade != null ? e.grade : (e.grade_status != null ? e.grade_status : '')
+                  })
+                }
+              });
+            }
 
 
-      
-     this.isLoading = false;
+
+            this.isLoading = false;
           });
-      
+
         } catch (err) {
           console.log(err);
         }
@@ -440,9 +444,9 @@ right: 0;
       let resCourse = await axios_instance.get("courses");
       this.courses = resCourse.data;
 
-           axios_instance.get('majors').then(res => {
-                this.majors = res.data
-            })
+      axios_instance.get('majors').then(res => {
+        this.majors = res.data
+      })
 
       let resAy = await axios_instance.get("ays");
       this.ays = resAy.data;
@@ -454,113 +458,113 @@ right: 0;
         this.aosf = res.data;
       });
     },
- 
-     //     data(){
-     //         return {
 
-     //          datas:[],
-     //          course:'',
-     //          sem:'',
-     //          isLoading:false,
-     //          ay:'',
-     //          columns:["student_id","fullname","course","major","semister","year_level","ac_year"],
-     //          courses:[],
-     //          ays:[],
-     //          semisters:['1st','2nd','summer'],
-     //          datatoExport:[],
-              
-     //          subjects:[]
-              
-     //         }
-     //        },
-     //        methods:{
+    //     data(){
+    //         return {
 
-     //          exportexcel(){
-                   
-     //        let jsondata=this.datatoExport
-            
-     //        var ws = XLSX.utils.json_to_sheet(jsondata, {header:['student_id','lastname',
-     //          'firstname','middlename',
-     //          'extension','gender','address',
-     //          'birthdate','course','year_level',
-     //          'zip_code','email','lrn','mobile','units',
-     //          'codes','descriptions'], skipHeader:true});
-     //  /* generate file and force a download*/
-     //  var wb = XLSX.utils.book_new();
-     //  XLSX.utils.book_append_sheet(wb, ws, "ws");
-    	// XLSX.writeFile(wb, "report.xlsx");
-     //          },
-     //          async search(){
-     //            try{
-     //            this.isLoading=true
-     //              let res=await axios.get(`/Api/enrollStudent/${this.ay}/${this.course}/${this.sem}/`)
-     //              this.datas=[]
-     //              this.datatoExport=[]
-     //              this.isLoading=false
-     //              res.data.forEach(el=>{
-     //                let ext_name=el.student.ext_name != null ? el.student.ext_name : ""
-     //                let middle_name=el.student.middle_name != null ?el.student.middle_name :""
-                   
-                   
-     //                 if(el.major != null){
-     //                  this.datas.push({id:el.id,year_level:el.year_level.description,student_id:el.student.student_id,fullname:`${el.student.last_name}, ${el.student.first_name} ${middle_name} ${ext_name}`,
-     //                 course:el.course.code,major:el.major.name,semister:el.semister,ac_year:el.academic_year.ay,status:el.status,uri:`/Admin/student/${el.id}/enroll`})
-    
-     //                 }else{
-     //                  this.datas.push({id:el.id,year_level:el.year_level.description,student_id:el.student.student_id,fullname:`${el.student.last_name}, ${el.student.first_name} ${middle_name} ${ext_name}`,
-     //                 course:el.course.code,major:null,semister:el.semister,ac_year:el.academic_year.ay,status:el.status,uri:`/Admin/student/${el.id}/enroll`})
-  
-     //                 }
-     //              let total_units=0
-     //              let subject_codes=''
-     //              let subject_descriptions=''
-     //              el.enroll_subjects.forEach((e,index)=>{
-     //                if(e.status == 'enrolled'){
-     //                console.log(e)
-     //                let subject=this.subjects.find(sub=>sub.id === e.subject)
-     //                total_units=total_units+subject.unit
-     //                if(index+1 != el.enroll_subjects.length){
-     //                    subject_descriptions=subject_descriptions+`${subject.description}, `
-     //                    subject_codes=subject_codes+`${subject.code}, `
-     //                }else{
-     //                  subject_descriptions=subject_descriptions+`${subject.description}`
-     //                  subject_codes=subject_codes+`${subject.code}`
-     //                }
+    //          datas:[],
+    //          course:'',
+    //          sem:'',
+    //          isLoading:false,
+    //          ay:'',
+    //          columns:["student_id","fullname","course","major","semister","year_level","ac_year"],
+    //          courses:[],
+    //          ays:[],
+    //          semisters:['1st','2nd','summer'],
+    //          datatoExport:[],
 
-     //              }
-     //              })
-     //              let lrn=el.student.lrn_num !=null?el.student.lrn_num:''
-     //              let major=el.major != null?el.major.description:''
-     //              this.datatoExport.push({student_id:el.student.student_id,lastname:el.student.last_name,
-     //                                firstname:el.student.first_name,middlename:el.student.middle_name,
-     //                                extension:el.student.ext_name,gender:el.student.gender,address:`${el.student.address}, ${el.student.city}, ${el.student.province}`,
-     //                                birthdate:new Date(el.student.birth_date).toDateString(),course:`${el.course.code} ${major}`,year_level:el.year_level.description,
-     //                                zip_code:el.student.zip_code,email:el.student.email_add,lrn:lrn,mobile:el.student.mobile_no,units:total_units,
-     //                                codes:subject_codes,descriptions:subject_descriptions                       
-     //              })
+    //          subjects:[]
 
-     //                               })
+    //         }
+    //        },
+    //        methods:{
 
-     //            } catch(err){
-     //              console.log(err)
-     //            }
-   
+    //          exportexcel(){
 
-     //          }
-     //        },
-     //        async created() {
-     //          //let res=await axios.get('')
-     //          let resCourse=await axios_instance.get('courses')
-     //          this.courses=resCourse.data
+    //        let jsondata=this.datatoExport
 
-     //          let resAy=await axios_instance.get('ays')
-     //          this.ays=resAy.data
-     //          let ressub=await axios_instance.get('subjects')
-     //          this.subjects=ressub.data
-     //        },
-          })
+    //        var ws = XLSX.utils.json_to_sheet(jsondata, {header:['student_id','lastname',
+    //          'firstname','middlename',
+    //          'extension','gender','address',
+    //          'birthdate','course','year_level',
+    //          'zip_code','email','lrn','mobile','units',
+    //          'codes','descriptions'], skipHeader:true});
+    //  /* generate file and force a download*/
+    //  var wb = XLSX.utils.book_new();
+    //  XLSX.utils.book_append_sheet(wb, ws, "ws");
+    // XLSX.writeFile(wb, "report.xlsx");
+    //          },
+    //          async search(){
+    //            try{
+    //            this.isLoading=true
+    //              let res=await axios.get(`/Api/enrollStudent/${this.ay}/${this.course}/${this.sem}/`)
+    //              this.datas=[]
+    //              this.datatoExport=[]
+    //              this.isLoading=false
+    //              res.data.forEach(el=>{
+    //                let ext_name=el.student.ext_name != null ? el.student.ext_name : ""
+    //                let middle_name=el.student.middle_name != null ?el.student.middle_name :""
 
 
- </script>
+    //                 if(el.major != null){
+    //                  this.datas.push({id:el.id,year_level:el.year_level.description,student_id:el.student.student_id,fullname:`${el.student.last_name}, ${el.student.first_name} ${middle_name} ${ext_name}`,
+    //                 course:el.course.code,major:el.major.name,semister:el.semister,ac_year:el.academic_year.ay,status:el.status,uri:`/Admin/student/${el.id}/enroll`})
 
- {%endblock%}
+    //                 }else{
+    //                  this.datas.push({id:el.id,year_level:el.year_level.description,student_id:el.student.student_id,fullname:`${el.student.last_name}, ${el.student.first_name} ${middle_name} ${ext_name}`,
+    //                 course:el.course.code,major:null,semister:el.semister,ac_year:el.academic_year.ay,status:el.status,uri:`/Admin/student/${el.id}/enroll`})
+
+    //                 }
+    //              let total_units=0
+    //              let subject_codes=''
+    //              let subject_descriptions=''
+    //              el.enroll_subjects.forEach((e,index)=>{
+    //                if(e.status == 'enrolled'){
+    //                console.log(e)
+    //                let subject=this.subjects.find(sub=>sub.id === e.subject)
+    //                total_units=total_units+subject.unit
+    //                if(index+1 != el.enroll_subjects.length){
+    //                    subject_descriptions=subject_descriptions+`${subject.description}, `
+    //                    subject_codes=subject_codes+`${subject.code}, `
+    //                }else{
+    //                  subject_descriptions=subject_descriptions+`${subject.description}`
+    //                  subject_codes=subject_codes+`${subject.code}`
+    //                }
+
+    //              }
+    //              })
+    //              let lrn=el.student.lrn_num !=null?el.student.lrn_num:''
+    //              let major=el.major != null?el.major.description:''
+    //              this.datatoExport.push({student_id:el.student.student_id,lastname:el.student.last_name,
+    //                                firstname:el.student.first_name,middlename:el.student.middle_name,
+    //                                extension:el.student.ext_name,gender:el.student.gender,address:`${el.student.address}, ${el.student.city}, ${el.student.province}`,
+    //                                birthdate:new Date(el.student.birth_date).toDateString(),course:`${el.course.code} ${major}`,year_level:el.year_level.description,
+    //                                zip_code:el.student.zip_code,email:el.student.email_add,lrn:lrn,mobile:el.student.mobile_no,units:total_units,
+    //                                codes:subject_codes,descriptions:subject_descriptions                       
+    //              })
+
+    //                               })
+
+    //            } catch(err){
+    //              console.log(err)
+    //            }
+
+
+    //          }
+    //        },
+    //        async created() {
+    //          //let res=await axios.get('')
+    //          let resCourse=await axios_instance.get('courses')
+    //          this.courses=resCourse.data
+
+    //          let resAy=await axios_instance.get('ays')
+    //          this.ays=resAy.data
+    //          let ressub=await axios_instance.get('subjects')
+    //          this.subjects=ressub.data
+    //        },
+  })
+
+
+</script>
+
+{%endblock%}

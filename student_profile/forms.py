@@ -203,7 +203,7 @@ class StudentFormUpdate(forms.ModelForm):
     # is_conditional.widget.attrs.update({'class':'form-control form-control validate'})
     class Meta:
         model=Student
-        fields=('student_id','first_name','middle_name','birth_date',
+        fields=('student_id','first_name','middle_name','birth_date','date_accepted',
             'address','city','province','zip_code','last_name','gender',
             'address','course','major','place_of_birth','mobile_no','guardian',
             'relationship','guardian_address','guardian_contact','occupation',
@@ -224,6 +224,7 @@ class StudentFormUpdate(forms.ModelForm):
                 'zip_code':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'zip code'}),
                 'place_of_birth':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'birth place'}),
                 'birth_date':forms.DateInput(attrs={'type':'date','class':'form-control datepicker','placeholder':'select a date'}),
+                'date_accepted':forms.DateInput(attrs={'type':'date','class':'form-control datepicker','placeholder':'select a date'}),
                 'course': forms.Select(attrs={'class':'form-control form-control validate'}),
                 'major': forms.Select(attrs={'class':'form-control form-control validate'}),
                 'mobile_no':forms.TextInput(attrs={'class':'form-control form-control validate','placeholder':'mobile number'}),

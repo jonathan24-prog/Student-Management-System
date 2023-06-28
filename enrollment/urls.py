@@ -20,3 +20,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('student_profile.urls'))
 ]
+handler404 = 'student_profile.views.page_not_found'
