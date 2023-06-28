@@ -19,6 +19,7 @@ from django.utils import timezone
 from datetime import datetime
 from django.db.models import Q
 from rest_framework import viewsets
+from rest_framework import filters
 
 import os
 from os.path import expanduser
@@ -312,6 +313,13 @@ class StudentEnrollListByAcademicYear(generics.ListAPIView):
 		ay = get_object_or_404(Academic_year,pk=ayId)
 		return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(academic_year=ay)
 
+class StudentEnrollListByStudentId(generics.ListAPIView):
+	serializer_class = StudentEnrollSerializer
+	
+	def get_queryset(self):
+
+		student = get_object_or_404(Student,pk=self.kwargs['pk'])
+		return EnrollbyStudent.objects.select_related("student").select_related("year_level").select_related("academic_year").select_related("major").select_related("course").filter(student=student)
 
 
 class StudentEnrollList(generics.ListAPIView):
@@ -1091,6 +1099,8 @@ def Apiaddsubjectbycuriculum(request,*args,**kwargs):
 	if major == None:
 		subjects_by_curriculum= Curriculum.objects.filter(course=course,year_level=year,semister=sem)
 
+	
+
 
 
 		
@@ -1306,7 +1316,10 @@ def displayAllStudent(request):
 	return render(request,'student_profile/allStudent.html',{})
 
 def schedules(request):
-		return render(request,'student_profile/schedules.html',{})
+	return render(request,'student_profile/schedules.html',{})
+
+def page_not_found(request,  exception):
+	return render(request, "student_profile/404.html", {})
 
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
@@ -1318,4 +1331,12 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       " If you don't receive an email, " \
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('home')
+
+
+
+class StudentListView(generics.ListAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name', 'last_name', 'middle_name', 'student_id']
 

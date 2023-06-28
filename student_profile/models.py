@@ -114,6 +114,7 @@ class Student(models.Model):
 	email_add=models.CharField(max_length=200,null=True)
 	lrn_num=models.CharField(max_length=200,null=True)
 	is_conditional = models.BooleanField(default=False, null=True)
+	date_accepted=models.DateTimeField(null=True, blank=True)
 
 
 
