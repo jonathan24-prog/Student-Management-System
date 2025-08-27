@@ -1,0 +1,61 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}  
+
+{% block content %}
+<div class="container my-5">
+    <h3 class="text-center mb-4">Privacy Protection for Student Profiles</h3>
+    <p class="text-muted text-center">BCConnect provides options for students to manage and control the visibility of their personal information. Your privacy is a priority, and we are committed to ensuring that your profile data remains secure. Here’s how BCConnect protects your privacy:</p>
+
+    <h4 class="mt-4">1. Customizable Profile Settings</h4>
+    <ul>
+        <li>Students can control which personal details are visible, such as name, profile photo, contact information, or academic achievements.</li>
+        <li>Only the information you choose to share will be visible to others within the system.</li>
+    </ul>
+
+    <h4 class="mt-4">2. Restricted Access</h4>
+    <ul>
+        <li>Your profile information is accessible only to authorized users within BCC, including faculty, staff, and authorized parents or guardians.</li>
+        <li>External parties do not have access to student profiles unless explicitly authorized.</li>
+    </ul>
+
+    <h4 class="mt-4">3. Data Encryption</h4>
+    <ul>
+        <li>All information shared on your profile is securely encrypted to prevent unauthorized access.</li>
+        <li>BCConnect uses advanced encryption protocols to protect your data at all times.</li>
+    </ul>
+
+    <h4 class="mt-4">4. Consent-Based Sharing</h4>
+    <ul>
+        <li>Any sharing of information beyond your chosen settings on BCConnect requires your explicit consent.</li>
+        <li>You may update or restrict your information at any time through the profile settings in BCConnect.</li>
+    </ul>
+
+    <h4 class="mt-4">5. Regular Security Monitoring</h4>
+    <ul>
+        <li>BCConnect is continuously monitored to prevent unauthorized access and detect potential security threats.</li>
+        <li>In case of any suspicious activity, immediate steps will be taken to secure user data.</li>
+    </ul>
+
+    <p class="mt-4">With BCConnect, you maintain control over your profile’s privacy, allowing you to share information with confidence. BCC is committed to providing a secure environment that supports your educational experience.</p>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h3, h4 {
+        font-weight: bold;
+    }
+    ul {
+        margin-left: 20px;
+        line-height: 1.6;
+    }
+    p {
+        line-height: 1.8;
+    }
+</style>
+{% endblock %}

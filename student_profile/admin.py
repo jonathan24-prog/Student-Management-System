@@ -7,7 +7,10 @@ from .forms import ActiveSemAdminForm
 
 class ActiveSemAdmin(admin.ModelAdmin):
     form = ActiveSemAdminForm
-
+class IDandFullnameAdmin(admin.ModelAdmin):
+    fields = ('student_id' , 'first_name','last_name', 'course')
+    list_display = ('student_id' , 'first_name','last_name', 'course')
+    search_fields = ('student_id' , 'first_name','last_name', 'course')
 
 
 admin.site.register(Course)
@@ -24,9 +27,9 @@ admin.site.register(DaySched)
 admin.site.register(SubjectsLoaded)
 admin.site.register(UploadExcel)
 admin.site.register(Curriculum)
-admin.site.register(IDandFullname)
+admin.site.register(IDandFullname, IDandFullnameAdmin)
 admin.site.register(AOSF)
-admin.site.register(ActiveSem, ActiveSemAdmin)
+admin.site.register(ActiveSem)
 
 
 

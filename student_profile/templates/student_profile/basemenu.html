@@ -103,7 +103,8 @@
   <!-- =================================================== -->
   <div>
     <!-- #Left Sidebar ==================== -->
-    <div class="sidebar">
+    
+    <div class="sidebar" style="background-color: #e0edfa;">
       <div class="sidebar-inner">
         <!-- ### $Sidebar Header ### -->
         <div class="sidebar-logo">
@@ -113,11 +114,11 @@
                 <div class="peers ai-c fxw-nw">
                   <div class="peer">
                     <div class="logo">
-                      <img src="{%static 'student_profile/assetsadminator/images/logo.png'%}" alt="">
+                      <img src="{%static 'student_profile/assetsadminator/images/bcc.png'%}" alt="" style="width: 70%; margin: 9px 0px 0px 0px;">
                     </div>
                   </div>
                   <div class="peer peer-greed">
-                    <h5 class="lh-1 mB-0 logo-text">BCC</h5>
+                    <h5 class="lh-1 mB-0 logo-text" style="font-weight: 700; font-size: 0.8rem;">BUENAVISTA COMMUNITY COLLEGE</h5>
                   </div>
                 </div>
               </a>
@@ -144,6 +145,7 @@
           </li>
 
           {%if request.user.is_superuser%}
+          
           <li class="nav-item">
             <a class='sidebar-link' href="{%url 'allStudentEnroll'%}">
               <span class="icon-holder">
@@ -161,6 +163,7 @@
               <span class="title">Manage Subjects</span>
             </a>
           </li>
+          
           <li class="nav-item">
             <a class='sidebar-link' href="{%url 'addCuriculum'%}">
               <span class="icon-holder">
@@ -169,20 +172,21 @@
               <span class="title">Curriculums</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a class='sidebar-link' href="{%url 'allStudent'%}">
-              <span class="icon-holder">
-                <i class="c-light-blue-500 ti-user"></i>
-              </span>
-              <span class="title">Students</span>
-            </a>
-          </li>
+          
           <li class="nav-item dropdown">
             <a class="sidebar-link" href="{%url 'manage-grades'%}">
               <span class="icon-holder">
                 <i class="c-pink-500 ti-palette"></i>
               </span>
-              <span class="title">Manage grades</span>
+              <span class="title">Manage Grades</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="sidebar-link" href="{%url 'manage-gradesubmition'%}">
+              <span class="icon-holder">
+                <i class="c-deep-purple-500 ti-pencil"></i>
+              </span>
+              <span class="title">Manage Grade Submission</span>
             </a>
           </li>
           <li class="nav-item dropdown">
@@ -193,8 +197,126 @@
               <span class="title">Students by Course</span>
             </a>
           </li>
-          {%endif%}
           <li class="nav-item dropdown">
+            <a class="sidebar-link" href="{%url 'users_page'%}">
+              <span class="icon-holder">
+                <i class="c-light-blue-500 ti-search"></i>
+              </span>
+              <span class="title">Search Students</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class='sidebar-link' href="{%url 'allStudent'%}">
+              <span class="icon-holder">
+                <i class="c-light-blue-500 ti-user"></i>
+              </span>
+              <span class="title">Students </span>
+            </a>
+          </li>
+          
+          {%endif%}
+          {% if request.user.is_dean or request.user.is_superuser %}        
+          <li class="nav-item dropdown">
+            <a class="sidebar-link" href="{% url 'add_role' 'teacher' %}">
+              <span class="icon-holder">
+                  <i class="c-green-500 ti-book"></i>
+              </span>
+              {% if request.user.is_superuser%}
+              <span class="title">Add Users</span>
+              {%endif%}
+              {% if request.user.is_dean%}
+              <span class="title">Add Teacher</span>
+              {%endif%}
+          </a>
+        
+          </li> 
+          <li style="display: none;">
+            <a href="{% url 'add_role' 'dean' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+              <i class="ti-settings mR-10"></i>
+              <span>Add Dean</span>
+          </a>
+          
+          <a href="{% url 'add_role' 'admin' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+              <i class="ti-settings mR-10"></i>
+              <span>Add Admin</span>
+          </a>
+          </li>
+         
+        {%endif%}
+        {%if request.user.is_dean%}
+        <li class="nav-item dropdown">
+          <a class="sidebar-link" href="{%url 'teacher_list'%}">
+            <span class="icon-holder">
+              <i class="c-deep-orange-500 ti-calendar"></i>
+            </span>
+            <span class="title">Teachers</span>
+          </a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="sidebar-link" href="{%url 'subject_leaderboard'%}">
+            <span class="icon-holder">
+              <i class="c-indigo-500 ti-crown"></i>
+            </span>
+            <span class="title">Leaderboard</span>
+          </a>
+        </li>
+        
+        {%endif%}
+        {%if request.user.is_superuser%}
+      
+        <li class="nav-item dropdown">
+          <a class="sidebar-link" href="{%url 'subject_leaderboard'%}">
+            <span class="icon-holder">
+              <i class="c-indigo-500 ti-crown"></i>
+            </span>
+            <span class="title">Leaderboard</span>
+          </a>
+        </li>
+        
+        {%endif%}
+        {%if request.user.is_teacher%}
+        <li class="nav-item dropdown">
+          <a class="sidebar-link" href="{%url 'upload_and_displaypage' request.user.student_id%}">
+            <span class="icon-holder">
+              <i class="c-pink-500 ti-palette"></i>
+            </span>
+            <span class="title">Upload grades</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="sidebar-link" href="{% url 'teacher_subject' request.user.student_id %}">
+            <span class="icon-holder">
+              <i class="c-blue-500 ti-book"></i>
+            </span>
+            <span class="title">My subjects</span>
+        </a>
+        
+        </li>
+        <li class="nav-item dropdown">
+          <a class="sidebar-link" href="{%url 'manage-grades'%}">
+            <span class="icon-holder">
+              <i class="c-green-500 ti-eye"></i>
+            </span>
+            <span class="title">View grades</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class='sidebar-link' href="{% url 'about_us' %}">
+            <span class="icon-holder">
+              <i class="c-light-gray-500 ti-user"></i>
+            </span>
+            <span class="title">About Us</span>
+          </a>
+        </li>
+        {%endif%}
+
+        
+
+
+
+        <!-- {% if request.user.is_student %} -->
+                  <li class="nav-item dropdown">
             <a class="dropdown-toggle" href="javascript:void(0);">
               <span class="icon-holder">
                 <i class="c-red-500 ti-files"></i>
@@ -224,6 +346,7 @@
                 </a>
               </li>
               {%endif%}
+              
               {%if request.user.student_id != None %}
               <li>
                 <a class='sidebar-link' href="{% url 'allStudentEnrollByStudentId-student' request.user.student_id %}">
@@ -234,7 +357,7 @@
                 </a>
               </li>
               {%endif%}
-
+        <!-- {%endif%} -->
             </ul>
           </li>
           {%if request.user.student_id == None %}
@@ -258,7 +381,14 @@
           </li>
           {%endif%}
 
-
+          <li class="nav-item">
+            <a class='sidebar-link' href="{% url 'about_us' %}">
+              <span class="icon-holder">
+                <i class="c-light-gray-500 ti-user"></i>
+              </span>
+              <span class="title">About Us</span>
+            </a>
+          </li>
 
         </ul>
       </div>
@@ -267,7 +397,7 @@
     <!-- #Main ============================ -->
     <div class="page-container">
       <!-- ### $Topbar ### -->
-      <div class="header navbar">
+      <div class="header navbar" style="background-color: #bac6d3;">
         <div class="header-container">
           <ul class="nav-left">
             <li>
@@ -287,95 +417,141 @@
           </ul>
 
           <ul class="nav-right">
-            {%if request.user.is_superuser %}
+            {% if request.user.is_superuser %}
             <li class="notifications dropdown">
-              <span class="counter bgc-red">{{forwarded|length}}</span>
+              <span class="counter bgc-red">{{ forwarded|length }}</span>
+              <span class="counter bgc-red">{{ grade_forwarded|length }}</span>
               <a href="" class="dropdown-toggle no-after" data-bs-toggle="dropdown">
-                <i class="ti-bell"></i>
+                  <i class="ti-bell" style="color: rgb(0, 19, 167);"></i>
               </a>
-
+          
               <ul class="dropdown-menu">
-                <li class="pX-20 pY-15 bdB">
-                  <i class="ti-bell pR-10"></i>
-                  <span class="fsz-sm fw-600 c-grey-900">Notifications</span>
+                  <!-- Enrollment Notifications -->
+                  <li class="pX-20 pY-15 bdB">
+                      <i class="ti-bell pR-10" style="color: rgb(8, 69, 251);"></i>
+                      <span class="fsz-sm fw-600 c-grey-900">Enrollment Notifications</span>
+                  </li>
+                  <li>
+                      <ul style="max-height: 300px;" class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
+                          {% for f in forwarded %}
+                          <li>
+                              <a href="{% url 'enrollDetailsAdmin' f.pk %}" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                                  <div class="peer mR-15">
+                                      <img class="w-3r bdrs-50p" src="{% static 'student_profile/assets/images/faces/face10.jpg' %}" alt="">
+                                  </div>
+                                  <div class="peer peer-greed">
+                                      <span>
+                                          <span class="fw-500">{{ f.student.last_name }}, {{ f.student.first_name }}</span>
+                                          <span class="c-grey-600">is forwarded <span class="text-dark">enrollment</span></span>
+                                      </span>
+                                  </div>
+                              </a>
+                          </li>
+                          {% endfor %}
+                      </ul>
+                  </li>
+          
+                  <!-- Grade Forwarded Notifications -->
+                  <li class="pX-20 pY-15 bdB">
+                    <i class="ti-bell pR-10" style="color: green;"></i>
+                    <span class="fsz-sm fw-600 c-grey-900">Grade Forwarded Notifications</span>
                 </li>
-
                 <li>
-                  <ul style="max-height: 300px;" class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
-                    {%for f in forwarded%}
-                    <li>
-                      <a href="{%url 'enrollDetailsAdmin' f.pk %}"
-                        class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
-                        <div class="peer mR-15">
-                          <img class="w-3r bdrs-50p" src="{% static 'student_profile/assets/images/faces/face10.jpg'%}"
-                            alt="">
-                        </div>
-                        <div class="peer peer-greed">
-                          <span>
-                            <span class="fw-500">{{f.student.last_name}}, {{f.student.first_name}} </span>
-                            <span class="c-grey-600">is forwarded <span class="text-dark">enrollment</span>
-                            </span>
-                          </span>
-                          <!-- <p class="m-0">
-                            <small class="fsz-xs">5 mins ago</small>
-                          </p> -->
-                        </div>
-                      </a>
-                    </li>
-                    {%endfor%}
+                    <ul style="max-height: 300px;" class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
+                        {% for g in grade_forwarded %}
+                        <li>
+                          <a href="{% url 'gradesDetailsAdmin' g.instructor.pk g.subject.pk %}" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
 
-                  </ul>
-                </li>
 
-                <li class="pX-20 pY-15 ta-c bdT">
-                  <span>
-                    <a href="" class="c-grey-600 cH-blue fsz-sm td-n">View All Notifications <i
-                        class="ti-angle-right fsz-xs mL-10"></i></a>
-                  </span>
+                                <div class="peer mR-15">
+                                    <img class="w-3r bdrs-50p" src="{% static 'student_profile/assets/images/faces/face10.jpg' %}" alt="">
+                                </div>
+                                <div class="peer peer-greed">
+                                    <span>
+                                        <span class="fw-500">{{ g.instructor.last_name }}, {{ g.instructor.first_name }}</span>
+                                        <span class="c-grey-600"> has <span class="text-dark">forwarded a Grade</span> for the subject <span class="text-dark fw-500">{{ g.subject.code }}</span></span>
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </li>
+                
+                
+                
+          
+                  <li class="pX-20 pY-15 ta-c bdT">
+                      <span>
+                          <a href="" class="c-grey-600 cH-blue fsz-sm td-n">View All Notifications <i class="ti-angle-right fsz-xs mL-10"></i></a>
+                      </span>
+                  </li>
               </ul>
-            </li>
-            {%endif%}
+          </li>
+          
+            {% endif %}
             <li class="dropdown">
-              <a href="" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1" data-bs-toggle="dropdown">
-                <div class="peer mR-10">
-                  <img class="w-2r bdrs-50p" src="{% static 'student_profile/images/admin.jpg' %}" alt="">
-                </div>
-                <div class="peer">
-                  <span class="fsz-sm c-grey-900">{{request.user.username}}</span>
-                </div>
-              </a>
-              <ul class="dropdown-menu fsz-sm">
-                <li>
-                  <a href="" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
-                    <i class="ti-settings mR-10"></i>
-                    <span>Setting</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
-                    <i class="ti-user mR-10"></i>
-                    <span>Profile</span>
-                  </a>
-                </li>
-
-                <li role="separator" class="divider"></li>
-                <li>
-                  <a href="{%url 'logout'%}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
-                    <i class="ti-power-off mR-10"></i>
-                    <span>Logout</span>
-                  </a>
-                </li>
-              </ul>
+                <a href="" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1" data-bs-toggle="dropdown">
+                    <div class="peer mR-10">
+                        {% if user.profile_image %}
+                            <img class="w-2r bdrs-50p" src="{{ request.user.profile_image.url }}" alt=""
+                                 style="width:30px;aspect-ratio:1;border-radius:100px">
+                        {% endif %}
+                    </div>
+                    <div class="peer">
+                        <span class="fsz-sm c-grey-900">{{ request.user.username }}</span>
+                    </div>
+                </a>
+                <ul class="dropdown-menu fsz-sm">
+                    <li>
+                        <a href="" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+                            <i class="ti-settings mR-10"></i>
+                            <span>Setting</span>
+                        </a>
+                    </li>
+                    {%if request.user.is_student%}
+                    <li>
+                        <a href="{% url 'profile' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+                            <i class="ti-user mR-10"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {%if request.user.is_teacher%}
+                    <li>
+                        <a href="{% url 'profiles' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+                            <i class="ti-user mR-10"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {%if request.user.is_dean%}
+                    <li>
+                        <a href="{% url 'profiles' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+                            <i class="ti-user mR-10"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    {% endif %}
+        
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href="{% url 'logout' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+                            <i class="ti-power-off mR-10"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-          </ul>
+        </ul>
+        
         </div>
       </div>
 
       <!-- ### $App Screen Content ### -->
-      <main class='main-content bgc-grey-100'>
+      <main class='main-content '>
         <div id='mainContent'>
-          <div class="full-container">
+          <div class="full-container" >
 
 
             {% block content %}
@@ -396,7 +572,30 @@
 
     </div>
   </div>
+  <script>
+    // Function to speak a message
+    function speakAIMessage(message) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.error("Speech synthesis is not supported in this browser.");
+      }
+    }
 
+    // Check if the user is a dean and trigger greeting on page load
+    document.addEventListener("DOMContentLoaded", function() {
+      // Assume we have set the role in localStorage based on user login
+      const userRole = localStorage.getItem("userRole"); // Should be "dean" for the dean
+      const speakGreeting = localStorage.getItem("speakGreeting");
+
+      if (userRole === "dean" && speakGreeting === "true") {
+        speakAIMessage("Welcome to The Dashboard, Dean.");
+        // Reset the greeting indicator after speaking it
+        localStorage.removeItem("speakGreeting");
+      }
+    });
+  </script>
 
   <script src="{% static 'student_profile/assetsadminator/js/jquery-3.6.0.min.js'%}"></script>
   <script src="{% static 'student_profile/assetsadminator/js/jquery.dataTables.min.js'%}"></script>
@@ -418,7 +617,7 @@
   <script src="{% static 'student_profile/js/pdfmake/vfs_fonts.js' %}"></script>
   <script src="{% static 'student_profile/js/vue-select/vue-select.js' %}"></script>
   <link href="{% static 'student_profile/css/vue-select/vue-select.css' %}" rel="stylesheet">
-  <script src="{% static 'student_profile/js/sweet-alert/sweetalert.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{% static 'student_profile/js/xlsx.full.min.js' %}"></script>
 
 
@@ -427,4 +626,4 @@
   {%endblock%}
 </body>
 
-</html>
+</html> 

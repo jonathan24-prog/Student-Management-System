@@ -1,0 +1,336 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+
+{% block content %}
+
+<div id="app" style="padding: 20px 20px;">
+    <el-card>
+        <el-radio-group size="small" v-model="radio">
+            <el-radio-button label="by Instructor"></el-radio-button>
+        </el-radio-group>
+        <br><br>
+        <h6>Search Parameters</h6>
+        <div v-show="radio == 'by Instructor'">
+            <el-row :gutter="5">
+                <el-col :md="6">
+                    <el-select filterable style="width: 100%;" size="small" v-model="instructor_pk"
+                        placeholder="Select instructor">
+                        <el-option value="">Select Instructor</el-option>
+                        <el-option v-for="(item, index) in instructors" :key="index" :label="item.full" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="6">
+                    <el-button style="width:100%;" @click="searchbyInstructor"
+                        :disabled="instructor_pk==''" size="small" type="success">Search
+                    </el-button>
+                </el-col>
+            </el-row>
+        </div>
+        
+       
+    </el-card>
+    <el-card>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <h6>Data Table</h6>
+            {% if request.user.is_superuser %}
+            <el-button 
+                type="success" 
+                size="small" 
+                round
+                @click="approveAllGrades"
+                :disabled="isApproveAllDisabled">
+                Approve All
+            </el-button>
+            {% endif %}
+        </div>
+        <v-client-table :columns="columns" :data="datas">
+            {% if request.user.is_superuser %}
+            <el-button 
+                type="success" 
+                slot="action" 
+                @click="approveGrade(props.row.id)" 
+                slot-scope="props" 
+                size="small" 
+                round
+                :disabled="props.row.submit_status === 'Approved'">
+                Approve
+            </el-button>
+            {% endif %}
+        </v-client-table>
+    </el-card>
+    
+
+    <el-dialog title="Warning" :visible.sync="dialog" width="40%" center>
+        <el-form :ref="sub_enroll" :model="sub_enroll" label-width="120px">
+            <el-form-item label="Instructor" size="small">
+                <el-select filterable v-model="sub_enroll.instructor" placeholder="Select instructor"
+                    style="width: 100%;">
+                    <el-option v-for="(item, index) in instructors" :key="index" :value="item.id"
+                        :label="item.last_name"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="Subject" size="small">
+                <el-select v-model="sub_enroll.subject" placeholder="Select Subject" style="width: 100%;">
+                    <el-option v-for="(item, index) in subjects" :key="index" :value="item.id"
+                        :label="`${item.code} - ${item.description}`">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="Midterm Grade" size="small">
+                <el-input v-model="sub_enroll.midterm_grade"></el-input>
+            </el-form-item>
+            <el-form-item label="Final Grade" size="small">
+                <el-input v-model="sub_enroll.grade"></el-input>
+            </el-form-item>
+            <el-form-item label="Status" size="small">
+                <el-select v-model="sub_enroll.grade_status" placeholder="Select status" style="width: 100%;">
+                    <el-option v-for="(item, index) in statuses" :key="index" :value="item" :label="item"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialog = false">Cancel</el-button>
+            <el-button type="primary" @click="save">Save</el-button>
+        </span>
+    </el-dialog>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    Vue.use(VueTables.ClientTable);
+
+    const inst = axios.create({
+        baseURL: '/bccapi',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    })
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                columns: ["student_id", "fullname", "subject", "description", "midterm_grade", "final_grade", "unit", "status", "submit_status", "action"],
+                datas: [],
+                origdata: [],
+                radio: "by Instructor",
+                dialog: false,
+                isLoading: true,
+                courses: [],
+                majors: [],
+                instructors: [],
+                students: [],
+                subjects: [],
+                ays: [],
+                selectedSubject: "",  // Updated variable name
+                instructor: null,   // Default will be set in created() based on URL
+                student_pk: "",
+                sem: '',
+                ay_pk: "",
+                
+                sems: ["1st", "2nd", "summer"],
+                statuses: ["passed", "failed", "for Completion"],
+                index: '',
+                sub: {},
+                sub_enroll: {
+                    "id": "",
+                    "grade_status": "passed",
+                    "grade": "",
+                    "midterm_grade": "",
+                    "status": "enrolled",
+                    "enrolled_by_student": "",
+                    "subject": "",
+                    "instructor": ""
+                }
+            }
+        },
+        methods: {
+            selectBySubject() {
+       
+    },
+    addGrade(id) {
+        this.index = this.datas.findIndex(e => e.id == id)
+        this.sub = this.datas.find(el => el.id == id)
+        this.dialog = true
+        inst.get('subjectsenrolled/' + id).then(res => {
+            this.sub_enroll = res.data
+            if (this.sub_enroll.instructor == null) {
+                this.sub_enroll.instructor = this.instructor_pk
+            }
+            if (this.sub_enroll.grade_status == null) {
+                this.sub_enroll.grade_status = 'passed'
+            }
+        })
+    },
+    save() {
+        inst.put("subjectsenrolled/" + this.sub_enroll.id + "/", this.sub_enroll).then(res => {
+            this.dialog = false
+            this.sub.final_grade = res.data.grade
+            this.sub.midterm_grade = res.data.midterm_grade
+            this.sub.status = res.data.grade_status
+            this.datas[this.index] = this.sub
+        })
+    },
+    approveGrade(id) {
+        
+        let index = this.datas.findIndex(e => e.id == id);
+        let record = this.datas[index];
+
+    
+        inst.get(`subjectsenrolled/${id}`).then(res => {
+            let subEnroll = res.data;
+            subEnroll.submit_status = 'approved';  
+
+            
+            inst.put(`subjectsenrolled/${id}/`, subEnroll)
+                .then(() => {
+                    
+                    this.$set(this.datas, index, {
+                        ...record,
+                        submit_status: 'Approved'
+                    });
+                })
+                .catch(error => {
+                    console.error("Failed to approve the grade:", error);
+                   
+                });
+        }).catch(error => {
+            console.error("Failed to fetch subject enrollment details:", error);
+        });
+    },
+    approveAllGrades() {
+// Filter out records that are not yet approved
+const toApprove = this.datas.filter(item => item.submit_status !== 'Approved');
+
+// If there are no records to approve, show an alert
+if (toApprove.length === 0) {
+    Swal.fire({
+        icon: 'info',
+        title: 'All records are already approved!',
+    });
+    return;
+}
+
+// For each item that needs approval, call approveGrade with its ID
+toApprove.forEach(item => {
+    inst.get(`subjectsenrolled/${item.id}`).then(res => {
+        let subEnroll = res.data;
+        subEnroll.submit_status = 'approved';
+
+        inst.put(`subjectsenrolled/${item.id}/`, subEnroll)
+            .then(() => {
+                // Update the local data after approval
+                const index = this.datas.findIndex(e => e.id == item.id);
+                this.$set(this.datas, index, {
+                    ...this.datas[index],
+                    submit_status: 'Approved'
+                });
+            })
+            .catch(error => {
+                console.error(`Failed to approve grade for record ID ${item.id}:`, error);
+            });
+    }).catch(error => {
+        console.error(`Failed to fetch subject enrollment details for ID ${item.id}:`, error);
+    });
+});
+
+Swal.fire({
+    icon: 'success',
+    title: 'All pending records have been approved!',
+});
+},
+
+searchbyInstructor() {
+    axios.get(`/Api/enrollbystudins/${this.instructor_pk}/${this.subject_pk}`).then(res => {
+        this.datas = [];
+        this.origdata = res.data;
+        res.data.forEach(el => {
+            let grade = el.grade != null ? el.grade : "";
+            let midterm_grade = el.midterm_grade != null ? el.midterm_grade : "";
+            let grade_status = el.grade_status != null ? el.grade_status : "";
+            let submit_status = el.submit_status != null ? el.submit_status : "Not Submitted";
+
+            if (submit_status === 'forwarded') {
+                this.datas.push({
+                    un: el.subject.unit,
+                    unit: el.subject.unit,
+                    id: el.id,
+                    subject: el.subject.code,
+                    student_id: el.enrolled_by_student.student.id,
+                    fullname: `${el.enrolled_by_student.student.last_name}, ${el.enrolled_by_student.student.first_name} ${el.enrolled_by_student.student.middle_name}`,
+                    final_grade: grade,
+                    midterm_grade: midterm_grade,
+                    status: grade_status,
+                    instructor: el.instructor == null ? '' :
+                        `${el.instructor.last_name}, ${el.instructor.first_name}`,
+                    description: el.subject.description,
+                    submit_status: submit_status
+                });
+            }
+        });
+
+        if (res.data.length == 0 || this.datas.length == 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'No records found',
+            });
+        }
+    });
+},
+
+
+        },
+        computed: {
+            isApproveAllDisabled() {
+                return this.datas.length === 0 || !this.datas.some(item => item.submit_status !== 'Approved');
+            }
+        },
+        created() {
+    const urlPath = window.location.pathname;
+    const instructorMatch = urlPath.match(/\/Admin-bcc\/student\/(\d+)\/grade\/(\d+)\//);
+    if (instructorMatch) {
+        this.instructor_pk = instructorMatch[1];
+        this.subject_pk = instructorMatch[2];  // Extract subject ID
+    }
+
+    inst.get('instructors').then(res => {
+        this.instructors = res.data;
+        this.instructors.forEach(el => {
+            el.full = `${el.last_name}, ${el.first_name} ${el.middle_name}`;
+        });
+    });
+    inst.get('majors').then(res => {
+        this.majors = res.data;
+    });
+    inst.get('ays').then(res => {
+        this.ays = res.data;
+    });
+    inst.get('courses').then(res => {
+        this.courses = res.data;
+    });
+    inst.get('subjects').then(res => {
+        this.subjects = res.data;
+    });
+    inst.get('students').then(res => {
+        this.students = res.data;
+        this.students.forEach(el => {
+            el.full = `${el.last_name}, ${el.first_name} ${el.middle_name}`;
+        });
+    });
+
+
+    // Fetch additional data (e.g., subjects, courses) as before
+    // Automatically trigger search if instructor_pk and subject_pk are set
+    if (this.instructor_pk && this.subject_pk) {
+        this.searchbyInstructor();
+    }
+}
+
+    });
+</script>
+
+{% endblock %}

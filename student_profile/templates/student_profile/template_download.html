@@ -1,0 +1,160 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div id="app" style="padding: 20px 20px;">
+<ele-card>
+    <el-card style="height: 100%; min-height: 50vh;">
+        <h6>Subject Selection</h6>
+        <el-row :gutter="10">
+            <el-col :md="20">
+                <v-select v-model="subject" label="full" value="id" :options="subjects" placeholder="Select a subject"></v-select>
+            </el-col>
+            <el-col :md="4">
+                <el-button size="small" @click="fetchEnrolledStudents" style="width: 100%;" type="primary">Display & Generate</el-button>
+            </el-col>
+        </el-row>
+        <hr>    
+
+
+        <el-row :gutter="10" class="mt-3">
+            <el-col :md="24">
+                <el-input
+                    v-model="searchQuery"
+                    placeholder="Search students by name, ID, or course"
+                    clearable
+                    prefix-icon="el-icon-search" style="width: 30%;"
+                ></el-input>
+            </el-col>
+        </el-row>
+        
+        <el-table
+            v-if="filteredStudents.length"
+            :data="filteredStudents"
+            @selection-change="handleSelectionChange"
+            style="width: 100%; max-height: 40vh;" >
+            <el-table-column type="selection" width="55"></el-table-column> 
+            <el-table-column prop="student_id" label="Student ID" width="120"></el-table-column>
+            <el-table-column prop="name" label="Name"></el-table-column>
+            <el-table-column prop="course" label="Course" width="150"></el-table-column>
+            <el-table-column prop="academic_year" label="Academic Year" width="150"></el-table-column>
+        </el-table>
+        
+        <el-alert class="mt-3" v-else title="No students match the search query." type="info" show-icon></el-alert>
+        
+
+        <el-alert class="mt-3" v-else title="No students enrolled in this subject." type="info" show-icon></el-alert>
+        <el-button class="mt-3" size="small" @click="processSelectedStudents" type="success">Process Selected Students</el-button>
+        
+    </el-card>
+</ele-card>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    Vue.use(VueTables.ClientTable);
+    Vue.component('v-select', VueSelect.VueSelect);
+    
+
+    const axios_instance = axios.create({
+        baseURL: '/bccapi',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    });
+
+    new Vue({
+    el: '#app',
+    data() {
+        return {
+            subject: null,
+            subjects: [],
+            enrolledStudents: [],
+            selectedStudents: [],
+            searchQuery: '' // For search functionality
+        };
+    },
+    computed: {
+        // Dynamically filter the students based on the search query
+        filteredStudents() {
+            const query = this.searchQuery.toLowerCase();
+            return this.enrolledStudents.filter(student =>
+                (student.student_id && student.student_id.toLowerCase().includes(query)) ||
+                (student.name && student.name.toLowerCase().includes(query)) ||
+                (student.course && student.course.toLowerCase().includes(query))
+            );
+        }
+    },
+    methods: {
+        handleSelectionChange(val) {
+            this.selectedStudents = val;
+        },
+        processSelectedStudents() {
+            if (this.selectedStudents.length === 0) {
+                this.$message.error('Please select students to process');
+                return;
+            }
+
+            const subjectName = this.subject.full;
+            axios_instance.post('generate_excel/', {
+                students: this.selectedStudents,
+                subject_name: subjectName
+            }, {
+                responseType: 'blob'
+            })
+            .then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                const fileName = `${subjectName.replace(/\s+/g, '_').toLowerCase()}_enrolled_students.xlsx`;
+                link.href = url;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => {
+                this.$message.error('Failed to generate Excel file');
+            });
+        },
+        fetchEnrolledStudents() {
+            if (!this.subject) {
+                this.$message.error('Please select a subject');
+                return;
+            }
+            axios_instance.get(`enrolled_students/${this.subject.id}`)
+                .then(res => {
+                    // Sort the students array before assigning it
+                    this.enrolledStudents = res.data.sort((a, b) => {
+                        // Replace 'name' with any property you want to sort by
+                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                        return 0;
+                    });
+                })
+                .catch(err => {
+                    this.$message.error('Failed to fetch enrolled students');
+                });
+}
+
+    },
+    created() {
+        axios_instance.get('curriculumss').then(res => {
+            res.data.forEach(el => {
+                el.subjects.forEach(e => {
+                    if (this.subjects.find(sub => sub.id == e.id) == null) {
+                        this.subjects.push(e);
+                    }
+                });
+            });
+
+            this.subjects.forEach(el => {
+                el.full = `${el.code}-${el.description}`;
+            });
+        });
+    }
+});
+
+</script>
+{% endblock %}

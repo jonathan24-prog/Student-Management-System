@@ -1,0 +1,176 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% load static %}  
+
+{% block content %}
+    <div class="container about-section">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h2 class="about-title">About Us</h2>
+                <p class="about-content">
+                    The BCC Portal is a dedicated online platform designed to enhance the learning experience and streamline academic processes for both students and educators at BCC School. This portal serves as a central hub for communication, collaboration, and access to essential academic resources.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <img src="{% static 'student_profile/images/BCC.png' %}" alt="About Us Image" class="about-image">
+            </div>
+        </div>
+        <h1 class="text-center mt-4" style="font-size: 2rem; color: black; font-weight: 600;">Join the BCC Online Community</h1>
+        <p class="about-content">
+            We invite all students and teachers at BCC School to explore the portal and take full advantage of its features. Together, we can create a collaborative and supportive educational experience that prepares our students for the future.
+        </p>
+
+
+
+    </div>
+
+
+
+    <section id="team" class="team section">
+
+        <div class="site-section slider-team-wrap">
+          <div class="container">
+  
+            <div class="slider-nav d-flex justify-content-end mb-3">
+              <a href="#" class="js-prev js-custom-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-8d3a1f5239b97f7e"><i class="bi bi-arrow-left-short"></i></a>
+              <a href="#" class="js-next js-custom-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-8d3a1f5239b97f7e"><i class="bi bi-arrow-right-short"></i></a>
+            </div>
+  
+            <div class="swiper init-swiper aos-init aos-animate swiper-initialized swiper-horizontal swiper-backface-hidden" data-aos="fade-up" data-aos-delay="100">
+              <script type="application/json" class="swiper-config">
+                {
+                  "loop": true,
+                  "speed": 600,
+                  "autoplay": {
+                    "delay": 5000
+                  },
+                  "slidesPerView": "1",
+                  "pagination": {
+                    "el": ".swiper-pagination",
+                    "type": "bullets",
+                    "clickable": true
+                  },
+                  "navigation": {
+                    "nextEl": ".js-custom-next",
+                    "prevEl": ".js-custom-prev"
+                  },
+                  "breakpoints": {
+                    "640": {
+                      "slidesPerView": 2,
+                      "spaceBetween": 30
+                    },
+                    "768": {
+                      "slidesPerView": 3,
+                      "spaceBetween": 30
+                    },
+                    "1200": {
+                      "slidesPerView": 3,
+                      "spaceBetween": 30
+                    }
+                  }
+                }
+              </script>
+              <div class="swiper-wrapper" id="swiper-wrapper-8d3a1f5239b97f7e" aria-live="off" style="transition-duration: 0ms; transform: translate3d(-1128px, 0px, 0px); transition-delay: 0ms;">
+                
+                
+                
+                
+                <!-- <div class="swiper-slide"></div> -->
+              <div class="swiper-slide swiper-slide-next" role="group" aria-label="2 / 4" style="width: 376px;" data-swiper-slide-index="1">
+                  <div class="team">
+                    <div class="pic">
+                      <img src="assets/img/team/team-2.jpg" alt="Image" class="img-fluid">
+                    </div>
+                    <h3 clas="">
+                      <a href="#"><span class="">Lawson</span> Arnold</a>
+                    </h3>
+                    <span class="d-block position">CEO, Founder, Atty.</span>
+                    <p>
+                      Separated they live in. Separated they live in Bookmarksgrove
+                      right at the coast of the Semantics, a large language ocean.
+                    </p>
+                    <p class="mb-0">
+                      <a href="#" class="more dark">Learn More <span class="bi bi-arrow-right-short"></span></a>
+                    </p>
+                  </div>
+                </div><div class="swiper-slide" role="group" aria-label="3 / 4" style="width: 376px;" data-swiper-slide-index="2">
+                  <div class="team">
+                    <div class="pic">
+                      <img src="assets/img/team/team-3.jpg" alt="Image" class="img-fluid">
+                    </div>
+                    <h3 clas="">
+                      <a href="#"><span class="">Patrik</span> White</a>
+                    </h3>
+                    <span class="d-block position">CEO, Founder, Atty.</span>
+                    <p>
+                      Separated they live in. Separated they live in Bookmarksgrove
+                      right at the coast of the Semantics, a large language ocean.
+                    </p>
+                    <p class="mb-0">
+                      <a href="#" class="more dark">Learn More <span class="bi bi-arrow-right-short"></span></a>
+                    </p>
+                  </div>
+                </div><div class="swiper-slide swiper-slide-prev" role="group" aria-label="4 / 4" style="width: 376px;" data-swiper-slide-index="3">
+                  <div class="team">
+                    <div class="pic">
+                      <img src="assets/img/team/team-4.jpg" alt="Image" class="img-fluid">
+                    </div>
+                    <h3 clas="">
+                      <a href="#"><span class="">Kathryn</span> Ryan</a>
+                    </h3>
+                    <span class="d-block position">CEO, Founder, Atty.</span>
+                    <p>
+                      Separated they live in. Separated they live in Bookmarksgrove
+                      right at the coast of the Semantics, a large language ocean.
+                    </p>
+                    <p class="mb-0">
+                      <a href="#" class="more dark">Learn More <span class="bi bi-arrow-right-short"></span></a>
+                    </p>
+                  </div>
+                </div><div class="swiper-slide swiper-slide-active" role="group" aria-label="1 / 4" style="width: 376px;" data-swiper-slide-index="0">
+                  <div class="team">
+                    <div class="pic">
+                      <img src="assets/img/team/team-1.jpg" alt="Image" class="img-fluid">
+                    </div>
+                    <h3 clas="">
+                      <a href="#"><span class="">Jeremy</span> Walker</a>
+                    </h3>
+                    <span class="d-block position">CEO, Founder, Atty.</span>
+                    <p>
+                      Separated they live in. Separated they live in Bookmarksgrove
+                      right at the coast of the Semantics, a large language ocean.
+                    </p>
+                    <p class="mb-0">
+                      <a href="#" class="more dark">Learn More <span class="bi bi-arrow-right-short"></span></a>
+                    </p>
+                  </div>
+                </div></div>
+            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+          </div>
+          <!-- /.container -->
+        </div>
+      </section>
+
+    <style>
+        .about-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+        .about-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .about-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .about-image {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+{% endblock %}

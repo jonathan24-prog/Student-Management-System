@@ -1,0 +1,56 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}  
+
+{% block content %}
+<div class="container my-5">
+    <h3 class="text-center mb-4">Terms and Conditions for Parental Access to Student Grades</h3>
+
+    
+    <p>Welcome to BCConnect, the student management system for Buenavista Community College (BCC). These Terms and Conditions govern access and use of this platform by parents or guardians to view student academic records, including grades, attendance, and other relevant academic information. By accessing your child’s grades and academic information on BCConnect, you agree to these Terms and Conditions. Please read them carefully.</p>
+    
+    <h4 class="mt-4">1. Eligibility and Access</h4>
+    <ul>
+        <li>Parents or legal guardians of students enrolled at BCC (Buenavista Community College) are eligible to access BCConnect to view their child’s academic records.</li>
+        <li>Access is granted solely to support parents in engaging with their child’s educational progress at BCC.</li>
+    </ul>
+
+    <h4 class="mt-4">2. Authorized Use</h4>
+    <ul>
+        <li>Access to student academic records, including grades, is restricted to the parent or legal guardian who has been authorized by BCC and provided with login credentials for BCConnect.</li>
+        <li>Unauthorized access to student records, including by other family members or external parties, is strictly prohibited.</li>
+    </ul>
+
+    <h4 class="mt-4">3. Confidentiality</h4>
+    <ul>
+        <li>Academic records accessed through BCConnect are confidential and intended solely for the designated parent or guardian’s use.</li>
+        <li>Sharing login credentials or information from BCConnect with unauthorized individuals is strictly prohibited and may result in the termination of access privileges.</li>
+    </ul>
+
+    <!-- Continue in the same format for the remaining sections -->
+
+    <h4 class="mt-4">10. Contact Information</h4>
+    <p>For questions or concerns regarding these Terms and Conditions or issues related to accessing student grades, please contact BCC at [Institution’s Contact Information].</p>
+
+    <p class="mt-4">By using BCConnect, you acknowledge and agree to abide by these Terms and Conditions. Failure to comply may result in restricted access or further actions as deemed necessary by BCC.</p>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h3, h4 {
+        font-weight: bold;
+    }
+    ul {
+        margin-left: 20px;
+        line-height: 1.6;
+    }
+    p {
+        line-height: 1.8;
+    }
+</style>
+{% endblock %}

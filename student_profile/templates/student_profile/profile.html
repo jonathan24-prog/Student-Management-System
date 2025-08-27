@@ -1,0 +1,106 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}  
+{% block content %}
+    {% if request.user.is_superuser %}
+      
+    {% else %}
+    
+    <div class="container profile-container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="profile-card">
+                    <div class="profile-pic-container">
+                        <img src="{% static 'student_profile/images/admin.jpg' %}" alt="Profile Picture" class="profile-pic">
+                    </div>
+                    {% comment %} <h2 class="mb-4">Student Profile</h2> {% endcomment %}
+                    <form>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="Enter your first name" value="{{request.user.first_name}}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Enter your last name" value="{{request.user.last_name}}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="Enter your age" value="{{ student.age }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option {% if student_profile.gender == "male" %}selected{% endif %} value="male">Male</option>
+                                <option {% if student_profile.gender == "female" %}selected{% endif %} value="female">Female</option>
+                                <option {% if student_profile.gender == "other" %}selected{% endif %} value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="course" class="form-label">Course</label>
+                            <input type="text" class="form-control" id="course" placeholder="Enter your course" value="{{ student_profile.course.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email" value="{{ request.user.email }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="birthdate" class="form-label">Birthdate</label>
+                            <input type="text" class="form-control" id="birthdate" value="{{ student_profile.middle_name}}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="birthplace" class="form-label">Birthplace</label>
+                            <input type="text" class="form-control" id="birthplace" placeholder="Enter your birthplace" value="{{ student_profile.place_of_birth }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" rows="3" placeholder="Enter your address">{{ student_profile.address }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-custom w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <style>
+         body {
+            background-color: #f8f9fa;
+        }
+        .profile-container {
+            margin-top: 50px;
+        }
+        .profile-card {
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .profile-pic-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+{% endblock %}

@@ -1,182 +1,142 @@
-  {% extends 'student_profile/basemenu.html' %}
+{% extends 'student_profile/basemenu.html' %}
 
-
-  {% block content %}
-  <div id="app">
-  <form id="form_upload111"  data-href="{%url 'uploadSubjectsAPI'%}" method="POST" enctype="multipart/form-data">
-    {%csrf_token%}
-    <div class="form-group row">
-      <div class="col-md-12">
-        <div class="input-group">
-          {{form_upload.file.errors}}
-          {{form_upload.file}}
-          <span class="input-group-btn">
-            <button class="btn btn-info" type="submit">import</button>
-          </span>
+{% block content %}
+<div id="app">
+    <form id="form_upload111" action="{% url 'uploadSubjectsAPI' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-md-12">
+                <div class="input-group">
+                    {{ form_upload.file.errors }}
+                    {{ form_upload.file }}
+                    <span class="input-group-btn">
+                        <button class="btn btn-info" type="submit">Import</button>
+                    </span>
+                </div>
+            </div>
         </div>
-      </div>
+    </form>
 
-
+    <div class="card">
+        <div class="card-header info-color">
+            <el-button @click="add" size="small" type="primary">Add Subject</el-button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <v-client-table :columns="columns" :data="subjects">
+                    <a slot="action" slot-scope="props">
+                        <el-button type="success" @click="update(props.row)" size="small" circle icon="el-icon-edit"></el-button>
+                    </a>
+                </v-client-table>
+            </div>
+        </div>
     </div>
 
-
-
-  </form>
-  <div class="card">
-    <div class="card-header info-color">
-      <el-button @click="add" size="small"type="primary">Add Subject</el-button>
-    </div>
-    <div class="card-body">
-
-
-       <div class="table-responsive">
-        
-        <v-client-table :columns="columns" :data="subjects">
-          <a   slot="action" slot-scope="props" > <el-button type="success" @click="update(props.row)" size="small"  circle icon="el-icon-edit"></el-button></a>
-      </v-client-table>
-      </div>
-
-
-
-
-    </div>
-  </div>
-
-
-  <el-dialog title="Add Subject" :visible.sync="dialog" width="40%" center>
+    <el-dialog title="Add Subject" :visible.sync="dialog" width="40%" center>
       <el-form size="small" :ref="form" :model="form">
-        <el-form-item label="Code">
-          <el-input placeholder="code" v-model="form.code"></el-input>
-        </el-form-item>
-        <el-form-item label="Description">
-          <el-input placeholder="description" v-model="form.description"></el-input>
-        </el-form-item>
-        <el-form-item label="Unit">
-          <el-input placeholder="unit" type="number" v-model="form.unit"></el-input>
-        </el-form-item>
-
+          <el-form-item label="Code">
+              <el-input placeholder="code" v-model="form.code"></el-input>
+          </el-form-item>
+          <el-form-item label="Description">
+              <el-input placeholder="description" v-model="form.description"></el-input>
+          </el-form-item>
+          <el-form-item label="Unit">
+              <el-input placeholder="unit" type="number" v-model="form.unit"></el-input>
+          </el-form-item>
+          <el-form-item label="Prerequisite">
+              <el-select v-model="form.prerequisite" placeholder="Select a prerequisite" filterable>
+                  <!-- Option for None -->
+                  <el-option :label="'None'" :value="null"></el-option>
+                  <!-- Loop through subjects to provide other options -->
+                  <el-option v-for="subject in subjects" :key="subject.id" :label="subject.code" :value="subject.id">
+                      {{ subject.code }}
+                  </el-option>
+              </el-select>
+          </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialog = false">Cancel</el-button>
-        <el-button :disabled="form.code==''|| form.description =='' || form.unit == ''" type="primary" @click="save">Save</el-button>
+          <el-button @click="dialog = false">Cancel</el-button>
+          <el-button :disabled="form.code === '' || form.description === '' || form.unit === ''" type="primary" @click="save">Save</el-button>
       </span>
   </el-dialog>
-</div>
-  {%endblock%}
   
-  {%block script%}
+</div>
+{% endblock %}
 
-  <script type="text/javascript">
-    $(document).ready(function($){
-      console.log('upload1')
-
-
-
-    })
-
-
-
-  </script>
+{% block script %}
 <script>
+    const inst = axios.create({
+        baseURL: '/bccapi',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    });
 
+    Vue.use(VueTables.ClientTable);
+    Vue.use(VueLoading);
+    Vue.component('loading', VueLoading);
 
-  const inst = axios.create({
-    baseURL: '/bccapi',
-    timeout: 10000,
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken')
-    }
-  })
-  Vue.use(VueTables.ClientTable);
-  Vue.use(VueLoading);
-Vue.component('loading', VueLoading)
-new Vue({
-  el: '#app',
-    data(){
+    new Vue({
+        el: '#app',
+        data() {
         return {
-            columns:["code","description","unit","action"],
-            students:[],
-            ids:[],
-            isLoading: true,
-            fullPage: false,
-            subjects:[],
-            dialog:false,
-
-            form:{
-             
-              code:'',
-              description:'',
-              unit:''
+            columns: ["code", "description", "unit", "action"],
+            subjects: [],
+            dialog: false,
+            form: {
+                code: '',
+                description: '',
+                unit: '',
+                prerequisite: null 
             }
-
         }
     },
-    methods: {
-
-      add() {
-         this.form={
-             
-              code:'',
-              description:'',
-              unit:''
-            };
-        this.dialog = true
-       
-      },
-      update(subject) {
-        this.form = subject
-        this.dialog = true
-      },
-      save(){
-        if(this.form.id ==''){
-        inst.post('subjects/',this.form).then(res=>{
-          console.log(res.data)
-          this.dialog = false
-          //if(res.data.failed == true)
-          this.subjects.push(res.data)
-        }).catch(err=>{
-               this.$notify.error({
-          title: 'Error',
-          message: 'Data Already Exists'
-        });
-        })
-      } else {
-               inst.put('subjects/'+this.form.id+'/',this.form).then(res=>{
-          console.log(res.data)
-          //if(res.data.failed == true)
-          //this.subjects.push(res.data)
-          this.dialog = false
-          inst.get('subjects').then(res=>{
-          this.subjects=res.data
-        })
-        
-
-        }).catch(err=>{
-               this.$notify.error({
-          title: 'Error',
-          message: 'Error'
-        });
-        })
-      } 
+        methods: {
+            add() {
+                this.form = {
+                    code: '',
+                    description: '',
+                    unit: ''
+                };
+                this.dialog = true;
+            },
+            update(subject) {
+                this.form = subject;
+                this.dialog = true;
+            },
+            save() {
+                if (!this.form.id) {
+                    inst.post('subjects/', this.form).then(res => {
+                        this.subjects.push(res.data);
+                        this.dialog = false;
+                    }).catch(err => {
+                        this.$notify.error({
+                            title: 'Error',
+                            message: 'Data Already Exists'
+                        });
+                    });
+                } else {
+                    inst.put('subjects/' + this.form.id + '/', this.form).then(res => {
+                        this.dialog = false;
+                        inst.get('subjects').then(res => {
+                            this.subjects = res.data;
+                        });
+                    }).catch(err => {
+                        this.$notify.error({
+                            title: 'Error',
+                            message: 'Error'
+                        });
+                    });
+                }
+            }
+        },
+        created() {
+            inst.get('subjects').then(res => {
+                this.subjects = res.data;
+            });
         }
-
-    },
-    created() {
- 
-        inst.get('subjects').then(res=>{
-          this.subjects=res.data
-         
-     
-
-        })
-        
-    },
-})
+    });
 </script>
-
-
-  {%endblock%}
-
-
-
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div id="instructor-grades" class="container mt-5">
+    <h2>Grades Submitted by {{ instructorName }}</h2>
+    <v-client-table :columns="columns" :data="grades">
+        <!-- Display instructor's data -->
+    </v-client-table>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    const inst = axios.create({
+        baseURL: '/',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    });
+
+    new Vue({
+    el: '#instructor-grades',
+    data: {
+        grades: [],
+        instructorName: ''
+    },
+    mounted() {
+        const instructorId = this.getInstructorIdFromUrl();
+        inst.get(`/api/instructor-grades/${instructorId}/`)
+            .then(response => {
+                this.grades = response.data;
+                if (response.data.length > 0) {
+                    const instructor = response.data[0].instructor_name;
+                    this.instructorName = instructor ? instructor : "Unknown Instructor";
+                }
+            })
+            .catch(error => {
+                console.log('Error fetching grades:', error);
+            });
+    },
+    methods: {
+        getInstructorIdFromUrl() {
+            const url = window.location.href;
+            const parts = url.split('/');
+            return parts[parts.length - 2]; // Extract instructor ID from URL
+        }
+    }
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<!-- Display success or error messages -->
+{% if messages %}
+<div id="custom-alert" class="alert-hidden">
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+            <i class="{% if message.tags == 'success' %}fas fa-check{% else %}fas fa-times{% endif %}"></i>
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <h2 class="section-title">Update Instructor Profile</h2>
+    <form method="POST" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
+        {{ profile_form.non_field_errors }}
+
+        <!-- Profile Image Section -->
+        <div class="form-group profile-image-group">
+            <label for="id_profile_image">Profile Image</label>
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="Profile Image" class="profile-image">
+            {% endif %}
+            {{ profile_form.profile_image }}
+        </div>
+
+        <!-- Instructor Name and Username Fields -->
+        <div class="form-group d-none">
+            <label for="id_username">Username</label>
+            {{ profile_form.username }}
+        </div>
+
+        <div class="form-group d-none">
+            <label for="id_first_name">First Name</label>
+            {{ profile_form.first_name }}
+        </div>
+
+        <div class="form-group d-none">
+            <label for="id_last_name">Last Name</label>
+            {{ profile_form.last_name }}
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+            <label for="id_first_name">First Name</label>
+            {{ instructor_form.first_name }}
+        </div>
+        <div class="form-group">
+            <label for="id_middle_name">Middle Name</label>
+            {{ instructor_form.middle_name }}
+        </div>
+        <div class="form-group">
+            <label for="id_last_name">Last Name</label>
+            {{ instructor_form.last_name }}
+        </div>
+        <div class="form-group">
+            <label for="id_gender">Sex</label>
+            {{ instructor_form.gender}}
+        </div>
+
+        <div class="form-group">
+            <label for="id_address">Address</label>
+            {{ instructor_form.address}}
+        </div>
+        <!-- Contact Field (Updated field for Instructor model) -->
+        
+
+        <div class="form-group">
+            <label for="id_contact">Contact</label>
+            {{ instructor_form.contact }}  <!-- This will now display the contact field -->
+        </div>
+
+        <!-- Submit Button -->
+        <hr>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* General Container Styles */
+    .container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Title Styles */
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #343a40;
+        text-align: center;
+    }
+
+    /* Form Styles */
+    .profile-form, .password-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #495057;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="file"] {
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus,
+    .form-group input[type="password"]:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        color: white;
+        background-color: #007bff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .profile-image-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        border: 2px solid #007bff;
+    }
+
+    .divider {
+        margin: 30px 0;
+        border: 1px solid #dee2e6;
+    }
+
+    /* Custom Alert Styles */
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+
+    /* Hidden state */
+    .alert-hidden {
+        display: none;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,306 @@
+{% extends "student_profile/basemenu.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Announcements</h2>
+    <div class="row">
+        {% for announcement in announcements %}
+            <div class="col-md-3 mb-4">
+                <div class="card border-light shadow-sm" style="height: 230px;"> <!-- Set a fixed height -->
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ announcement.title }}</h5>
+                        <p class="card-text description">{{ announcement.content }}</p>
+                        <div class="mt-auto">
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#detailsModal"
+                                    data-title="{{ announcement.title }}"
+                                    data-content="{{ announcement.content }}"
+                                    data-start-date="{{ announcement.start_date|date:'F j, Y' }}"
+                                    data-end-date="{{ announcement.end_date|date:'F j, Y' }}">
+                                See Details
+                            </button>
+                            {% if request.user.is_superuser %}
+                            <button type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#editModal"
+                                    data-id="{{ announcement.id }}"
+                                    data-title="{{ announcement.title }}"
+                                    data-content="{{ announcement.content }}"
+                                    data-start-date="{{ announcement.start_date|date:'Y-m-d' }}"
+                                    data-end-date="{{ announcement.end_date|date:'Y-m-d' }}">
+                                Edit
+                            </button>
+                            <button type="button" class="btn btn-danger text-white" data-toggle="modal" data-target="#deleteModal" data-id="{{ announcement.id }}">
+                                Delete
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    No announcements available at the moment.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editAnnouncementForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="announcementId">
+                    <div class="form-group">
+                        <label for="announcementTitle">Title</label>
+                        <input type="text" class="form-control" id="announcementTitle" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcementContent">Content</label>
+                        <textarea class="form-control" id="announcementContent" name="content" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcementStartDate">Start Date</label>
+                        <input type="date" class="form-control" id="announcementStartDate" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcementEndDate">End Date</label>
+                        <input type="date" class="form-control" id="announcementEndDate" name="end_date" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this announcement?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Announcement Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5 id="detailTitle" style="font-weight: 700; font-size: 2.5rem; color: black;"></h5>
+                <p id="detailContent" style="color: rgb(73, 72, 72); font-weight: 600;"></p>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+<script>
+    $('#editModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); 
+        var id = button.data('id'); 
+        var title = button.data('title');
+        var content = button.data('content');
+        var startDate = button.data('start-date');
+        var endDate = button.data('end-date');
+
+        var modal = $(this);
+        modal.find('.modal-title').text('Edit Announcement: ' + title);
+        modal.find('#announcementId').val(id);
+        modal.find('#announcementTitle').val(title);
+        modal.find('#announcementContent').val(content);
+        modal.find('#announcementStartDate').val(startDate);
+        modal.find('#announcementEndDate').val(endDate);
+    });
+
+    $('#editAnnouncementForm').on('submit', function(event) {
+        event.preventDefault(); 
+        
+        var form = $(this);
+        var formData = form.serialize(); 
+        
+        $.ajax({
+            url: "{% url 'update_announcement' %}",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                $('#editModal').modal('hide');
+                location.reload(); 
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    });
+
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var modal = $(this);
+        modal.find('#confirmDelete').data('id', id);
+    });
+
+    $('#confirmDelete').on('click', function () {
+        var id = $(this).data('id');
+        $.ajax({
+            url: "{% url 'delete_announcement' %}",
+            type: "POST",
+            data: {
+                'id': id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#deleteModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    });
+
+    $('#detailsModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var title = button.data('title');
+    var content = button.data('content').replace(/\n/g, '<br>');  // Replace line breaks with <br> tags
+    var startDate = button.data('start-date');
+    var endDate = button.data('end-date');
+
+    var modal = $(this);
+    modal.find('#detailTitle').text(title);
+    modal.find('#detailContent').html(content);  // Use .html() to preserve line breaks
+    modal.find('#detailStartDate').text(startDate);
+    modal.find('#detailEndDate').text(endDate);
+});
+
+</script>
+
+<style>
+    h2 {
+        color: #333;
+        font-weight: 600;
+        font-size: 2rem;
+    }
+    .card {
+        background-color: #efefef;
+        border-radius: 8px;
+        border: 4px solid #535353;
+        box-shadow: 0px 10px 8px rgba(0, 0, 0, 0.884);
+        overflow: hidden;
+    }
+    #announcementContent {
+        min-height: 200px; 
+        overflow-y: auto;   
+    }
+
+    #detailContent {
+    word-wrap: break-word;  
+    white-space: normal;     
+    overflow-y: auto;       
+    max-height: 400px;     
+}
+
+  
+    .card-footer {
+        background-color: transparent;
+        outline: none;
+        border: none;
+    }
+    .alert-info {
+        font-size: 1.2rem;
+        padding: 20px;
+        border-radius: 5px;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    button {
+        color: white;
+        font-weight: 500;
+    }
+    .card-title {
+    color: #c0500f;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    white-space: nowrap;  /* Prevents overflow to a new line */
+    overflow: hidden;
+    text-overflow: ellipsis;  /* Shows '...' if the title is too long */
+    max-width: 100%;  /* Ensures title stays within the card width */
+}
+
+.card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+}
+
+.description {
+    max-height: 80px; 
+    overflow-y: auto;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;
+}
+
+/* Styling for the button area to avoid overflow */
+.card .btn {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+    margin-top: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 1.2rem; /* Scales down for smaller screens */
+    }
+}
+
+</style>
+{% endblock %}

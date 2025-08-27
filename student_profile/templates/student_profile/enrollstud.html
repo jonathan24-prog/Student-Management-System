@@ -216,26 +216,67 @@
         },
         methods: {
             deleteRow(index, rows) {
-                rows.splice(index, 1);
-            },
-            addSubject() {
-                //let subject=this.subjects.find(el=>el.id == this.subject.id)
+        rows.splice(index, 1);
+    },
+    addSubject() {
+    if (!this.subject) {
+        this.$message.error('Please select a subject');
+        return;
+    }
 
-                console.log(this.subject)
-
-                if (this.enroll.enroll_subjects.find(e => e.subject == this.subject) == null) {
+    axios_instance1.get(`/check_prerequisites?subject_id=${this.subject.id}&student_id=${this.enroll.student}`)
+        .then(response => {
+            if (response.data.status === 'error') {
+                this.$notify({
+                    title: 'Warning',
+                    message: response.data.message,
+                    type: 'warning'
+                });
+            } else {
+                // Add subject if prerequisites are satisfied
+                if (this.enroll.enroll_subjects.find(e => e.subject == this.subject.id) == null) {
                     this.enroll.enroll_subjects.push({
-
                         grade_status: null,
                         grade: null,
                         status: "draft",
                         subject: this.subject.id,
                         instructor: null,
                         sub: this.subject
-                    })
+                    });
                 }
+            }
+        })
+        .catch(error => {
+            this.$message.error('Error checking prerequisites');
+        });
+},
 
-            },
+    validateSubjects() {
+        // Validate all enrolled subjects against prerequisites
+        const validSubjects = [];
+        
+        this.enroll.enroll_subjects.forEach(subject => {
+            axios_instance1.get(`/check_prerequisites?subject_id=${subject.subject}&student_id=${this.enroll.student}`)
+                .then(response => {
+                    if (response.data.status === 'success') {
+                        validSubjects.push(subject);
+                    } else {
+                        this.$notify({
+                            title: 'Warning',
+                            message: response.data.message,
+                            type: 'warning'
+                        });
+                    }
+                })
+                .catch(error => {
+                    this.$message.error('Error validating subjects');
+                })
+                .finally(() => {
+                    this.enroll.enroll_subjects = validSubjects;
+                });
+        });
+    },
+
             save() {
                 let major = this.enroll.major != null ? this.enroll.major : "0"
 
@@ -270,27 +311,45 @@
 
             },
             getSubjects() {
-
-                let major = this.enroll.major != null ? this.enroll.major : "0"
+                let major = this.enroll.major != null ? this.enroll.major : "0";
+                
                 axios_instance1.get(
                     `/Apiaddsubjectbycuriculum/${this.enroll.course}/${major}/${this.enroll.semister}/${this.enroll.year_level}`
                 ).then(res => {
-                    console.log(res.data)
-                    this.enroll.enroll_subjects = []
-                    res.data.forEach(el => {
-                        this.enroll.enroll_subjects.push({
-
-                            grade_status: null,
-                            grade: null,
-                            status: "draft",
-                            subject: el.id,
-                            instructor: null,
-                            sub: el
-                        },)
-                    })
+                    this.enroll.enroll_subjects = [];
+                    
+                    res.data.forEach(subject => {
+                        // Check prerequisite for each subject before adding
+                        axios_instance1.get(`/check_prerequisites?subject_id=${subject.id}&student_id=${this.enroll.student}`)
+                            .then(response => {
+                                if (response.data.status === 'success') {
+                                    // Add subject if prerequisites are satisfied
+                                    if (!this.enroll.enroll_subjects.find(e => e.subject === subject.id)) {
+                                        this.enroll.enroll_subjects.push({
+                                            grade_status: null,
+                                            grade: null,
+                                            status: "draft",
+                                            subject: subject.id,
+                                            instructor: null,
+                                            sub: subject
+                                        });
+                                    }
+                                } else {
+                                    // Notify the user if prerequisites are not satisfied
+                                    this.$notify({
+                                        title: 'Warning',
+                                        message: response.data.message + '  plss add subjects manually',
+                                        type: 'warning'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                this.$message.error('Error checking prerequisites');
+                            });
+                    });
                 }).catch(err => {
-                    this.$message.error('Oops, No Curriculum added on this parameters');
-                })
+                    this.$message.error('Oops, No Curriculum added for the selected parameters');
+                });
             }
 
         },
@@ -304,20 +363,23 @@
 
             axios_instance.get('curriculumss').then(res => {
                 res.data.forEach(el => {
-                    el.subjects.forEach(e => {
-                        if (this.subjects.find(sub => sub.id == e.id) == null) {
-                            this.subjects.push(e)
-                        }
-
-                    })
-
-                })
-
-
-                this.subjects.forEach(el => {
-                    el.full = `${el.code}-${el.description}`
+                    // Check if the curriculum's semester matches the active semester
+                    if (el.semister === this.activeSem.semister) {
+                        el.subjects.forEach(e => {
+                            // Check if the subject is not already added
+                            if (this.subjects.find(sub => sub.id == e.id) == null) {
+                                this.subjects.push(e)
+                            }
+                        });
+                    }
                 });
-            })
+
+                // Add the 'full' property to each subject
+                this.subjects.forEach(el => {
+                    el.full = `${el.code}-${el.description}`;
+                });
+            });
+
 
             axios_instance.get('instructors').then(res => {
                 this.instructors = res.data

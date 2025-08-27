@@ -1,0 +1,102 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="profile-heading">Profile Details</h2>
+
+    <div class="profile-info">
+        <!-- Profile Image Section -->
+        <div class="profile-image-section text-center mb-4">
+            <label for="profile_image" class="font-weight-bold">Profile Image</label><br>
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="Profile Image" class="profile-image img-fluid rounded-circle shadow-sm">
+            {% else %}
+                <p class="text-muted">No profile image uploaded.</p>
+            {% endif %}
+        </div>
+
+        <!-- User Information Section -->
+        <div class="user-info-section">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="font-weight-bold">Username</label>
+                    <p class="form-control bg-light">{{ user.username }}</p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="first_name" class="font-weight-bold">First Name</label>
+                    <p class="form-control bg-light">{{ user.first_name }}</p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="last_name" class="font-weight-bold">Last Name</label>
+                    <p class="form-control bg-light">{{ user.last_name }}</p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="font-weight-bold">Email</label>
+                    <p class="form-control bg-light">{{ user.email }}</p>
+                </div>
+
+                <!-- Password (Not Recommended for Display) -->
+                <div class="col-md-6 mb-3">
+                    <label for="password" class="font-weight-bold">Password</label>
+                    <p class="form-control bg-light">******</p> <!-- Masked for security -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-heading {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #333;
+}
+
+.profile-info {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.profile-image-section {
+    margin-bottom: 30px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+
+.form-control {
+    font-size: 16px;
+    border: none;
+    background-color: #fff;
+    padding: 10px;
+}
+
+.font-weight-bold {
+    font-weight: 600;
+    color: #444;
+}
+
+.text-muted {
+    color: #777;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+</style>
+{% endblock %}  

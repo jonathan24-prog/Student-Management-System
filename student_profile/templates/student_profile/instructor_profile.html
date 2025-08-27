@@ -1,0 +1,137 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5" id="profile">
+    <h2 class="text-center mb-4">Profile Details</h2>
+
+    <!-- Display success or error messages -->
+    {% if messages %}
+    <div id="custom-alert" class="alert-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                <div class="alert-content">
+                    <div class="alert-message">
+                        <i class="fa {% if message.tags == 'success' %}fa-check{% else %}fa-times{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">×</button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section class="section profile">
+        <div class="container mt-4">
+            <div class="text-center mb-5">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="Profile Picture" class="rounded-circle img-fluid mb-3 m-auto" style="width: 150px; height: 150px;">
+                {% else %}
+                    <div class="placeholder-image bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 150px; height: 150px;">
+                        <span>No Image</span>
+                    </div>
+                {% endif %}
+                <h3 class="fw-bold">{{ user.first_name|default:"N/A" }} {{ user.last_name|default:"N/A" }}</h3>
+                <a href="{% url 'view_instructor' %}" class="btn btn-primary mt-3">Edit Profile</a>
+            </div>
+
+            <h5 class="fw-bold mb-4 text-center">Personal Details</h5>
+           
+            <!-- Profile Information Grid -->
+            <div class="row m-auto">
+                <!-- Column 1: Personal Details -->
+                <div class="col-md-4 mb-4">
+                    <ul class="list-unstyled">
+                        <li><strong>ID:</strong> {{ user.student_id|default:"N/A" }}</li>
+                        <li><strong>Firstname:</strong> {{ instructor.first_name|default:"N/A" }}</li>
+                        
+                       
+                    </ul>
+                </div>
+
+                <!-- Column 2: Contact Information -->
+                <div class="col-md-4 mb-4">
+                    <ul class="list-unstyled">
+                        <li><strong>Lastname:</strong> {{ instructor.last_name|default:"N/A" }}</li>
+                        <li><strong>Sex:</strong> {{ instructor.gender|default:"N/A" }}</li>
+                       
+                    </ul>
+                </div>
+
+                <!-- Column 3: Professional Details -->
+                <div class="col-md-4 mb-4">
+                    <ul class="list-unstyled">
+                        <li><strong>Mobile No.:</strong> {{ instructor.contact|default:"N/A" }}</li>                       
+                        <li><strong>Address:</strong> {{ instructor.address|default:"N/A" }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<style>
+  #profile li{
+    outline: 1px solid rgb(191, 191, 191);
+    background-color: rgb(250, 250, 250);
+    border-radius: 3px;
+    margin: 10px 0px;
+    padding: 10px;
+  }
+
+    /* Custom Alert Styles */
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+
+    /* Hidden state */
+    .alert-hidden {
+        display: none;
+    }
+</style>
+
+<script>
+    // Function to display the alert message
+    function showCustomAlert() {
+        const alert = document.getElementById('custom-alert');
+
+        // If there is an alert, make it visible
+        if (alert && alert.innerHTML.trim() !== '') {
+            alert.className = 'alert-visible';
+            // Remove the alert after 5 seconds
+            setTimeout(() => {
+                alert.className = 'alert-hidden';
+            }, 5000); // 5 seconds
+        }
+    }
+
+    // Call this function on page load
+    document.addEventListener('DOMContentLoaded', showCustomAlert);
+</script>
+
+
+{% endblock %}

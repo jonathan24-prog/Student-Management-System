@@ -1,0 +1,32 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Post Announcement</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" class="border p-4 rounded bg-light shadow-sm">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.content.label_tag }}
+                    {{ form.content }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.start_date.label_tag }}
+                    {{ form.start_date }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.end_date.label_tag }}
+                    {{ form.end_date }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Post Announcement</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

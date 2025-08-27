@@ -1,7 +1,133 @@
 {% extends 'student_profile/basemenu.html' %}
 
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4" style="color: black; font-weight: 700; font-size: 2rem;">Dashboard</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Announcements</h5>
+                    <p class="card-text">View the latest announcements here.</p>
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'post_announcement' %}" class="btn btn-success">Add Announcements</a>
+                    {% endif %}
+                    <a href="{% url 'announcement_list' %}" class="btn btn-info">View Announcements</a>
+                </div>
+            </div>
+        </div>
+        {% if request.user.is_superuser %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title" style="font-size: 1.5rem;">Grade Submission Schedule </h5>
+                    <p class="card-text">Create a Schedule for submission of grades here</p>              
+                    <a href="{% url 'set_grade_submission_schedule' %}" class="btn btn-success">Set Schedule</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {%if request.user.is_student%}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">User Profile</h5>
+                    <p class="card-text">Manage your profile and account settings.</p>
+                    <a href="{% url 'profile' %}" class="btn btn-primary">View Profile</a>
+                </div>
 
-      {% block content %}
+            </div>
+        </div>
+        {%endif%}
+        {%if request.user.is_dean%}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">User Profile</h5>
+                    <p class="card-text">Manage your profile and account settings.</p>
+                    <a href="{% url 'profiles' %}" class="btn btn-primary">View Profile</a>
+                </div>
 
+            </div>
+        </div>
+        {%endif%}
+        
+        {%if request.user.is_teacher %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">User Profile</h5>
+                    <p class="card-text">Manage your profile and account settings.</p>
+                    <a href="{% url 'profiles' %}" class="btn btn-primary">View Profile</a>
+                </div>
+                
+            </div>
+        </div>
+        {%endif%}
+        
+<!--         
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Total Students</h5>
+                    <p class="card-text">Total number of students enrolled.</p>
+                    <h3 class="card-text">{{ total_students }}</h3>
+                </div>
+            </div>
+        </div> -->
+    </div>
 
-{%endblock%}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert " role="alert" style="background-color: rgb(220, 229, 238);">
+                Welcome to your dashboard! Here you can manage announcements, your profile, and generate reports.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    h2 {
+        color: black;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+    .card {
+        background-color: rgb(230, 232, 238);
+        box-shadow: 0px 0px 2px 0px gray;
+        outline: none;
+    }
+    .card-title {
+        color: rgb(15, 18, 46);
+        font-size: 1.7rem;
+        font-weight: 700;
+    }
+    .description {
+        color: rgb(39, 39, 39);
+        font-size: 1.2rem;
+    }
+</style>
+
+<script>
+    // Function to speak a message
+    function speakAIMessage(message) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.error("Speech synthesis is not supported in this browser.");
+      }
+    }
+
+    // Check if we need to greet the user on the profile page
+    window.addEventListener('load', function() {
+      if (localStorage.getItem("speakProfileGreeting") === "true") {
+        // Speak the profile greeting
+        speakAIMessage("Welcome to  Dashboard");
+        // Remove the greeting indicator from localStorage
+        localStorage.removeItem("speakProfileGreeting");
+      }
+    });
+  </script>
+{% endblock %}

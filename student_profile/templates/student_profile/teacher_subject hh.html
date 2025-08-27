@@ -1,0 +1,105 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 p-5 shadow-lg">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            <div id="custom-alert" class="alert-container mt-4 p-2 shadow-lg">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                            <div class="alert-content">
+                                <div class="alert-message">
+                                    {% if message.tags == 'success' %}
+                                        <div class="flex-content">
+                                            <img class="w-10 rounded-circle" src="{% static 'student_profile/images/c.png' %}" alt="Success">
+                                            <span>Success: {{ message }}</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="flex-content">
+                                            <img class="w-10 rounded-circle" src="{% static 'student_profile/images/error.png' %}" alt="Error">
+                                            <span>Error: {{ message }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <form id="userSubjectSearchForm" method="POST">
+                {% csrf_token %}
+                <div class="mt-3">
+                    <input type="text" class="form-control" id="userSubjectSearch" placeholder="Search Your Subjects" autocomplete="off">
+                    <div id="userSubjectDropdown" class="dropdown-menu w-50" style="display: none;"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    // Function to get the CSRF token from the cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Add CSRF token to all AJAX requests
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": csrftoken }
+    });
+
+    // Live search for the user's subjects
+    $('#userSubjectSearch').on('input', function() {
+        var query = $(this).val();
+        if (query.length > 0) {
+            $.ajax({
+                url: "{% url 'teacher_subject' teacher.id %}",
+                type: "POST",
+                data: {
+                    'query': query,
+                    'action': 'search_user_subjects',
+                },
+                success: function(data) {
+                    var dropdown = $('#userSubjectDropdown');
+                    dropdown.empty().show();
+                    if (data.length > 0) {
+                        $.each(data, function(index, subject) {
+                            dropdown.append('<a class="dropdown-item" href="#">' + subject.code + ' - ' + subject.description + '</a>');
+                        });
+                    } else {
+                        dropdown.append('<div class="dropdown-item">No subjects found</div>');
+                    }
+                }
+            });
+        } else {
+            $('#userSubjectDropdown').hide();
+        }
+    });
+
+    // Handle selection of a subject from the user's subject dropdown
+    $(document).on('click', '#userSubjectDropdown .dropdown-item', function(e) {
+        e.preventDefault();
+        $('#userSubjectSearch').val($(this).text());
+        $('#userSubjectDropdown').hide();
+    });
+</script>
+
+{% endblock %}
+

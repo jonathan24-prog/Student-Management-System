@@ -2,7 +2,50 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from .models import DaySched, TimeSched, Room,InstructorLoadSubject, AOSF, IDandFullname, EnrollbyStudent,Student,Subject,Course,Major,Year_level,Academic_year,SubjectsLoaded,Instructor,Curriculum, ActiveSem
+from accounts.models import CustomUser
+from .models import DaySched, TimeSched, Room,InstructorLoadSubject, AOSF, IDandFullname,StudentProfile, EnrollbyStudent,Announcement,Student,Subject,Course,Major,Year_level,Academic_year,SubjectsLoaded,Instructor,Curriculum, ActiveSem
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Announcement
+        fields = ['id', 'title', 'content', 'start_date', 'end_date', 'created_by', 'created_at', 'updated_at']
+
+class StudentProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentProfile
+        fields = '__all__'
 
 class DuplicateData(APIException):
     status_code = 406 
@@ -55,11 +98,76 @@ class Academic_yearSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
+
 class SubjectsLoadedSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(required=False)
-	class Meta:
-		model = SubjectsLoaded
-		fields = ["id","grade_status","grade","midterm_grade","status","enrolled_by_student","subject","instructor"]
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = SubjectsLoaded
+        fields = ["id", "grade_status", "grade", "midterm_grade", "status", "enrolled_by_student", "subject", "instructor", "submit_status"]
+
+from rest_framework import serializers
+from .models import SubjectsLoaded
+
+from django.db.models import Count
+
+class SubjectsLoadedSerializers(serializers.ModelSerializer):
+    instructor_name = serializers.SerializerMethodField()
+    forwarded_subject_count = serializers.SerializerMethodField()  # Forwarded subjects count
+    total_subject_count = serializers.SerializerMethodField()  # Total subjects assigned to the instructor
+    subject_name = serializers.CharField(source='subject.description', read_only=True)
+    subject_code = serializers.CharField(source='subject.code', read_only=True)
+    semister = serializers.CharField(source='semister.semister', read_only=True)
+    academic_year = serializers.CharField(source='academic_year.ay', read_only=True)
+    submission_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = SubjectsLoaded
+        fields = [
+            'id', 'subject_name', 'subject_code', 'semister', 'academic_year', 
+            'instructor_name', 'submit_status', 'grade', 'midterm_grade', 'status', 
+            'submission_time', 'forwarded_subject_count', 'total_subject_count'
+        ]
+
+    def get_instructor_name(self, obj):
+        if obj.instructor:
+            return f"{obj.instructor.first_name} {obj.instructor.last_name}"
+        return "No instructor"
+
+    def get_forwarded_subject_count(self, obj):
+        instructor = obj.instructor
+        if instructor:
+            # Get all subjects assigned to this instructor in IDandFullname
+            assigned_subjects = IDandFullname.objects.filter(
+                instructor=instructor
+            ).values_list('subjects__id', flat=True).distinct()
+
+            # Count distinct subjects with any non-empty submit_status
+            forwarded_count = SubjectsLoaded.objects.filter(
+                instructor=instructor,
+                submit_status__isnull=False,  # Ensure the submit_status has a value
+                subject__id__in=assigned_subjects  # Only include subjects assigned to this instructor
+            ).values('subject').distinct().count()
+
+            return forwarded_count
+        return 0
+
+    def get_total_subject_count(self, obj):
+        instructor = obj.instructor
+        if instructor:
+            id_and_fullname = IDandFullname.objects.filter(instructor=instructor).first()
+            if id_and_fullname:
+                related_subjects = id_and_fullname.subjects.all()
+                total_subjects = related_subjects.count()
+                return total_subjects
+        return 0
+
+
+
+
+
+
+
 
 class CurriculumSerializer(serializers.ModelSerializer):
 	# subjects=SubjectSerializer(many=True)
@@ -203,18 +311,28 @@ class StudentsEnrollSerializer(serializers.ModelSerializer):
 
 
 class SubjectEnrollSerializer(serializers.ModelSerializer):
-	enrolled_by_student=StudentEnrollSerializer()
-	subject=SubjectSerializer()
-	instructor=InstructorSerializer()
-	class Meta:
-		model=SubjectsLoaded
-		fields = ['id','enrolled_by_student','grade','midterm_grade','subject','instructor','grade_status','status',]
+    enrolled_by_student = StudentEnrollSerializer()
+    subject = SubjectSerializer()
+    instructor = InstructorSerializer()
+
+    class Meta:
+        model = SubjectsLoaded
+        fields = ['id', 'enrolled_by_student', 'grade', 'midterm_grade', 'subject', 'instructor', 'grade_status', 'status', 'submit_status']
+
 
 class ActiveSemSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = ActiveSem
 		fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = CustomUser
+		fields = '__all__'
+
+
 
 
 
