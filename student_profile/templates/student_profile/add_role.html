@@ -1,0 +1,437 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4 p-7 shadow-lg">
+    {% if messages %}
+    <div id="custom-alert" class="alert-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                <div class="alert-content">
+                    <div class="alert-message">
+                        {% if message.tags == 'success' %}
+                            <div class="flex-content">
+                                <img class="w-10 rounded-circle" src="{% static 'student_profile/images/c.png' %}" alt="Success">
+                                <span>Success</span>
+                            </div>
+                        {% else %}
+                            <div class="flex-content">
+                                <img class="w-10 rounded-circle" src="{% static 'student_profile/images/delete.jpg' %}" alt="Error">
+                                <span>Error</span>
+                            </div>
+                        {% endif %}
+                        &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;{{ message }}
+                    </div>
+                </div>
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">X</button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="tab-container">
+        <div class="tabs">
+            {% if request.user.is_superuser %}
+            <button class="tab {% if role == 'teacher' %}active{% endif %}" onclick="openTab('teacher', '{% url 'add_role' 'teacher' %}')">Add Teacher</button>
+            <button class="tab {% if role == 'dean' %}active{% endif %}" onclick="openTab('dean', '{% url 'add_role' 'dean' %}')">Add Dean</button>
+            <button class="tab {% if role == 'student' %}active{% endif %}" onclick="openTab('student', '{% url 'add_role' 'student' %}')">Add Student</button>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-5">
+        <button type="button" id="dynamicButton" class="btn btn-primary text-white fw-bolder" data-bs-toggle="modal" data-bs-target="#addIdAndFullNameModal">
+            Add {{ role|capfirst }}
+        </button>
+    </div>
+
+    <div class="modal fade" id="addIdAndFullNameModal" tabindex="-1" aria-labelledby="addIdAndFullNameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIdAndFullNameModalLabel">Add ID and Full Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" class="form-group">
+                        {% csrf_token %}
+                        
+                        <!-- Conditionally render the ID field based on the role -->
+                        {% if role == 'teacher' or role == 'dean' %}
+                        <div class="form-group">
+                            <label for="student_id">{{ role|capfirst }} ID:</label>
+                            <input type="text" name="student_id" class="form-control" value="{{ random_id }}" readonly required>
+                        </div>
+                        {% else %}
+                        <div class="form-group">
+                            <label for="student_id">Student ID (Required):</label>
+                            <input type="text" name="student_id" class="form-control" required>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            <label for="first_name">First Name:</label>
+                            <input type="text" name="first_name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name:</label>
+                            <input type="text" name="last_name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="course_id">Course:</label>
+                            <select name="course_id" class="form-control" required>
+                                <option value="">Select Course</option>
+                                {% for course in courses %}
+                                    <option value="{{ course.id }}">{{ course.code }}</option>
+                                {% empty %}
+                                    <option value="">No courses available</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                
+                        <button type="submit" class="btn btn-primary mt-3">Add {{ role|capfirst }}</button>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5">List of {{ role|capfirst }}s</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>{{ role|capfirst }} ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Course</th> <!-- New column for Course name -->
+                    <th>Action</th>  <!-- New column to show who added the entry -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in role_entries %}
+                <tr id="row-{{ entry.id }}" style="background-color: {% if forloop.counter0|divisibleby:2 %} #0000000d {% else %} white {% endif %};">
+                    <td>{{ entry.student_id }}</td>
+                    <td>{{ entry.first_name }}</td>
+                    <td>{{ entry.last_name }}</td>
+                    <td>{{ entry.course.code }}</td> <!-- Display the course name instead of ID -->
+                    <td>
+                        <button type="button" class="btn btn-info text-white fw-bolder" data-bs-toggle="modal" data-bs-target="#viewDetailsModal_{{ entry.id }}">
+                            View Details
+                        </button>
+                        <button type="button" class="btn btn-danger text-white fw-bolder" id="deleteBtn_{{ entry.id }}" data-entry-id="{{ entry.id }}">
+                            Delete
+                        </button></td>
+                    <!-- Modal to display entry details -->
+                        <div class="modal fade" id="viewDetailsModal_{{ entry.id }}" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="viewDetailsModalLabel">View Details for {{ entry.first_name }} {{ entry.last_name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Student ID:</strong> {{ entry.student_id }}</p>
+                                        <p><strong>First Name:</strong> {{ entry.first_name }}</p>
+                                        <p><strong>Last Name:</strong> {{ entry.last_name }}</p>
+                                        <p><strong>Course:</strong> {{ entry.course }}</p>
+                                        <p><strong>Status:</strong> {{ entry.status }}</p>
+                                        <p><strong>Role:</strong> {% if entry.is_teacher %}Teacher{% elif entry.is_dean %}Dean{% elif entry.is_student %}Student{% else %}N/A{% endif %}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No {{ role }}s added yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+    </div>
+</div>
+
+
+
+<!-- Button to trigger modal -->
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle delete button click directly
+        $(".btn-danger").click(function() {
+            var entryId = $(this).data('entry-id');  // Get the entry ID from the button's data attribute
+
+            // AJAX request to delete the entry
+            $.ajax({
+                url: "{% url 'delete_role_entry' entry_id=0 %}".replace("0", entryId),  // Use dynamic URL
+                method: "POST",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Add CSRF token for security
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Success - remove the entry row from the page
+                      //  $("#viewDetailsModal_" + entryId).modal('hide');  // Close the modal
+                        $('#entry_' + entryId).remove();  // Assuming the row has an ID 'entry_<id>' to uniquely identify it
+                            location.reload(); // Optionally show success message
+                    } else {
+                        alert('Error deleting entry: ' + response.message);  // Display error message
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while deleting the entry');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+<style>
+    /* Profile Image Styles */
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border: 3px solid #007bff;
+    }
+    
+    /* Placeholder Image Styles */
+    .placeholder-image {
+        font-size: 1rem;
+        width: 150px;
+        height: 150px;
+    }
+    
+    /* Edit Profile Button Styles */
+    .btn-edit-profile {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 25px;
+    }
+    
+    /* Profile Details Card Styles */
+    .profile-details {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Detail Item Styles */
+    .detail-item {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+    
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+    
+    .detail-title {
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .detail-value {
+        font-size: 1.1rem;
+        color: #212529;
+    }
+
+    /* Custom Alert Styles */
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 20px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+    }
+
+    .alert-success {
+        background-color: #fff;
+        color: #000;
+    }
+
+    .alert-danger {
+        background-color: #fff;
+        color: #000;
+    }
+
+    .alert i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+
+    /* Hidden state */
+    .alert-hidden {
+        display: none;
+    }
+
+    .fa-check{
+        background-color: #28a745;
+        color: white;
+        padding:5px;
+        border-radius:100px;
+    }
+
+    .fa-times{
+        background-color: #dc3545;
+        color: white;
+        padding:5px;
+        border-radius:100px;
+    }
+    {% comment %} .alert-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .alert-danger {
+        background-color: #dc3545;
+        color: white;
+    } {% endcomment %}
+    .alert-container {
+        display: flex;
+        flex-wrap: wrap;
+       
+    }
+    
+    .alert {
+       
+        
+        padding: 10px;
+        border-radius: 8px;
+        width:20%;
+    
+    }
+    
+    .alert-success {
+        background-color: #fff;
+        
+    }
+    
+    .alert-danger {
+        background-color: #fff;
+        
+    }
+    
+    .alert-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .alert-message {
+        flex-grow: 1;
+    }
+    
+    .flex-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+    
+    .alert img {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .close-btn {
+        background-color: transparent;
+        border: none;
+        font-size: 16px;
+        color:lightgray;
+        cursor: pointer;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+    }
+    
+    .close-btn:hover {
+        color: red;
+    }
+    .tab-container {
+        display: flex;
+        border-radius: 8px;
+        justify-content: center;
+        width: 281px;
+        overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    gap: 2px; /* Adds spacing between the buttons */
+}
+
+.tab {
+    background-color: #f5f5f5;
+    border: none;
+    outline: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    color: #333;
+}
+
+/* When hovering over one tab, all tabs change their background */
+    .tabs:hover .tab {
+        background-color: #e0e0e0;
+    }
+
+    .tab.active {
+        background-color: #4a90e2;
+        color: white;
+    }
+
+    /* Keep the active tab color the same even when hovering */
+    .tab.active:hover {
+        background-color: #4a90e2;
+    }
+</style>
+<script>
+    function openTab(role, url) {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        document.querySelector(`button[onclick="openTab('${role}', '${url}')"]`).classList.add('active');
+        window.location.href = url;
+    }
+</script>
+<script>
+    // Function to display the alert message
+    function showCustomAlert() {
+        const alert = document.getElementById('custom-alert');
+
+        // If there is an alert, make it visible
+        if (alert && alert.innerHTML.trim() !== '') {
+            alert.className = 'alert-visible';
+            // Remove the alert after 5 seconds
+            setTimeout(() => {
+                alert.className = 'alert-hidden';
+            }, 5000); // 5 seconds
+        }
+    }
+
+    // Call this function on page load
+    document.addEventListener('DOMContentLoaded', showCustomAlert);
+</script>
+{% endblock %}

@@ -1,20 +1,84 @@
-from .models import Student,EnrollbyStudent,IDandFullname, SubjectsLoaded,Curriculum,Subject,UploadExcel,IDandFullname,ActiveSem
+from django.db import models
+from django.utils import timezone
+from django.conf import settings
+from .models import Student,EnrollbyStudent,IDandFullname,Course, SubjectsLoaded,Curriculum,Subject,UploadExcel,IDandFullname,ActiveSem, Announcement
 from django import forms
 from django.db.models import Q
 import sys
 
 
 
+
+
+
+
+
+
+
+# forms.py
+from django import forms
+from .models import GradeSubmissionSchedule
+
+from django import forms
+from .models import GradeSubmissionSchedule, ActiveSem, Academic_year
+
+
+class GradeSubmissionScheduleForm(forms.ModelForm):
+    class Meta:
+        model = GradeSubmissionSchedule
+        fields = ['start_date', 'end_date', 'active_semister', 'academic_year']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+
+        if start_date and end_date and end_date < start_date:
+            self.add_error('end_date', 'End date must be after start date.')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class IDsNameForm(forms.ModelForm):
     class Meta:
         model=IDandFullname
-        fields=['student_id','first_name','last_name']
+        fields=['student_id','first_name','last_name', 'course']
         widgets={
                 'student_id':forms.TextInput(attrs={'class':'form-control form-control validate'}),
                 'first_name':forms.TextInput(attrs={'class':'form-control form-control validate'}),
                 'last_name':forms.TextInput(attrs={'class':'form-control form-control validate'}),
-
+                'course':forms.Select(attrs={'class':'form-control form-control validate'}),
                 }
+        course = forms.ModelChoiceField(queryset=Course.objects.all())
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ['title', 'content', 'start_date', 'end_date']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control border-primary'}),
+            'content': forms.Textarea(attrs={'class': 'form-control border-primary'}),
+            'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control border-primary'}),
+            'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control border-primary'}),
+        }
 
 
 
@@ -301,6 +365,7 @@ class ActiveSemAdminForm(forms.ModelForm):
         fields=('semister',)
         widgets = {
              'semister':forms.Select(attrs={'class':'form-control form-control validate'}),
+             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
     def __init__(self, *args, **kwargs):
         super(ActiveSemAdminForm, self).__init__(*args, **kwargs)

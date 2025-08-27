@@ -1,0 +1,74 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div id="app" class="container mt-5">
+    <el-card>
+    <h2 class="mb-4" style="color: black; font-weight: 700; font-size: 2rem;">Teacher List</h2>
+
+    <!-- Teacher List Table -->
+ 
+            <div class="table-responsive" v-if="teachers.length > 0 && !hasError">
+                <v-client-table :columns="columns" :data="teachers" :options="tableOptions">
+                    <!-- Template for the "Action" column with Manage Subject button -->
+                    <template slot="action" slot-scope="props">
+                        <a :href="`/manage_subjects/${props.row.id}/`" class="btn btn-primary btn-sm">
+                            Manage Subject
+                        </a>
+                    </template>
+                </v-client-table>
+            </div>
+
+            <div v-else-if="teachers.length === 0" class="text-center mt-3">
+                <p>No teachers found. Please add teachers.</p>
+            </div>
+
+            <div v-if="hasError" class="alert alert-danger">
+                <p>{{ errorMessage }}</p>
+            </div>
+       
+</div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+    // Axios instance configuration
+    const inst = axios.create({
+        baseURL: '/',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')  // Ensure that `Cookies` is defined and loaded before this script
+        }
+    });
+
+    // Vue configuration
+    Vue.use(VueTables.ClientTable);  // Table management
+    Vue.use(VueLoading);
+    Vue.component('loading', VueLoading);
+
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                teachers: JSON.parse('{{ teachers|escapejs }}'),  // Safely parse the teachers JSON
+                columns: ['student_id', 'first_name', 'last_name', 'course__code', 'action'],  // Adjusted column name
+                tableOptions: {
+                    headings: {
+                        student_id: 'Student ID',
+                        first_name: 'First Name',
+                        last_name: 'Last Name',
+                        'course__code': 'Course',  // Adjusted heading to match the field
+                        action: 'Action'
+                    },
+                    sortable: ['student_id', 'first_name', 'last_name', 'course__code'],
+                    filterable: ['student_id', 'first_name', 'last_name', 'course__code']
+                },
+                loadingTeachers: false,
+                hasError: false,
+                errorMessage: ''
+            };
+        }
+    });
+</script>
+{% endblock %}

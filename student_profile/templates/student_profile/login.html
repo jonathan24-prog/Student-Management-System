@@ -1,98 +1,9 @@
 {%extends 'student_profile/base.html'%} {%block content%}
 
 <div class="container">
-  <div class="lg:flex">
-    <div class="lg:w-1/2 xl:max-w-screen-sm">
-      <div class="py-12 bg-indigo-100 lg:bg-white flex justify-center lg:justify-start lg:px-12">
-        <div class="cursor-pointer flex items-center">
-          <div>
-            <svg class="w-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px"
-              viewBox="0 0 225 225" style="enable-background: new 0 0 225 225" xml:space="preserve">
-              <style type="text/css">
-                .st0 {
-                  fill: none;
-                  stroke: currentColor;
-                  stroke-width: 20;
-                  stroke-linecap: round;
-                  stroke-miterlimit: 3;
-                }
-              </style>
-              <g transform="matrix( 1, 0, 0, 1, 0,0) ">
-                <g>
-                  <path id="Layer0_0_1_STROKES" class="st0"
-                    d="M173.8,151.5l13.6-13.6 M35.4,89.9l29.1-29 M89.4,34.9v1 M137.4,187.9l-0.6-0.4     M36.6,138.7l0.2-0.2 M56.1,169.1l27.7-27.6 M63.8,111.5l74.3-74.4 M87.1,188.1L187.6,87.6 M110.8,114.5l57.8-57.8" />
-                </g>
-              </g>
-            </svg>
-          </div>
-          <div class="text-2xl text-indigo-800 tracking-wide ml-2 font-semibold">
-            BCC Enrollment Portal
-          </div>
-        </div>
-      </div>
-      <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
-        <h2
-          class="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl xl:text-bold">
-          Log in
-        </h2>
-        <div class="mt-12">
-          <form method="POST">
-            {%csrf_token%}
-            <div>
-              <div class="text-sm font-bold text-gray-700 tracking-wide pb-2">
-                Username
-              </div>
-              {{form.username}}
-            </div>
-            <div class="mt-8">
-              <div class="flex justify-between items-center">
-                <div class="text-sm font-bold text-gray-700 tracking-wide pb-2">
-                  Password
-                </div>
-
-              </div>
-              {{form.password}}
-            </div>
-            <div class="mt-10">
-              <button type="submit"
-                class="bg-indigo-500 text-gray-100 p-3 w-full rounded-md tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600 shadow-lg">
-                Log In
-              </button>
-            </div>
-
-
-            <div
-              class="mt-4 items-center flex flex-row  p-3 w-full rounded-md tracking-wide font-semibold font-display">
-              <p> Don't have account? &nbsp;</p>
-              <a href="{%url 'register'%}"
-                class="text-lg font-display font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer">
-                click here
-              </a>
-            </div>
-
-
-            {% if form.errors %}
-            {% for field in form %}
-            {% for error in field.errors %}
-            <div class="alert alert-danger">
-              <strong>{{ field.label }}</strong><span>{{ error|escape }}</strong>
-            </div>
-            {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-              <strong>{{ error|escape }}</strong>
-            </div>
-            {% endfor %}
-            {% endif %}
-          </form>
-
-
-
-        </div>
-      </div>
-    </div>
+  <div class="logcard">
+  <div class="lg:flex" id="logcardchild">
+    
     <div class="hidden lg:flex items-center justify-center bg-indigo-100 flex-1 h-screen">
       <div class="max-w-xs transform duration-200 hover:scale-110 cursor-pointer">
         <svg class="w-5/6 mx-auto" xmlns="http://www.w3.org/2000/svg" id="f080dbb7-9b2b-439b-a118-60b91c514f72"
@@ -155,7 +66,121 @@
         </svg>
       </div>
     </div>
+
+    <div class="lg:w-1/2 xl:max-w-screen-sm" style="background-color: white;">
+      <div class="py-7 bg-indigo-100 lg:bg-white flex justify-center lg:justify-start lg:px-12">
+        <div class="cursor-pointer flex items-center">
+          <div>
+            <svg class="w-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px"
+              viewBox="0 0 225 225" style="enable-background: new 0 0 225 225" xml:space="preserve">
+              <style type="text/css">
+                .st0 {
+                  fill: none;
+                  stroke: currentColor;
+                  stroke-width: 20;
+                  stroke-linecap: round;
+                  stroke-miterlimit: 3;
+                }
+              </style>
+              <g transform="matrix( 1, 0, 0, 1, 0,0) ">
+                <g>
+                  <path id="Layer0_0_1_STROKES" class="st0"
+                    d="M173.8,151.5l13.6-13.6 M35.4,89.9l29.1-29 M89.4,34.9v1 M137.4,187.9l-0.6-0.4     M36.6,138.7l0.2-0.2 M56.1,169.1l27.7-27.6 M63.8,111.5l74.3-74.4 M87.1,188.1L187.6,87.6 M110.8,114.5l57.8-57.8" />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <div class="text-2xl text-indigo-800 tracking-wide ml-2 font-semibold">
+            BCConnect
+          </div>
+        </div>
+      </div>
+      <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl" id="formscroll">
+        <h2
+          class="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl xl:text-bold">
+          LOG IN HERE
+        </h2>
+        <div class="mt-12">
+          <form method="POST">
+            {% if form.errors %}
+            {% for field in form %}
+            {% for error in field.errors %}
+            <div class="alert alert-danger">
+              <strong>{{ field.label }}</strong><span>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+              <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {%csrf_token%}
+            <div>
+              <div class="text-sm font-bold text-gray-700 tracking-wide pb-2">
+                Username
+              </div>
+              {{form.username}}
+            </div>
+            <div class="mt-8">
+              <div class="flex justify-between items-center">
+                <div class="text-sm font-bold text-gray-700 tracking-wide pb-2">
+                  Password
+                </div>
+
+              </div>
+              {{form.password}}
+            </div>
+            <div class="mt-10">
+              <button type="submit" id="profileButton"
+                class="bg-indigo-500 text-gray-100 p-3 w-full rounded-md tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600 shadow-lg">
+                Log In
+              </button>
+            </div>
+            <div
+              class="mt-4 items-center flex flex-row  p-3 w-full rounded-md tracking-wide font-semibold font-display">
+              <p> Don't have account? &nbsp;</p>
+              <a href="{%url 'register'%}"
+                class="text-lg font-display font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer">
+                create account.
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
   </div>
 </div>
 
+
+<style>
+  body{
+    background-color: rgb(147, 159, 191);
+  }
+  .logcard{
+    margin-top: 35px;
+  }
+  #logcardchild{
+    display: flex;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 0px rgb(178, 178, 178);
+    height: 90vh;
+    overflow: hidden;
+    font-family: "Kanit", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  }
+  #formscroll{
+  height: 65vh;
+  overflow-y: scroll;
+ }
+::-webkit-scrollbar{
+  width: 0;
+} 
+</style>
 {%endblock%}

@@ -1,0 +1,300 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+
+<div id="app" class="container mt-5" style="padding: 20px 20px;">
+  <el-card>
+
+    <a href="{% url 'templateDownload' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+        <el-button size="small" type="info" class="mt-2 download-template" @click="downloadTemplate" :disabled="status === 'pending' || status === 'closed'">
+            Download Template
+        </el-button>
+    </a>
+    <div class="uploadGrades mb-2 mt-4">
+        
+        <el-upload
+            class="upload-demo"
+            action="/upload-excel/"
+            accept=".xlsx, .csv"
+            :before-upload="beforeUpload"
+            :on-change="handleFileChange"
+            :data="csrfData"
+            :show-file-list="false"
+            :on-error="handleUploadError"
+            ref="uploadRef"
+            :disabled="status === 'pending' || status === 'closed'">  <!-- Disable if status is 'closed' -->
+            <el-button size="small" type="primary">Upload File</el-button>
+        </el-upload>
+        
+    </div>
+
+    <!-- Status Message -->
+    <div v-if="status === 'pending'" class="alert alert-info text-center">
+        <p>Submission of Grades hasn't started yet.</p>
+    </div>
+
+    <div v-if="status === 'closed'" class="alert alert-danger text-center">
+        <p>Submission of Grades has already ended.</p>
+    </div>
+
+    <div class="row mb-3">
+        <h2>Select a subject</h2>
+        <div class="col-md-3">
+            <el-select 
+                v-model="selectedSubject" 
+                placeholder="Select subject" 
+                clearable 
+                filterable 
+                remote 
+                :remote-method="searchSubjects" 
+                :loading="loadingSubjects"
+                @change="displaySelectedSubject"
+                style="width: 300px;">
+                <el-option
+                    v-for="subject in subjects"
+                    :key="subject.id"
+                    :label="subject.code + ' - ' + subject.name" 
+                    :value="subject.id">
+                </el-option>
+            </el-select>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive" v-if="grades.length > 0 && !hasError">
+                <v-client-table :columns="columns" :data="grades"></v-client-table>
+            </div>
+            <div v-else-if="grades.length === 0" class="text-center mt-3">
+                <p>No data yet. Please upload grades.</p>
+            </div>
+            <div v-if="hasError" class="alert alert-danger">
+                <p>There was an error processing your request. Please fix the issues and try again.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3" v-if="grades.length > 0 && status !== 'closed'">
+        <el-button @click="submitGrades" type="success" :disabled="hasError || grades.length === 0 || !selectedSubject">
+            Submit Grades
+        </el-button>
+    </div>
+</el-card>
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    const inst = axios.create({
+        baseURL: '/',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    });
+    
+    Vue.use(VueTables.ClientTable);
+    Vue.use(VueLoading);
+    Vue.component('loading', VueLoading);
+
+    new Vue({
+    el: '#app',
+        data() {
+            return {
+                csrfToken: Cookies.get('csrftoken'),
+                csrfData: { csrfmiddlewaretoken: Cookies.get('csrftoken') },
+                columns: ["student_id", "name", "midterm_grade", "final_grade", "status"],
+                grades: [],
+                subjects: [],
+                selectedSubject: null,
+                selectedSubjectDetails: null,
+                loadingSubjects: false,
+                hasError: false,
+                instructorName: "{{ instructor_name }}",
+                instructorId: "{{ instructor_id }}",
+                status: "{{ status }}"  // Assume status comes from Django context
+            };
+        },
+
+        mounted() {
+            this.fetchSubjects();
+            
+            // Log instructor details in the console
+            console.log("Instructor ID:", this.instructorId);
+            console.log("Instructor Name:", this.instructorName);
+        },
+        methods: {
+        
+        // Fetch subjects from server
+        fetchSubjects() {
+            this.loadingSubjects = true;
+            inst.get('/subjects/list/')
+                .then(response => {
+                    this.subjects = response.data.map(subject => ({
+                        id: subject.id,
+                        code: subject.code,
+                        name: subject.description
+                    }));
+                    this.loadingSubjects = false;
+                })
+                .catch(error => {
+                    console.error('Error fetching subjects:', error);
+                    this.loadingSubjects = false;
+                });
+        },
+
+        // Search subjects based on user input
+        searchSubjects(query) {
+            if (query !== '') {
+                this.loadingSubjects = true;
+                inst.get('/subjects/list/', { params: { search: query } })
+                    .then(response => {
+                        this.subjects = response.data.map(subject => ({
+                            id: subject.id,
+                            code: subject.code,
+                            name: subject.description
+                        }));
+                        this.loadingSubjects = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching subjects:', error);
+                        this.loadingSubjects = false;
+                    });
+            } else {
+                this.fetchSubjects(); 
+            }
+        },
+        fetchGrades() {
+    inst.get('/grades/list/', { params: { subjectId: this.selectedSubject } })
+        .then(response => {
+            this.grades = response.data.map(grade => ({
+                ...grade,
+                semester: grade.semester,  // Include semester in the display
+                submitted_at: moment(grade.submitted_at).format('MMMM Do YYYY, h:mm:ss a')
+            }));
+        })
+        .catch(error => console.error('Error fetching grades:', error));
+},
+
+
+        // Display the selected subject
+        displaySelectedSubject(value) {
+            const subject = this.subjects.find(subject => subject.id === value);
+            this.selectedSubjectDetails = subject;
+        },
+
+        // Handle file upload validation
+        beforeUpload(file) {
+            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                file.type === 'application/vnd.ms-excel' || 
+                file.type === 'text/csv';
+
+            if (!isExcel) {
+                this.$notify.error('You can only upload Excel files!');
+                this.hasError = true;
+            }
+            return isExcel;
+        },
+
+        handleFileChange(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+                this.grades = json.map(item => ({
+                    student_id: item.student_id,
+                    name: item.name,
+                    midterm_grade: parseFloat(item.Midterm_Rating).toFixed(2),  // Format to 2 decimal places
+                    final_grade: parseFloat(item.Final_Rating).toFixed(2),      // Format to 2 decimal places
+                    status: item.status
+                }));
+                this.hasError = false;
+            };
+            reader.readAsArrayBuffer(file.raw);
+        },
+
+        // Handle upload error
+        handleUploadError(err) {
+            this.grades = []; 
+            this.hasError = true;
+            this.$notify.error({
+                title: 'Upload Error',
+                message: `${err}`
+            });
+            this.$refs.uploadRef.clearFiles(); 
+        },
+
+        // Method to download the template
+        downloadTemplate() {
+            window.location.href = "{% url 'templateDownload' %}";
+        },
+
+        submitGrades() {
+    const formattedGrades = this.grades.map(grade => ({
+        ...grade,
+        midterm_grade: parseFloat(grade.midterm_grade).toFixed(2),
+        final_grade: parseFloat(grade.final_grade).toFixed(2)
+    }));
+
+    const gradesData = JSON.stringify(formattedGrades);
+
+    inst.post('check_existing_grades/', { 
+        grades: formattedGrades, 
+        selectedSubject: this.selectedSubject  
+    })
+    .then(response => {
+        const existingRecords = response.data.existing_records;
+
+        if (existingRecords.length > 0) {
+            const errorMessages = existingRecords.map(record => `- Student ${record.name} already has a grade for ${record.subject}.`);
+            const consolidatedMessage = errorMessages.join('<br>');
+
+            Swal.fire({
+                title: 'Grade Submission Error',
+                html: consolidatedMessage,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
+
+            this.hasError = true;
+            return;
+        }
+    
+        // Proceed with saving the grades
+        inst.post('save_grades/', { 
+            data: gradesData,
+            selectedSubject: this.selectedSubject,
+            instructorId: this.instructorId  // Include instructor ID for saving
+        }).then(response => {
+            Swal.fire('Success!', 'The grades have been submitted!', 'success');
+        }).catch(error => {
+            console.error('Error submitting grades:', error);
+            Swal.fire('Error', 'You are not assigned to this subject', 'error');
+        });
+    }).catch(error => {
+        console.error('Error checking existing grades:', error);
+    });
+}
+
+    }
+});
+</script>
+{% endblock %}
+
+<style>
+    .table-responsive {
+        margin-top: 20px;
+    }
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .alert {
+        margin-top: 20px;
+    }
+   
+</style>

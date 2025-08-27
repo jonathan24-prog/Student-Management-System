@@ -1,0 +1,161 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div id="app" class="container mt-5">
+    <el-card>
+        <h2>Subject Leaderboard (Forwarded Submit Status)</h2>
+        <v-client-table :columns="columns" :data="formattedData">
+            <template v-slot:column-rank="{ row }">
+                {{ row.rank }} <!-- Display the rank here -->
+            </template>
+            <template v-slot:column-forwarded_subject_ratio="{ row }">
+                {{ row.forwarded_subject_ratio }} <!-- Display forwarded/total subjects ratio -->
+            </template>
+            <template slot="action" slot-scope="{ row }">
+                <button class="btn btn-primary" @click="openModal(row)">View</button>
+            </template>
+            <!-- Other table content -->
+        </v-client-table>
+        
+        
+        <el-dialog title="Forwarded Subjects" :visible.sync="showModal" width="50%">
+
+            <el-table :data="modalData" style="width: 100%">
+                <el-table-column prop="instructor_name" label="Instructor Name"></el-table-column>
+                <el-table-column prop="subject_name" label="Subject Name"></el-table-column>
+                <el-table-column prop="submit_status" label="Submit Status"></el-table-column>
+                <el-table-column prop="submission_time" label="Submission Time">
+                    {% verbatim %}
+                    <template slot-scope="scope">
+                        {{ formatDate(scope.row.submission_time) }}
+                    </template>
+                    {% endverbatim %}
+                </el-table-column>
+            </el-table>
+            
+            <span slot="footer" class="dialog-footer">
+                <button class="btn btn-secondary" @click="closeModal">Close</button>
+            </span>
+        </el-dialog>
+        
+        
+        
+    </el-card>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    // Axios instance configuration
+    const inst = axios.create({
+        baseURL: '/',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    });
+
+    // Vue configuration
+    Vue.use(VueTables.ClientTable);  // Table management
+    Vue.use(VueLoading);
+    Vue.component('loading', VueLoading);
+
+    new Vue({
+    el: '#app',
+    data: {
+    columns: ['rank', 'instructor_name', 'forwarded_subject_ratio', 'action'], // Add 'instructor_name'
+    datas: [], 
+    modalData: [], 
+    showModal: false,
+    selectedInstructorName: '', // Holds instructor name for modal
+},
+    computed: {
+    formattedData() {
+        const instructorData = this.datas.map(item => ({
+            ...item,
+            forwarded_subject_ratio: `${item.forwarded_subject_count}/${item.total_subject_count}`,
+            forwarded_subject_percentage: item.total_subject_count 
+                ? (item.forwarded_subject_count / item.total_subject_count) * 100
+                : 0, // Avoid division by zero
+            submission_time: new Date(item.submission_time) // Convert to Date for sorting
+        }));
+
+        // Sort by forwarded subject percentage in descending order
+        instructorData.sort((a, b) => {
+            if (b.forwarded_subject_percentage === a.forwarded_subject_percentage) {
+                // Tie-breaking by earliest submission_time
+                return a.submission_time - b.submission_time;
+            }
+            return b.forwarded_subject_percentage - a.forwarded_subject_percentage;
+        });
+
+        // Assign ranks with fixed placements for first-to-100%
+        let rankCount = 1;
+        const rankTexts = ["1st", "2nd", "3rd"];
+        const uniqueInstructors = new Set();
+
+        return instructorData
+            .filter(item => {
+                // Avoid duplicate instructors
+                if (uniqueInstructors.has(item.instructor_name)) return false;
+                uniqueInstructors.add(item.instructor_name);
+                return true;
+            })
+            .map((item, index) => {
+                let rank = rankCount.toString();
+                if (rankCount <= 3) {
+                    rank = rankTexts[rankCount - 1];
+                }
+
+                // Preserve placement for first 100% achievers
+                if (item.forwarded_subject_percentage === 100) {
+                    rank = rankTexts[rankCount - 1] || rankCount.toString();
+                }
+
+                rankCount++;
+                return {
+                    ...item,
+                    rank
+                };
+            });
+    }
+},
+
+    mounted() {
+        // Fetch data when the component is mounted
+        inst.get('/api/forwarded-submit-status/')
+            .then(response => {
+                this.datas = response.data;  // Assign the response data to the Vue instance
+            })
+            .catch(error => {
+                console.log('Error fetching data:', error);
+            });
+    },
+    methods: {
+        openModal(row) {
+        // Filter data for the modal to show all subjects for the selected instructor
+        this.modalData = this.datas.filter(
+            item => item.instructor_name === row.instructor_name && item.submit_status
+        ); // Check if submit_status has a value
+        this.selectedInstructorName = row.instructor_name; // Assign the instructor name to display in the modal
+        this.showModal = true; // Show the modal
+    },
+    closeModal() {
+        this.showModal = false; // Hide the modal
+    },
+
+        formatDate(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(date).toLocaleDateString(undefined, options);
+        },
+        getRankText(rank) {
+            // Return the rank as "First", "Second", "Third"
+            const rankTexts = ["1st", "2nd", "3rd"];
+            return rankTexts[rank - 1];
+        }
+    }
+});
+
+</script>   
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div id="app" class="container mt-5">
+    <!-- Subject Selection Interface -->
+    <el-card>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <el-select
+                    v-model="selectedSubject"
+                    placeholder="Select subject"
+                    clearable
+                    filterable
+                    remote
+                    :remote-method="searchSubjects"
+                    :loading="loadingSubjects"
+                    style="width: 300px;"
+                >
+                    <el-option
+                        v-for="subject in subjects"
+                        :key="subject.id"
+                        :label="`${subject.code} - ${subject.description}`"
+                        :value="subject.code"
+                    ></el-option>
+                </el-select>
+            </div>
+            <div class="col-md-2">
+                <el-button type="primary" @click="saveSelectedSubject" :disabled="!selectedSubject">Select</el-button>
+            </div>
+        </div>
+
+        <!-- Assigned Subjects Table -->
+        <div class="table-responsive" v-if="teacherSubjects.length > 0 && !hasError">
+            <v-client-table :columns="columns" :data="teacherSubjects" :options="tableOptions">
+                <template slot="action" slot-scope="props">
+                    <el-button type="danger" size="mini" @click="confirmDeleteSubject(props.row)">Delete</el-button>
+                </template>
+                <loading v-if="loadingSubjects"></loading>
+            </v-client-table>
+        </div>
+
+        <div v-else-if="teacherSubjects.length === 0" class="text-center mt-3">
+            <p>No subjects assigned yet. Please add subjects.</p>
+        </div>
+
+        <div v-if="hasError" class="alert alert-danger">
+            <p>{{ errorMessage }}</p>
+        </div>
+    </el-card>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    const inst = axios.create({
+        baseURL: '/',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    });
+
+    Vue.use(VueTables.ClientTable); // for table management
+    Vue.use(VueLoading);
+    Vue.component('loading', VueLoading);
+
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                teacherId: '{{ teacher.id }}', // Teacher ID passed via Django context
+                subjects: [],
+                selectedSubject: '',
+                loadingSubjects: false,
+                columns: ['id', 'name', 'subject','status'],
+                teacherSubjects: [], // To hold assigned subjects
+                tableOptions: {
+                    headings: {
+                        id: 'ID',
+                        name: 'Name',
+                        subject: 'Subject',
+                        action: 'Action'
+                    },
+                    sortable: ['id', 'name', 'subject'],
+                    filterable: ['name', 'subject']
+                },
+                hasError: false,
+                errorMessage: ''
+            };
+        },
+        methods: {
+            fetchSubjects() {
+                inst.get(`/api/teacher/${this.teacherId}/subjects/`)
+                    .then(response => {
+                        this.teacherSubjects = response.data; // Load assigned subjects
+                    })
+                    .catch(error => {
+                        this.hasError = true;
+                        this.errorMessage = 'Error loading subjects.';
+                    });
+            },
+            searchSubjects(query) {
+                if (query !== '') {
+                    this.loadingSubjects = true;
+                    inst.get(`/api/search_subjects`, { params: { query: query } })
+                        .then(response => {
+                            this.subjects = response.data;
+                            this.loadingSubjects = false;
+                        })
+                        .catch(() => {
+                            this.loadingSubjects = false;
+                        });
+                } else {
+                    this.subjects = [];
+                }
+            },
+            saveSelectedSubject() {
+                console.log("Selected Subject Code:", this.selectedSubject);
+                inst.post(`/teacher/${this.teacherId}/select_subject/`, { subjectCode: this.selectedSubject })
+                    .then(response => {
+                        console.log('Response:', response.data);
+                        if (response.data.success) {
+                            this.fetchSubjects();
+                            this.selectedSubject = '';
+                            this.$notify({
+                                title: 'Subject Added',
+                                message: response.data.message,
+                                type: 'success'
+                            });
+                        } else {
+                            this.$notify.error({
+                                title: 'Subject Assignment Error',
+                                message: response.data.message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.$notify.error({
+                            title: 'Error',
+                            message: 'An error occurred while adding the subject.',
+                        });
+                    });
+            },
+            confirmDeleteSubject(row) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to delete the subject ${row.subject}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.deleteSubject(row);
+                    }
+                });
+            },
+            deleteSubject(row) {
+                const subjectId = row.id; // The ID of the subject to be deleted
+                inst.delete(`/api/teachers/${this.teacherId}/subjects/${subjectId}/delete/`)
+                    .then(response => {
+                        if (response.data.success) {
+                            this.fetchSubjects(); // Reload the teacher's subjects after deletion
+                            this.$notify({
+                                title: 'Subject Removed',
+                                message: response.data.message,
+                                type: 'success'
+                            });
+                        } else {
+                            this.$notify.error({
+                                title: 'Error',
+                                message: response.data.message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.$notify.error({
+                            title: 'Error',
+                            message: 'An error occurred while removing the subject.'
+                        });
+                    });
+            }
+        },
+        
+        created() {
+            this.fetchSubjects();
+        }
+    });
+</script>
+{% endblock %}

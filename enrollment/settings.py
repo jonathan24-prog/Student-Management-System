@@ -89,30 +89,30 @@ WSGI_APPLICATION = 'enrollment.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {
-  'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'port_bcc_db',
-        'USER': 'port_bcc',
-        'PASSWORD': 'BccAdmin@123',
-        'HOST': 'localhost',
-        'PORT': '',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': 'SET character_set_connection=utf8mb4;'
-                        'SET collation_connection=utf8mb4_unicode_ci;'
-                        "SET NAMES 'utf8mb4';"
-                        "SET CHARACTER SET utf8mb4;"
-        }
-  }
-}
-
 # DATABASES = {
-#     'default': {
-#     'ENGINE': 'django.db.backends.sqlite3',
-#     'NAME': 'db.sqlite3',
-#     }
+#   'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'port_bcc_db',
+#         'USER': 'port_bcc',
+#         'PASSWORD': 'BccAdmin@123',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#             'init_command': 'SET character_set_connection=utf8mb4;'
+#                         'SET collation_connection=utf8mb4_unicode_ci;'
+#                         "SET NAMES 'utf8mb4';"
+#                         "SET CHARACTER SET utf8mb4;"
+#         }
+#   }
 # }
+
+DATABASES = {
+    'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'db.sqlite3',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators

@@ -1,0 +1,239 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% load static %}  
+
+{% block content %}
+<div class="container about-section">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2 class="about-title">About Us</h2>
+
+            
+           
+        </div>
+    </div>
+   
+
+
+
+</div>
+
+
+    <div class="container about-section">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+               
+                
+                <p class="about-content">
+                    The BCC Portal is a dedicated online platform designed to enhance the learning experience and streamline academic processes for both students and educators at BCC School. This portal serves as a central hub for communication, collaboration, and access to essential academic resources.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <img src="{% static 'student_profile/images/BCC.png' %}" alt="About Us Image" class="about-image">
+            </div>
+        </div>
+        <h1 class="text-center mt-4" style="font-size: 2rem; color: black; font-weight: 600;">Join the BCC Online Community</h1>
+        <p class="about-content">
+            We invite all students and teachers at BCC School to explore the portal and take full advantage of its features. Together, we can create a collaborative and supportive educational experience that prepares our students for the future.
+        </p>
+
+        <section class="cf team-container mt-5">
+    
+          <h1 class="team-h1">Our Team</h1>
+        
+            <!-- member-->  
+           
+        <div class="m-auto">
+            <!-- member-->
+            <div class="team-member">
+            <img class="team-photo" src="http://square-vn.com/app/dscms/assets/images/person-4.jpg?v=1495618120">
+              <h3>Person's Name</h3>
+              <span>Gwapo</span>
+               <a class="email" href="mailto:email@something.com"><span >email</span></a>
+            </div>
+        
+        
+            <!-- member-->
+            <div class="team-member">
+            <img class="team-photo" src="http://square-vn.com/app/dscms/assets/images/person-4.jpg?v=1495618120">
+              <h3>Person's Name</h3>
+              <span>This section could be used to show a very short bio description for each member</span>
+              <a class="email" href="mailto:email@something.com"><span >email</span></a>
+            </div> 
+        
+        
+        
+            <!-- member-->
+            <div class="team-member">
+            <img class="team-photo" src="http://square-vn.com/app/dscms/assets/images/person-4.jpg?v=1495618120">
+              <h3>Person's Name</h3>
+              <span>This section could be used to show a very short bio description for each member</span>
+               <a class="email" href="mailto:email@something.com"><span >email</span></a>
+            </div> 
+        
+        
+            <!-- member-->
+            <div class="team-member">
+            <img class="team-photo" src="http://square-vn.com/app/dscms/assets/images/person-4.jpg?v=1495618120">
+              <h3>Person's Name</h3>
+              <span>This section could be used to show a very short bio description for each member</span>
+               <a class="email" href="mailto:email@something.com"><span >email</span></a>
+            </div> 
+          </div>
+         </section>
+
+    </div>
+
+
+
+    <!-- this section wraps the team members as a container-->
+
+
+    <style>
+        .about-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+        .about-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .about-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .about-image {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+
+        /* Team Member CSS 
+===========================*/
+
+h1.team-h1 {
+  margin: 0;
+  position: absolute;
+  top: -16px;
+  text-align: center;
+  left: 40%;
+  font-family: georgia;
+  font-style: italic;
+  background-color: white;
+  padding: 0px 20px;
+  color: #222; 
+}
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.cf {
+    *zoom: 1;
+}
+
+.team-container {
+  max-width: 1000px;
+  margin: auto;
+  border-top: 1px #e9e9e9 solid;
+  border-bottom: 1px #e9e9e9 solid;
+  padding-top: 5em;
+  padding-bottom: 5em;
+  margin-top: 3em;
+  position: relative;
+}
+
+.team-member {
+  width: 21%;
+  float: left;
+  text-align: center;
+  margin-right: 5%;
+}
+
+.team-member:last-child {margin-right: 0;}
+
+
+.team-member span,
+.team-member h3 {
+  max-width: 200px;
+  font-family: sans-serif;
+  letter-spacing: -1px;
+}
+
+.team-member h3 {
+  color: #1CA3A3;
+}
+
+.email {
+  color: #EA2678;
+  
+}
+
+.team-member span {
+  display: block;
+ 
+}
+.team-photo {
+  border-radius: 50%;
+  text-align: center;
+  margin: auto;
+  max-width: 100%;
+  height: auto;
+  transition: 0.1s transform ease-in-out;
+}
+
+
+.team-photo:hover {
+  transform: scale(0.9);
+  cursor: pointer;
+}
+
+
+/* code for phone layout */
+@media (max-width:850px){
+  .team-member {
+    width:25%;
+    margin-left: 4%;
+    margin-right: 4%;
+    margin-bottom: 40px;
+    
+  }
+  
+}
+
+
+
+@media (max-width:650px){
+  .team-member {
+    float: none;
+    display: block;
+    margin: 50px auto;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .team-member h3,
+  .team-member span {
+    margin: 15px auto;
+  }
+}
+
+
+/* ENDS Team Member CSS 
+===========================*/
+    </style>
+{% endblock %}

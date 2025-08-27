@@ -1,0 +1,105 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5" style="background-color: rgb(237, 239, 244); width: 40%; height: 60vh; display: grid; place-content: center; border-radius: 4px; box-shadow: 0px 0px 3px 0px rgb(177, 177, 177);">
+  <div class="inside">
+  <h2 class="text-center mb-4" style="font-weight: 700;">Set Grade Submission Schedule</h2>
+  
+  <!-- Button to open modal -->
+  <div class="d-flex justify-content-center mb-4">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+      Set Schedule
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="scheduleModalLabel">Set Grade Submission Schedule</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post">
+            {% csrf_token %}
+        
+            <div class="mb-3">
+              <label for="start_date" class="form-label">Start Date</label>
+              <input type="date" id="start_date" name="start_date" class="form-control" value="{{ schedule.start_date|date:'Y-m-d' }}">
+          </div>
+          
+          <div class="mb-3">
+              <label for="end_date" class="form-label">End Date</label>
+              <input type="date" id="end_date" name="end_date" class="form-control" value="{{ schedule.end_date|date:'Y-m-d' }}">
+          </div>
+          
+        
+            <div class="mb-3">
+                <label for="active_semister" class="form-label">Active Semester</label>
+                <select id="active_semister" name="active_semister" class="form-control">
+                    {% for semester in active_semisters %}
+                    <option value="{{ semester.id }}" {% if schedule.active_semister.id == semester.id %}selected{% endif %}>
+                        {{ semester.semister }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="mb-3">
+                <label for="academic_year" class="form-label">Academic Year</label>
+                <select id="academic_year" name="academic_year" class="form-control">
+                    {% for year in academic_years %}
+                    <option value="{{ year.id }}" {% if schedule.academic_year.id == year.id %}selected{% endif %}>
+                        {{ year.ay }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary">Save Schedule</button>
+            </div>
+        </form>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display the set schedule -->
+  <div class="mt-4 text-center">
+    <h4>Current Schedule:</h4>
+    <p><strong>Start Date:</strong> {{ schedule.start_date|date:"Y-m-d" }}</p>
+    <p><strong>End Date:</strong> {{ schedule.end_date|date:"Y-m-d" }}</p>
+  </div>
+</div>
+</div>
+
+{% endblock %}
+
+<style>
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  .modal-header {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+
+  .container {
+    max-width: 600px;
+  }
+</style>

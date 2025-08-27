@@ -1,0 +1,188 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5" id="profile">
+    <h3 class="ml-4 mb-4" style="font-weight: 700; font-size: 2rem; color: #343a40;">Profile Details</h3>
+
+    {% if messages %}
+    <div id="custom-alert" class="alert-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                <div class="alert-content">
+                    <div class="alert-message">
+                        <i class="fa {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">×</button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section class="section profile">
+        <div class="container mt-4">
+            <div class="text-center mb-5">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="Profile Picture" class="rounded-circle img-fluid shadow mb-3 m-auto" style="width: 150px; height: 150px; border: 4px solid #6c757d;">
+                {% else %}
+                    <div class="placeholder-image bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle shadow mb-3" style="width: 150px; height: 150px; font-size: 18px;">
+                        <span>No Image</span>
+                    </div>
+                {% endif %}
+                <h3 class="fw-bold" style="font-size: 1.5rem; color: #495057;">{{ student.first_name|default:"N/A" }} {{ student.middle_name|default:"" }} {{ student.last_name|default:"N/A" }} {{ student.ext_name|default:"" }}</h3>
+                <a href="{% url 'view_profile' %}" class="btn btn-primary mt-3">Edit Profile</a>
+            </div>
+
+            <h2 class="section-title">Personal Information</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <ul class="list-unstyled profile-info">
+                        <li><strong>ID:</strong> {{ student.student_id|default:"N/A" }}</li>
+                        <li><strong>LRN Number:</strong> {{ student.lrn_num|default:"N/A" }}</li>
+                        <li><strong>Birth Date:</strong> {{ student.birth_date|date:"F j, Y"|default:"N/A" }}</li>
+                        <li><strong>Gender:</strong> {{ student.gender|default:"N/A" }}</li>
+                        <li><strong>Civil Status:</strong> {{ student.civil_status|default:"N/A" }}</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul class="list-unstyled profile-info">
+                        <li><strong>Place of Birth:</strong> {{ student.place_of_birth|default:"N/A" }}</li>
+                        <li><strong>Nationality:</strong> {{ student.nationality|default:"N/A" }}</li>
+                        <li><strong>Religion:</strong> {{ student.religion|default:"N/A" }}</li>
+                        <li><strong>Mobile No.:</strong> {{ student.mobile_no|default:"N/A" }}</li>
+                        <li><strong>Email:</strong> {{ student.email_add|default:"N/A" }}</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul class="list-unstyled profile-info">
+                        <li><strong>Address:</strong> {{ student.address|default:"N/A" }}</li>
+                        <li><strong>Barangay:</strong> {{ student.brgy|default:"N/A" }}</li>
+                        <li><strong>Street:</strong> {{ student.street|default:"N/A" }}</li>
+                        <li><strong>City:</strong> {{ student.city|default:"N/A" }}</li>
+                        <li><strong>Province:</strong> {{ student.province|default:"N/A" }}</li>
+                        <li><strong>Zip Code:</strong> {{ student.zip_code|default:"N/A" }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>Guardian Information</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Guardian:</strong> {{ student.guardian|default:"N/A" }}</li>
+                        <li><strong>Relationship:</strong> {{ student.relationship|default:"N/A" }}</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Guardian Address:</strong> {{ student.guardian_address|default:"N/A" }}</li>
+                        <li><strong>Guardian Contact:</strong> {{ student.guardian_contact|default:"N/A" }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>Educational Background</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Primary School:</strong> {{ student.primary|default:"N/A" }} ({{ student.primary_completed|default:"N/A" }})</li>
+                        <li><strong>Elementary School:</strong> {{ student.elementary|default:"N/A" }} ({{ student.elementary_completed|default:"N/A" }})</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>High School:</strong> {{ student.highschool|default:"N/A" }} ({{ student.highschool_completed|default:"N/A" }})</li>
+                        <li><strong>Senior High School:</strong> {{ student.senior_highschool|default:"N/A" }} ({{ student.senior_highschool_completed|default:"N/A" }})</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>Additional Information</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Occupation:</strong> {{ student.occupation|default:"N/A" }}</li>
+                        <li><strong>Course:</strong> {{ student.course|default:"N/A" }}</li>
+                        <li><strong>Major:</strong> {{ student.major|default:"N/A" }}</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Date Created:</strong> {{ student.date_created|date:"F j, Y"|default:"N/A" }}</li>
+                        <li><strong>Date Accepted:</strong> {{ student.date_accepted|date:"F j, Y"|default:"N/A" }}</li>
+                        <li><strong>Is Conditional:</strong> {{ student.is_conditional|yesno:"Yes,No"|default:"N/A" }}</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<style>
+    body {
+        background-color: #f9f9f9;
+    }
+
+    #profile h2 {
+        border-bottom: 2px solid #131313;
+        padding-bottom: 10px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    #profile ul li {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        color: #2c3e50;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card h2 {
+        color: #34495e;
+    }
+
+    .alert {
+        animation: fadeIn 1s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<script>
+    function showCustomAlert() {
+        const alert = document.getElementById('custom-alert');
+        if (alert && alert.innerHTML.trim() !== '') {
+            alert.className = 'alert-visible';
+            setTimeout(() => {
+                alert.className = 'alert-hidden';
+            }, 5000);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', showCustomAlert);
+</script>
+
+{% endblock %}

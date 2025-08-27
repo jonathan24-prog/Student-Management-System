@@ -1,0 +1,382 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<!-- Display success or error messages -->
+{% if messages %}
+<div id="custom-alert" class="alert-hidden">
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+            <i class="{% if message.tags == 'success' %}fas fa-check{% else %}fas fa-times{% endif %}"></i>
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <h2 class="section-title">Update Profile</h2>
+    <form method="POST" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
+        {{ profile_form.non_field_errors }}
+
+        <div class="form-group profile-image-group">
+            <label for="id_profile_image">Profile Image</label>
+            {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" alt="Profile Image" class="profile-image">
+        {% endif %}
+        {{ profile_form.profile_image }}
+        </div>
+
+        <div class="form-group d-none">
+            <label for="id_username">Username</label>
+            {{ profile_form.username }}
+        </div>
+
+        <div class="form-group d-none">
+            <label for="id_first_name">First Name</label>
+            {{ profile_form.first_name }}
+        </div>
+
+        <div class="form-group d-none">
+            <label for="id_last_name">Last Name</label>
+            {{ profile_form.last_name }}
+        </div>
+
+        <div class="form-group d-none">
+            <label for="id_email">Email</label>
+            {{ profile_form.email }}
+        </div>
+
+        <hr>
+
+        <div class="form-group d-none">
+            <label for="id_username">Username</label>
+            {{ profile_form.username }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_first_name">First Name</label>
+            {{ student_form.first_name }}  <!-- This will render the input field for first_name -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_last_name">Last Name</label>
+            {{ student_form.last_name }}  <!-- This will render the input field for last_name -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_middle_name">Middle Name</label>
+            {{ student_form.middle_name }}  <!-- This will render the input field for middle_name -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_ext_name">Extension Name</label>
+            {{ student_form.ext_name }}  <!-- This will render the input field for ext_name -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_gender">Gender</label>
+            {{ student_form.gender }}  <!-- This will render the input field for gender -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_birth_date">Birth Date</label>
+            {{ student_form.birth_date }}  <!-- This will render the input field for birth_date -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_address">Address</label>
+            {{ student_form.address }}  <!-- This will render the input field for address -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_brgy">Barangay</label>
+            {{ student_form.brgy }}  <!-- This will render the input field for brgy -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_street">Street</label>
+            {{ student_form.street }}  <!-- This will render the input field for street -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_city">City</label>
+            {{ student_form.city }}  <!-- This will render the input field for city -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_province">Province</label>
+            {{ student_form.province }}  <!-- This will render the input field for province -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_place_of_birth">Place of Birth</label>
+            {{ student_form.place_of_birth }}  <!-- This will render the input field for place_of_birth -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_mobile_no">Mobile Number</label>
+            {{ student_form.mobile_no }}  <!-- This will render the input field for mobile_no -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_guardian">Guardian</label>
+            {{ student_form.guardian }}  <!-- This will render the input field for guardian -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_relationship">Relationship</label>
+            {{ student_form.relationship }}  <!-- This will render the input field for relationship -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_guardian_address">Guardian's Address</label>
+            {{ student_form.guardian_address }}  <!-- This will render the input field for guardian_address -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_guardian_contact">Guardian's Contact</label>
+            {{ student_form.guardian_contact }}  <!-- This will render the input field for guardian_contact -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_occupation">Occupation</label>
+            {{ student_form.occupation }}  <!-- This will render the input field for occupation -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_religion">Religion</label>
+            {{ student_form.religion }}  <!-- This will render the input field for religion -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_zip_code">Zip Code</label>
+            {{ student_form.zip_code }}  <!-- This will render the input field for zip_code -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_course">Course</label>
+            {{ student_form.course }}  <!-- This will render the input field for course -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_major">Major</label>
+            {{ student_form.major }}  <!-- This will render the input field for major -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_primary">Primary School</label>
+            {{ student_form.primary }}  <!-- This will render the input field for primary -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_elementary">Elementary School</label>
+            {{ student_form.elementary }}  <!-- This will render the input field for elementary -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_highschool">High School</label>
+            {{ student_form.highschool }}  <!-- This will render the input field for highschool -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_senior_highschool">Senior High School</label>
+            {{ student_form.senior_highschool }}  <!-- This will render the input field for senior_highschool -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_degree_completed">Degree Completed</label>
+            {{ student_form.degree_completed }}  <!-- This will render the input field for degree_completed -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_degree_year_attended">Year Attended (Degree)</label>
+            {{ student_form.degree_year_attended }}  <!-- This will render the input field for degree_year_attended -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_name_of_school">Name of School</label>
+            {{ student_form.name_of_school }}  <!-- This will render the input field for name_of_school -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_primary_completed">Primary Completed</label>
+            {{ student_form.primary_completed }}  <!-- This will render the input field for primary_completed -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_elementary_completed">Elementary Completed</label>
+            {{ student_form.elementary_completed }}  <!-- This will render the input field for elementary_completed -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_highschool_completed">High School Completed</label>
+            {{ student_form.highschool_completed }}  <!-- This will render the input field for highschool_completed -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_senior_highschool_completed">Senior High School Completed</label>
+            {{ student_form.senior_highschool_completed }}  <!-- This will render the input field for senior_highschool_completed -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_civil_status">Civil Status</label>
+            {{ student_form.civil_status }}  <!-- This will render the input field for civil_status -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_nationality">Nationality</label>
+            {{ student_form.nationality }}  <!-- This will render the input field for nationality -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_email_add">Email Address</label>
+            {{ student_form.email_add }}  <!-- This will render the input field for email_add -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_lrn_num">LRN Number</label>
+            {{ student_form.lrn_num }}  <!-- This will render the input field for lrn_num -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_is_conditional">Conditional</label>
+            {{ student_form.is_conditional }}  <!-- This will render the input field for is_conditional -->
+        </div>
+
+        <div class="form-group">
+            <label for="id_date_accepted">Date Accepted</label>
+            {{ student_form.date_accepted }}  <!-- This will render the input field for date_accepted -->
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        </div>
+    </form>
+</div>
+<style>
+    /* General Container Styles */
+    .container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Title Styles */
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #343a40;
+        text-align: center;
+    }
+
+    /* Form Styles */
+    .profile-form, .password-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #495057;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="file"] {
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus,
+    .form-group input[type="password"]:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        color: white;
+        background-color: #007bff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .profile-image-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        border: 2px solid #007bff;
+    }
+
+    .divider {
+        margin: 30px 0;
+        border: 1px solid #dee2e6;
+    }
+
+    /* Custom Alert Styles */
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+
+    /* Hidden state */
+    .alert-hidden {
+        display: none;
+    }
+</style>
+
+{% endblock %}

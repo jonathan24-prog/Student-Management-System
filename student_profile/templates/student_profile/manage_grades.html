@@ -141,10 +141,10 @@
     </el-card>
     <el-card>
         <v-client-table :columns="columns" :data="datas">
-
+            {%if request.user.is_superuser%}
             <el-button type="success" slot="action" @click="addGrade(props.row.id)" slot-scope="props" size="small"
                 round>add grade</el-button>
-
+            {%endif%}
         </v-client-table>
         <br>
         <el-button :disabled="radio== 'by Group'" size="small" @click="print" type="primary">Print</el-button>

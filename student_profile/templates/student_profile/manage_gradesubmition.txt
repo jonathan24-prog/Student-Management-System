@@ -1,0 +1,411 @@
+{% extends 'student_profile/basemenu.html' %}
+{% load static %}
+
+{% block content %}
+
+<div id="app" style="padding: 20px 20px;">
+    <el-card>
+        <el-radio-group size="small" v-model="radio">
+            <el-radio-button label="by Instructor"></el-radio-button>
+            <!-- <el-radio-button label="by Subject" @click="selectBySubject"></el-radio-button> -->
+            
+            <!-- <el-radio-button label="by Student"></el-radio-button> -->
+        </el-radio-group>
+        <br><br>
+        <h6>Search Parameters</h6>
+        <div v-show="radio == 'by Instructor'">
+            <el-row :gutter="5">
+                <el-col :md="6">
+                    <el-select filterable style="width: 100%;" size="small" v-model="instructor_pk"
+                        placeholder="select student">
+                        <el-option value="">select instructor</el-option>
+                        <el-option v-for="(item, index) in instructors" :key="index" :label="item.full" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="6">
+                    <el-select style="width: 100%;" size="small" v-model="ay_pk" placeholder="select Academic Year">
+                        <el-option value="">select Academic Year</el-option>
+                        <el-option v-for="(item, index) in ays" :key="index" :label="item.ay" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="6">
+                    <el-select style="width: 100%;" size="small" v-model="sem" placeholder="select sem">
+                        <el-option value="">select sem</el-option>
+                        <el-option v-for="(item, index) in sems" :key="index" :label="item" :value="item"></el-option>
+                    </el-select>
+                </el-col>
+
+                <el-col :md="6">
+                    <el-button style="width:100%;" @click="searchbyInstructor"
+                        :disabled="instructor_pk=='' || ay_pk == ''|| sem=='' " size="small" type="success">Search
+                    </el-button>
+
+                </el-col>
+            </el-row>
+        </div>
+        <!-- <div v-show="radio == 'by Student'">
+            <el-row :gutter="5">
+                <el-col :md="6">
+                    <el-select filterable style="width: 100%;" size="small" v-model="student_pk"
+                        placeholder="select student">
+                        <el-option value="">select instructor</el-option>
+                        <el-option v-for="(item, index) in students" :key="index" :label="item.full" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="6">
+                    <el-select style="width: 100%;" size="small" v-model="ay_pk" placeholder="select Academic Year">
+                        <el-option value="">select Academic Year</el-option>
+                        <el-option v-for="(item, index) in ays" :key="index" :label="item.ay" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="6">
+                    <el-select style="width: 100%;" size="small" v-model="sem" placeholder="select sem">
+                        <el-option value="">select sem</el-option>
+                        <el-option v-for="(item, index) in sems" :key="index" :label="item" :value="item"></el-option>
+                    </el-select>
+                </el-col>
+
+                <el-col :md="6">
+                    <el-button style="width:100%;" @click="searchbyStudent"
+                        :disabled="student_pk=='' || ay_pk == ''|| sem=='' " size="small" type="success">Search
+                    </el-button>
+
+                </el-col>
+            </el-row>
+        </div> -->
+       
+        <!-- <div v-show="radio == 'by Subject'">
+            <el-row :gutter="5">
+                <el-col :md="24">
+                    <el-select filterable style="width: 100%;" size="small" v-model="selectedSubject"
+                        placeholder="Select subject">
+                        <el-option value="">Select subject</el-option>
+                        <el-option v-for="(item, index) in subjects" :key="index" 
+                            :label="`${item.code} - ${item.description}`" 
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+            </el-row>
+            <el-row style="margin-top: 5px;" :gutter="5">
+                <el-col :md="8">
+                    <el-select style="width: 100%;" size="small" v-model="ay_pk" placeholder="Select Academic Year">
+                        <el-option value="">Select Academic Year</el-option>
+                        <el-option v-for="(item, index) in ays" :key="index" :label="item.ay" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="8">
+                    <el-select style="width: 100%;" size="small" v-model="sem" placeholder="Select sem">
+                        <el-option value="">Select sem</el-option>
+                        <el-option v-for="(item, index) in sems" :key="index" :label="item" :value="item"></el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="4">
+                    <el-select style="width: 100%;" size="small" v-model="instructor_pk" placeholder="Instructor">
+                        <el-option value="">Select Instructor</el-option>
+                        <el-option v-for="(item, index) in instructors" :key="index" :label="item.last_name"
+                            :value="item.id"></el-option>
+                    </el-select>
+                </el-col>
+                <el-col :md="4">
+                    <el-button style="width:100%;" @click="search" 
+                        :disabled="ay_pk === '' || selectedSubject === '' || sem === ''"
+                        size="small" type="success">Search</el-button>
+                </el-col>
+            </el-row>
+        </div> -->
+    </el-card>
+    <el-card>
+        <v-client-table :columns="columns" :data="datas">
+            {% if request.user.is_superuser %}
+            <el-button 
+                type="success" 
+                slot="action" 
+                @click="approveGrade(props.row.id)" 
+                slot-scope="props" 
+                size="small" 
+                round
+                :disabled="props.row.submit_status === 'Approved'">
+                Approve
+            </el-button>
+
+            {% endif %}
+        </v-client-table>
+    </el-card>
+
+    <el-dialog title="Warning" :visible.sync="dialog" width="40%" center>
+        <el-form :ref="sub_enroll" :model="sub_enroll" label-width="120px">
+            <el-form-item label="Instructor" size="small">
+                <el-select filterable v-model="sub_enroll.instructor" placeholder="Select instructor"
+                    style="width: 100%;">
+                    <el-option v-for="(item, index) in instructors" :key="index" :value="item.id"
+                        :label="item.last_name"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="Subject" size="small">
+                <el-select v-model="sub_enroll.subject" placeholder="Select Subject" style="width: 100%;">
+                    <el-option v-for="(item, index) in subjects" :key="index" :value="item.id"
+                        :label="`${item.code} - ${item.description}`">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="Midterm Grade" size="small">
+                <el-input v-model="sub_enroll.midterm_grade"></el-input>
+            </el-form-item>
+            <el-form-item label="Final Grade" size="small">
+                <el-input v-model="sub_enroll.grade"></el-input>
+            </el-form-item>
+            <el-form-item label="Status" size="small">
+                <el-select v-model="sub_enroll.grade_status" placeholder="Select status" style="width: 100%;">
+                    <el-option v-for="(item, index) in statuses" :key="index" :value="item" :label="item"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialog = false">Cancel</el-button>
+            <el-button type="primary" @click="save">Save</el-button>
+        </span>
+    </el-dialog>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    Vue.use(VueTables.ClientTable);
+
+    const inst = axios.create({
+        baseURL: '/bccapi',
+        timeout: 10000,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+        }
+    })
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                columns: ["student_id", "fullname", "subject", "description", "midterm_grade", "final_grade", "unit", "status", "submit_status", "action"],
+                datas: [],
+                origdata: [],
+                radio: "by Instructor",
+                dialog: false,
+                isLoading: true,
+                courses: [],
+                majors: [],
+                instructors: [],
+                students: [],
+                subjects: [],
+                ays: [],
+                selectedSubject: "",  // Updated variable name
+                instructor_pk: '',
+                student_pk: "",
+                sem: '',
+                ay_pk: "",
+                sems: ["1st", "2nd", "summer"],
+                statuses: ["passed", "failed", "for Completion"],
+                index: '',
+                sub: {},
+                sub_enroll: {
+                    "id": "",
+                    "grade_status": "passed",
+                    "grade": "",
+                    "midterm_grade": "",
+                    "status": "enrolled",
+                    "enrolled_by_student": "",
+                    "subject": "",
+                    "instructor": ""
+                }
+            }
+        },
+        methods: {
+            selectBySubject() {
+                // No additional functionality needed here
+            },
+            addGrade(id) {
+                this.index = this.datas.findIndex(e => e.id == id)
+                this.sub = this.datas.find(el => el.id == id)
+                this.dialog = true
+                inst.get('subjectsenrolled/' + id).then(res => {
+                    this.sub_enroll = res.data
+                    if (this.sub_enroll.instructor == null) {
+                        this.sub_enroll.instructor = this.instructor_pk
+                    }
+                    if (this.sub_enroll.grade_status == null) {
+                        this.sub_enroll.grade_status = 'passed'
+                    }
+                })
+            },
+            save() {
+                inst.put("subjectsenrolled/" + this.sub_enroll.id + "/", this.sub_enroll).then(res => {
+                    this.dialog = false
+                    this.sub.final_grade = res.data.grade
+                    this.sub.midterm_grade = res.data.midterm_grade
+                    this.sub.status = res.data.grade_status
+                    this.datas[this.index] = this.sub
+                })
+            },
+            approveGrade(id) {
+        // Find the record and its index
+        let index = this.datas.findIndex(e => e.id == id);
+        let record = this.datas[index];
+
+        // Prepare the payload with the existing sub_enroll data, updating only submit_status
+        inst.get(`subjectsenrolled/${id}`).then(res => {
+            let subEnroll = res.data;
+            subEnroll.submit_status = 'approved';  // Update submit_status
+
+            // Send the full payload with the updated submit_status
+            inst.put(`subjectsenrolled/${id}/`, subEnroll)
+                .then(() => {
+                    // Update the local data to reflect the approved status
+                    this.$set(this.datas, index, {
+                        ...record,
+                        submit_status: 'Approved'
+                    });
+                })
+                .catch(error => {
+                    console.error("Failed to approve the grade:", error);
+                    // Optionally handle the error (e.g., show error message)
+                });
+        }).catch(error => {
+            console.error("Failed to fetch subject enrollment details:", error);
+        });
+    },
+    searchbyStudent() {
+                axios.get(`/Api/enrollbystudsub/${this.student_pk}/${this.ay_pk}/${this.sem}`).then(res => {
+                    this.datas = []
+                    this.origdata = res.data
+                    res.data.forEach(el => {
+                        let grade = el.grade != null ? el.grade : ""
+                        let midterm_grade = el.midterm_grade != null ? el.midterm_grade : ""
+                        let grade_status = el.grade_status != null ? el.grade_status : ""
+                        this.datas.push({
+                            un: el.subject.unit,
+                            unit: el.subject.unit,
+                            id: el.id,
+                            subject: el.subject.code,
+                            student_id: el.enrolled_by_student.student.id,
+                            fullname: `${el.enrolled_by_student.student.last_name}, ${el.enrolled_by_student.student.first_name} ${el.enrolled_by_student.student.middle_name}`,
+                            final_grade: grade,
+                            midterm_grade: midterm_grade,
+                            status: grade_status,
+                            instructor: el.instructor == null ? '' :
+                                `${el.instructor.last_name},${el.instructor.first_name}`,
+                            description: el.subject.description
+                        })
+                    })
+
+                    if (res.data.length == 0) {
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'No records found',
+                        })
+                    }
+                })
+            },
+    searchbyInstructor() {
+                axios.get(`/Api/enrollbystudins/${this.instructor_pk}/${this.ay_pk}/${this.sem}`).then(res => {
+                    this.datas = []
+                    this.origdata = res.data
+                    res.data.forEach(el => {
+                        let grade = el.grade != null ? el.grade : ""
+                        let midterm_grade = el.midterm_grade != null ? el.midterm_grade : ""
+                        let grade_status = el.grade_status != null ? el.grade_status : ""
+                        this.datas.push({
+                            un: el.subject.unit,
+                            unit: el.subject.unit,
+                            id: el.id,
+                            subject: el.subject.code,
+                            student_id: el.enrolled_by_student.student.id,
+                            fullname: `${el.enrolled_by_student.student.last_name}, ${el.enrolled_by_student.student.first_name} ${el.enrolled_by_student.student.middle_name}`,
+                            final_grade: grade,
+                            midterm_grade: midterm_grade,
+                            status: grade_status,
+                            instructor: el.instructor == null ? '' :
+                                `${el.instructor.last_name},${el.instructor.first_name}`,
+                            description: el.subject.description
+                        })
+                    })
+
+                    if (res.data.length == 0) {
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'No records found',
+                        })
+                    }
+                })
+            },
+    search() {
+    axios.get(`/Api/subjectloaded/${this.selectedSubject}/${this.major_pk || "0"}/${this.ay_pk}/${this.course_pk || "0"}/${this.sem}`).then(res => {
+        this.datas = [];
+        res.data.forEach(el => {
+            let grade = el.grade != null ? el.grade : "";
+            let grade_status = el.grade_status != null ? el.grade_status : "";
+            let midterm_grade = el.midterm_grade != null ? el.midterm_grade : "";
+            let submit_status = el.submit_status != null ? el.submit_status : "Not Submitted";
+
+            // Only push data if submit_status is 'forwarded'
+            if (submit_status === 'forwarded') {
+                this.datas.push({
+                    unit: el.subject.unit,
+                    id: el.id,
+                    subject: el.subject.code,
+                    description: el.subject.description,
+                    student_id: el.enrolled_by_student.student.id,
+                    fullname: `${el.enrolled_by_student.student.last_name}, ${el.enrolled_by_student.student.first_name} ${el.enrolled_by_student.student.middle_name}`,
+                    final_grade: grade,
+                    status: grade_status,
+                    midterm_grade: midterm_grade,
+                    submit_status: submit_status // Push submit_status into data
+                });
+            }
+        });
+
+        if (res.data.length == 0 || this.datas.length == 0) {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'No records found',
+            });
+        }
+    });
+}
+        },
+        created() {
+            inst.get('instructors').then(res => {
+                this.instructors = res.data
+                this.instructors.forEach(el => {
+                    el.full = `${el.last_name}, ${el.first_name} ${el.middle_name}`
+                })
+                
+            })
+            inst.get('majors').then(res => {
+                this.majors = res.data
+            })
+            inst.get('ays').then(res => {
+                this.ays = res.data
+            })
+            inst.get('courses').then(res => {
+                this.courses = res.data
+            })
+            inst.get('subjects').then(res => {
+                this.subjects = res.data
+            })
+            inst.get('students').then(res => {
+                this.students = res.data
+                this.students.forEach(el => {
+                    el.full = `${el.last_name}, ${el.first_name} ${el.middle_name}`
+                })
+            })
+        }
+    });
+</script>
+{% endblock %}

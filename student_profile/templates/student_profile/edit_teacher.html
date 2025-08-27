@@ -1,0 +1,89 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% block content %}
+<div id="app" style="padding: 20px 20px;">
+  <!-- Loader -->
+  <div v-if="isLoading" class="semipolar-spinner" :style="spinnerStyle">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <br><br><br>
+    <p>Fetching Teacher Details...</p>
+  </div>
+
+  <!-- Teacher Edit Form -->
+  <el-card v-if="!isLoading">
+    <el-form ref="form" :model="teacher" label-width="120px">
+      <el-form-item label="Student ID">
+        <el-input v-model="teacher.student_id" disabled></el-input>
+      </el-form-item>
+
+      <el-form-item label="First Name">
+        <el-input v-model="teacher.first_name"></el-input>
+      </el-form-item>
+
+      <el-form-item label="Last Name">
+        <el-input v-model="teacher.last_name"></el-input>
+      </el-form-item>
+
+      <el-form-item label="Email">
+        <el-input v-model="teacher.email"></el-input>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="updateTeacher">Save Changes</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        teacher: {
+          student_id: '',
+          first_name: '',
+          last_name: '',
+          email: ''
+        },
+        isLoading: true,  // Loading spinner state
+      };
+    },
+    created() {
+      // Fetch teacher details when the component is created
+      const teacherId = window.location.pathname.split('/').pop(); // Get teacher ID from URL
+      axios.get(`/editTeacher/${teacherId}/`)
+        .then(res => {
+          this.teacher = res.data;
+          this.isLoading = false;  // Disable loading spinner
+        })
+        .catch(err => {
+          console.error(err);
+          this.isLoading = false;  // Disable loading spinner on error
+        });
+    },
+    methods: {
+      updateTeacher() {
+        const teacherId = window.location.pathname.split('/').pop(); // Get teacher ID from URL
+        axios.post(`/editTeacher/${teacherId}/`, this.teacher)
+          .then(() => {
+            this.$message({
+              message: 'Teacher details updated successfully',
+              type: 'success'
+            });
+          })
+          .catch(err => {
+            console.error(err);
+            this.$message.error('Failed to update teacher details');
+          });
+      }
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'student_profile/basemenu.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="profile-header">
+        <a href="{% url 'view_profile' %}" class="btn btn-outline-secondary mb-4">
+            <i class="ti-user mr-2"></i>
+            View Profile
+        </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
+
+        <!-- Display the current profile image if it exists -->
+        <div class="form-group text-center mb-4">
+            <label for="id_image" class="font-weight-bold d-block mb-3">Current Profile Image:</label>
+            <img src="{% if form.instance.image %}{{ form.instance.image.url }}{% else %}{% static 'student_profile/images/admin.jpg' %}{% endif %}" 
+                alt="Profile Image" class="profile-image rounded-circle shadow-sm">
+        </div>
+
+        <!-- Image upload input -->
+        <div class="form-group mb-4">
+            <label for="id_image" class="font-weight-bold">Upload New Image:</label>
+            {{ form.image }}
+        </div>
+
+        <!-- Render the rest of the form fields with better styling -->
+        <div class="form-fields">
+            {{ form.as_p }}
+        </div>
+
+        <!-- Submit button -->
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-5">Update Profile</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-header a {
+    display: inline-block;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.profile-header a:hover {
+    background-color: #f1f1f1;
+}
+
+.profile-form {
+    margin-top: 20px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #ccc;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.form-fields p {
+    margin-bottom: 15px;
+}
+
+button.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 12px 30px;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+button.btn-lg {
+    padding: 15px 40px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    .profile-image {
+        width: 120px;
+        height: 120px;
+    }
+    button.btn-lg {
+        width: 100%;
+    }
+}
+
+</style>
+{% endblock %}
